@@ -1,2 +1,6 @@
-# githubpub
-A web server that serves content out of GitHub repositories.
+### githubpub
+
+A Node web server that serves content out of GitHub repositories.
+
+`npm install githubpub`
+

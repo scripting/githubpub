@@ -12,7 +12,7 @@ I'm running the app here: http://githubpub.scripting.com/.
 
 It's set up to access this <a href="https://github.com/scripting/Scripting-News/tree/master/githubpub">directory</a> in the Scripting-News repository. 
 
-It displays <a href="https://github.com/scripting/Scripting-News/blob/master/githubpub/index.md">index.md</a> when you access the top level of the site.
+It displays <a href="https://raw.githubusercontent.com/scripting/Scripting-News/master/githubpub/index.md">index.md</a> when you access the top level of the site.
 
 ### Why githubpub is cool
 

@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.4.4"; 
+const myProductName = "githubpub", myVersion = "0.4.6"; 
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2015 Dave Winer
@@ -76,7 +76,7 @@ function init (userConfig) {
 		}
 	davehttp.start (config, function (theRequest) {
 		function notFound (message) {
-			theRequest.httpReturn (404, "text/plain", s);
+			theRequest.httpReturn (404, "text/plain", message);
 			}
 		function getFileContent (jstruct, callback) {
 			if (jstruct.encoding == "base64") {

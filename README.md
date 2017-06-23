@@ -9,7 +9,6 @@ A Node app that serves from GitHub repositories.
 ~~~~
 
 const githubpub = require ("githubpub");
-const utils = require ("daveutils");
 
 var config = {
 	port: 5376,

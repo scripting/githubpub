@@ -14,6 +14,8 @@ It's set up to access this <a href="https://github.com/scripting/Scripting-News/
 
 It displays <a href="https://raw.githubusercontent.com/scripting/Scripting-News/master/githubpub/index.md">index.md</a> when you access the top level of the site.
 
+Here's <a href="https://www.npmjs.com/package/githubpub">githubpub</a> on NPM.
+
 ### Why githubpub is cool
 
 1. It can be configured to serve many sites from lots of locations on GitHub. Each location gets its own domain name. 

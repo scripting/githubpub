@@ -1,4 +1,4 @@
-## githubpub
+# githubpub
 
 A Node app that serves from GitHub repositories.
 

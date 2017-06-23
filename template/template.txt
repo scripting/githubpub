@@ -6,8 +6,8 @@
 		<script src="http://fargo.io/code/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="http://fargo.io/code/fontAwesome/css/font-awesome.min.css"/>
 		<link href="http://fargo.io/code/ubuntuFont.css" rel="stylesheet" type="text/css">
-		<script src="http://fargo.io/code/shared/gitpub/template/code.js"></script>
-		<link rel="stylesheet" href="http://fargo.io/code/shared/gitpub/template/styles.css"/>
+		<script src="http://fargo.io/code/shared/githubpub/template/code.js"></script>
+		<link rel="stylesheet" href="http://fargo.io/code/shared/githubpub/template/styles.css"/>
 		<script>
 			var pageproperties = [%pageproperties%];
 			</script>

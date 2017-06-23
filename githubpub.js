@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.4.6"; 
+const myProductName = "githubpub", myVersion = "0.4.8"; 
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2015 Dave Winer
@@ -35,7 +35,7 @@ var mime = require ("mime");
 var config = {
 	port: 80,
 	apiUrl: "https://api.github.com/repos/",
-	urlMarkdownTemplate: "http://fargo.io/code/shared/gitpub/template/template.txt", 
+	urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
 	indexFileName: "index"
 	};

@@ -4,35 +4,15 @@ A Node app that serves from GitHub repositories.
 
 `npm install githubpub`
 
-### Demo app
+### Hello World app
+
+Here's the <a href="https://gist.github.com/scripting/75e27f5227be29afe6f76cd55961d95d">Hello World</a> app.
 
 I'm running the app here: http://githubpub.scripting.com/.
 
 It's set up to access this <a href="https://github.com/scripting/Scripting-News/tree/master/githubpub">directory</a> in the Scripting-News repository. 
 
 It displays <a href="https://github.com/scripting/Scripting-News/blob/master/githubpub/index.md">index.md</a> when you access the top level of the site.
-
-### Hello World app
-
-~~~~
-
-const githubpub = require ("githubpub");
-
-var config = {
-	port: 5376,
-	domains: {
-		"githubpub.scripting.com": {
-			username: "scripting",
-			repository: "Scripting-News",
-			path: "githubpub"
-			}
-		}
-	};
-
-githubpub.init (config);
-
-
-~~~~
 
 ### Why githubpub is cool
 

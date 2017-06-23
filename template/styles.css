@@ -11,3 +11,7 @@ body {
 	margin-right: auto;
 	margin-bottom: 400px;
 	}
+.divPageBody p {
+	margin-top: 15px;
+	margin-bottom: 0px;
+	}

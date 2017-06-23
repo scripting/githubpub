@@ -6,9 +6,7 @@ A Node app that serves from GitHub repositories.
 
 ## Hello World app
 
-~~~~
-
-const githubpub = require ("githubpub");
+~~~~const githubpub = require ("githubpub");
 
 var config = {
 	port: 5376,
@@ -22,7 +20,5 @@ var config = {
 	};
 
 githubpub.init (config);
-
-
 ~~~~
 

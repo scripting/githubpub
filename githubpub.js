@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.4.10"; 
+const myProductName = "githubpub", myVersion = "0.4.11"; 
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -28,7 +28,7 @@ const utils = require ("daveutils");
 const davehttp = require ("davehttp"); 
 const request = require ("request"); 
 const marked = require ("marked");
-var mime = require ("mime"); 
+const mime = require ("mime"); 
 
 var config = {
 	port: 80,
@@ -41,7 +41,7 @@ var config = {
 function httpRequest (url, callback) {
 	var options = {
 		url: url,
-		jar: true,
+		jar: true, //"remember cookies for future use"
 		maxRedirects: 5,
 		headers: {
 			"User-Agent": myProductName + " v" + myVersion

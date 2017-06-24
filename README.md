@@ -24,7 +24,7 @@ Here's <a href="https://www.npmjs.com/package/githubpub">githubpub</a> on NPM.
 
 3. It builds on the <a href="https://developer.github.com/v3/repos/">GitHub API</a>, so if you've been looking for a foothold in extending GitHub, this is a good place to start. That's the primary reason I developed it.
 
-4. It has got a cool name. Try saying it three times fast. :heart:
+4. It has a cool name. Try saying it three times fast. :heart:
 
 ### Questions, problems?
 

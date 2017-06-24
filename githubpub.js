@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.4.9"; 
+const myProductName = "githubpub", myVersion = "0.4.10"; 
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -84,7 +84,7 @@ function init (userConfig) {
 			else {
 				httpRequest (jstruct.download_url, function (err, response, fileContent) {
 					if (err || (response.statusCode !== 200)) {
-						theRequest.httpReturn (500, "text/plain", err.message);
+						notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
 						}
 					else {
 						callback (fileContent);
@@ -114,7 +114,7 @@ function init (userConfig) {
 								}
 							}
 						if (!flIndexFileServed) {
-							notFound ("Couldn't serve the page because there was no \"index\" file in the directory.");
+							notFound ("Couldn't serve the page because there was no \"" + config.indexFileName + "\" file in the directory.");
 							}
 						}
 					else {

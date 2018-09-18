@@ -9,7 +9,7 @@ var config = {
 		"localhost": {
 			username: "scripting",
 			repository: "Scripting-News",
-			path: "gitpub"
+			path: "githubpub"
 			}
 		}
 	};

@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.4.11"; 
+const myProductName = "githubpub", myVersion = "0.5.2";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -28,7 +28,6 @@ const utils = require ("daveutils");
 const davehttp = require ("davehttp"); 
 const request = require ("request"); 
 const marked = require ("marked");
-const mime = require ("mime"); 
 
 var config = {
 	port: 80,
@@ -64,8 +63,7 @@ function getFileExtension (url) {
 	return (utils.stringLastField (url, ".").toLowerCase ());
 	}
 function fileExtensionToMime (ext) {
-	mime.default_type = "text/plain";
-	return (mime.lookup (ext));
+	return (utils.httpExt2MIME (ext));
 	}
 function init (userConfig) {
 	console.log ("\n" + myProductName + " v" + myVersion + "\n");
@@ -131,7 +129,7 @@ function init (userConfig) {
 										pageproperties: utils.jsonStringify (jstruct)
 										};
 									var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
-									theRequest.httpReturn (200, "text/html", htmltext);
+									return (htmltext);
 									}
 								function serveMarkdown () {
 									var s = fileContent.toString (), pagetitle = undefined;
@@ -140,7 +138,8 @@ function init (userConfig) {
 										pagetitle = utils.trimWhitespace (utils.trimLeading (firstline, "#"));
 										}
 									fileContent = marked (fileContent.toString ());
-									theRequest.httpReturn (200, "text/html", renderThroughTemplate (pagetitle));
+									var htmltext = renderThroughTemplate (pagetitle);
+									theRequest.httpReturn (200, "text/html", htmltext);
 									}
 								switch (ext) {
 									case "md":

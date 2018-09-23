@@ -2,16 +2,16 @@
 //you can access my test site through http://localhost:1402/
 
 const gitpub = require ("./githubpub.js");
+const fs = require ("fs");
 
 var config = {
-	port: 1402,
-	domains: {
-		"localhost": {
-			username: "scripting",
-			repository: "Scripting-News",
-			path: "githubpub"
+	};
+fs.readFile ("config.json", function (err, jsontext) {
+	if (!err) {
+		var jstruct = JSON.parse (jsontext);
+		for (var x in jstruct) {
+			config [x] = jstruct [x];
 			}
 		}
-	};
-
-gitpub.init (config);
+	gitpub.init (config);
+	});

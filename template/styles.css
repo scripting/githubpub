@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Oswald:400,700');
 body {
 	font-family: "Ubuntu";
 	font-size: 18px;
@@ -6,7 +7,7 @@ body {
 	}
 .divPageBody {
 	width: 60%;
-	margin-top: 90px;
+	margin-top: 50px;
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 400px;
@@ -14,4 +15,18 @@ body {
 .divPageBody p {
 	margin-top: 15px;
 	margin-bottom: 0px;
+	}
+.divPageBody h4 {
+	margin-top: 30px;
+	}
+.divPubDate {
+	margin-bottom: 15px;
+	}
+.divTitle {
+	font-family: "Oswald";
+	font-size: 48px;
+	letter-spacing: -2px;
+	font-weight: bold;
+	line-height: 100%;
+	margin-bottom: 20px;
 	}

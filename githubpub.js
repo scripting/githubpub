@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.2";  
+const myProductName = "githubpub", myVersion = "0.5.3";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -28,6 +28,8 @@ const utils = require ("daveutils");
 const davehttp = require ("davehttp"); 
 const request = require ("request"); 
 const marked = require ("marked");
+const yaml = require ("js-yaml");
+const dateFormat = require ("dateformat");
 
 var config = {
 	port: 80,
@@ -64,6 +66,33 @@ function getFileExtension (url) {
 	}
 function fileExtensionToMime (ext) {
 	return (utils.httpExt2MIME (ext));
+	}
+function yamlIze (jsontext) {
+	var jstruct = JSON.parse (jsontext);
+	const delimiter = "---\n";
+	var text = jstruct.text;
+	delete jstruct.text;
+	var s = delimiter + yaml.safeDump (jstruct) + delimiter + text;
+	return (s);
+	}
+function deYamlIze (data) {
+	const delimiter = "---\n";
+	var filetext = data.toString ();
+	if (utils.beginsWith (filetext, delimiter)) {
+		var frontmatter = utils.stringNthField (filetext, delimiter, 2);
+		var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));
+		if (frontmatter.length > 0) {
+			var jstruct = yaml.safeLoad (frontmatter);
+			console.log ("\ndeYamlIze: frontmatter == \n" + frontmatter + "\n");
+			jstruct.text = remainingtext;
+			return (utils.jsonStringify (jstruct));
+			}
+		return (filetext);
+		}
+	return (filetext);
+	}
+function longTimeFormat (when) { 
+	return (dateFormat (when, "dddd mmmm d, yyyy; h:MM TT Z"));
 	}
 function init (userConfig) {
 	console.log ("\n" + myProductName + " v" + myVersion + "\n");
@@ -119,26 +148,28 @@ function init (userConfig) {
 						getFileContent (jstruct, function (fileContent) {
 							getTemplate (function (templatetext) { 
 								var ext = getFileExtension (jstruct.download_url);
-								function renderThroughTemplate (pagetitle) {
-									if (pagetitle === undefined) {
-										pagetitle = utils.stringLastField (jstruct.download_url, "/");
+								function renderThroughTemplate (pagetable) {
+									function setPagePropertiesJson () {
+										var myprops = new Object ();
+										utils.copyScalars (pagetable, myprops);
+										delete myprops.bodytext;
+										pagetable.pageproperties = utils.jsonStringify (myprops);
 										}
-									var pagetable = {
-										bodytext: fileContent.toString (),
-										title: pagetitle,
-										pageproperties: utils.jsonStringify (jstruct)
-										};
+									if (pagetable.title === undefined) {
+										pagetable.title = utils.stringLastField (jstruct.download_url, "/");
+										}
+									pagetable.createdstring = longTimeFormat (pagetable.created);
+									setPagePropertiesJson ();
 									var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
 									return (htmltext);
 									}
 								function serveMarkdown () {
-									var s = fileContent.toString (), pagetitle = undefined;
-									if (s [0] == "#") {
-										var firstline = utils.stringNthField (s, "\n", 1);
-										pagetitle = utils.trimWhitespace (utils.trimLeading (firstline, "#"));
-										}
-									fileContent = marked (fileContent.toString ());
-									var htmltext = renderThroughTemplate (pagetitle);
+									
+									var pagetable = JSON.parse (deYamlIze (fileContent.toString ()));
+									pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
+									delete pagetable.text;
+									
+									var htmltext = renderThroughTemplate (pagetable);
 									theRequest.httpReturn (200, "text/html", htmltext);
 									}
 								switch (ext) {
@@ -146,7 +177,10 @@ function init (userConfig) {
 										serveMarkdown ();
 										break;
 									case "txt":
-										theRequest.httpReturn (200, "text/html", renderThroughTemplate ());
+										var pagetable = {
+											bodytext: fileContent.toString ()
+											};
+										theRequest.httpReturn (200, "text/html", renderThroughTemplate (pagetable));
 										break;
 									default:
 										theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);

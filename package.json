@@ -2,7 +2,7 @@
 	"name": "githubpub", 
 	"description": "A web server that serves content out of GitHub repositories.",
 	"author": "Dave Winer <dave@smallpicture.com>",
-	"version": "0.5.2",
+	"version": "0.5.3",
 	"scripts": {
 		"start": "node githubpub.js"
 		},
@@ -13,6 +13,8 @@
 		},
 	"dependencies" : {
 		"marked": "*",
+		"js-yaml": "*",
+		"dateformat": "*",
 		"daveutils": "*", 
 		"davehttp": "*" 
 		}, 

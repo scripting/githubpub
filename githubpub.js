@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.3";  
+const myProductName = "githubpub", myVersion = "0.5.4";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -50,17 +50,77 @@ function httpRequest (url, callback) {
 		};
 	request (options, callback);
 	}
-function getTemplate (callback) {
-	httpRequest (config.urlMarkdownTemplate, function (err, response, templatetext) { 
-		if (err || (response.statusCode !== 200)) {
-			console.log ("Error getting the template.");
+
+function getGitHubObject (host, path, callback) {
+	if (!utils.beginsWith (path, "/")) {
+		path = "/" + path;
+		}
+	var domain = config.domains [host.toLowerCase ()];
+	if (domain === undefined) {
+		callback ({message: "The domain \"" + host + "\" is not defined."});
+		}
+	else {
+		var whenstart = new Date ();
+		var url = config.apiUrl + domain.username + "/" + domain.repository + "/contents/" + domain.path + path;
+		
+		if ((config.clientId !== undefined) && (config.clientSecret !== undefined)) {
+			url += "?client_id=" + config.clientId + "&client_secret=" + config.clientSecret;
+			}
+		
+		httpRequest (url, function (err, response, jsontext) {
+			if (err) {
+				callback (err);
+				}
+			else {
+				if (response.headers ["x-ratelimit-remaining"] == 0) {
+					var theLimit = response.headers ["x-ratelimit-limit"];
+					callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
+					}
+				else {
+					try {
+						console.log ("getGitHubObject: path == " + path + ", " + utils.secondsSince (whenstart) + " secs.");
+						callback (undefined, JSON.parse (jsontext));
+						}
+					catch (err) {
+						callback (err);
+						}
+					}
+				}
+			});
+		}
+	}
+function getTemplate (host, callback) {
+	getGitHubObject (host, "template/template.txt", function (err, jstruct) {
+		if (err) {
+			console.log ("getTemplate: err.message == " + err.message);
 			callback (undefined);
 			}
 		else {
-			callback (templatetext);
+			var buffer = new Buffer (jstruct.content, "base64"); 
+			callback (buffer.toString ());
 			}
 		});
 	}
+function renderThroughTemplate (pagetable, callback) {
+	getTemplate (pagetable.host, function (templatetext) { 
+		function setPagePropertiesJson () {
+			var myprops = new Object ();
+			utils.copyScalars (pagetable, myprops);
+			delete myprops.bodytext;
+			pagetable.pageproperties = utils.jsonStringify (myprops);
+			}
+		if (pagetable.title === undefined) {
+			pagetable.title = utils.stringLastField (pagetable.path, "/");
+			}
+		pagetable.createdstring = longTimeFormat (pagetable.created);
+		pagetable.modifiedstring = longTimeFormat (pagetable.modified);
+		pagetable.now = new Date ();
+		setPagePropertiesJson ();
+		var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
+		callback (htmltext);
+		});
+	}
+
 function getFileExtension (url) {
 	return (utils.stringLastField (url, ".").toLowerCase ());
 	}
@@ -83,7 +143,6 @@ function deYamlIze (data) {
 		var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));
 		if (frontmatter.length > 0) {
 			var jstruct = yaml.safeLoad (frontmatter);
-			console.log ("\ndeYamlIze: frontmatter == \n" + frontmatter + "\n");
 			jstruct.text = remainingtext;
 			return (utils.jsonStringify (jstruct));
 			}
@@ -94,12 +153,8 @@ function deYamlIze (data) {
 function longTimeFormat (when) { 
 	return (dateFormat (when, "dddd mmmm d, yyyy; h:MM TT Z"));
 	}
-function init (userConfig) {
-	console.log ("\n" + myProductName + " v" + myVersion + "\n");
-	for (var x in userConfig) {
-		config [x] = userConfig [x];
-		}
-	davehttp.start (config, function (theRequest) {
+	function handleHttpRequest (theRequest) {
+		var now = new Date ();
 		function notFound (message) {
 			theRequest.httpReturn (404, "text/plain", message);
 			}
@@ -120,17 +175,11 @@ function init (userConfig) {
 				}
 			}
 		function serveObject (path) {
-			var domain = config.domains [theRequest.lowerhost], url;
-			if (domain === undefined) {
-				notFound ("The domain \"" + theRequest.lowerhost + "\" is not defined.");
-				}
-			url = config.apiUrl + domain.username + "/" + domain.repository + "/contents/" + domain.path + path;
-			httpRequest (url, function (err, response, jsontext) {
-				if (err || (response.statusCode !== 200)) {
-					notFound ("There was an error reading the file, or we got a bad response code.");
+			getGitHubObject (theRequest.lowerhost, path, function (err, jstruct) {
+				if (err) {
+					notFound (err.message);
 					}
 				else {
-					var jstruct = JSON.parse (jsontext);
 					if (Array.isArray (jstruct)) { //it's a directory
 						var flIndexFileServed = false;
 						for (var i = 0; i < jstruct.length; i++) {
@@ -146,52 +195,39 @@ function init (userConfig) {
 						}
 					else {
 						getFileContent (jstruct, function (fileContent) {
-							getTemplate (function (templatetext) { 
-								var ext = getFileExtension (jstruct.download_url);
-								function renderThroughTemplate (pagetable) {
-									function setPagePropertiesJson () {
-										var myprops = new Object ();
-										utils.copyScalars (pagetable, myprops);
-										delete myprops.bodytext;
-										pagetable.pageproperties = utils.jsonStringify (myprops);
-										}
-									if (pagetable.title === undefined) {
-										pagetable.title = utils.stringLastField (jstruct.download_url, "/");
-										}
-									pagetable.createdstring = longTimeFormat (pagetable.created);
-									setPagePropertiesJson ();
-									var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
-									return (htmltext);
-									}
-								function serveMarkdown () {
-									
-									var pagetable = JSON.parse (deYamlIze (fileContent.toString ()));
-									pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
-									delete pagetable.text;
-									
-									var htmltext = renderThroughTemplate (pagetable);
+							var ext = getFileExtension (jstruct.download_url);
+							function serveMarkdown () {
+								var pagetable = JSON.parse (deYamlIze (fileContent.toString ()));
+								pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
+								pagetable.host = theRequest.lowerhost;
+								pagetable.path = theRequest.lowerpath;
+								pagetable.ext = ext;
+								delete pagetable.text;
+								renderThroughTemplate (pagetable, function (htmltext) {
 									theRequest.httpReturn (200, "text/html", htmltext);
-									}
-								switch (ext) {
-									case "md":
-										serveMarkdown ();
-										break;
-									case "txt":
-										var pagetable = {
-											bodytext: fileContent.toString ()
-											};
-										theRequest.httpReturn (200, "text/html", renderThroughTemplate (pagetable));
-										break;
-									default:
-										theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);
-										break;
-									}
-								});
+									});
+								}
+							switch (ext) {
+								case "md":
+									serveMarkdown ();
+									break;
+								default:
+									theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);
+									break;
+								}
 							});
 						}
 					}
 				});
 			}
 		serveObject (theRequest.path);
+		}
+function init (userConfig) {
+	console.log ("\n" + myProductName + " v" + myVersion + "\n");
+	for (var x in userConfig) {
+		config [x] = userConfig [x];
+		}
+	davehttp.start (config, function (theRequest) {
+		handleHttpRequest (theRequest);
 		});
 	}

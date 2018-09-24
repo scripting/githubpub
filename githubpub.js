@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.4";  
+const myProductName = "githubpub", myVersion = "0.5.5";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -72,17 +72,22 @@ function getGitHubObject (host, path, callback) {
 				callback (err);
 				}
 			else {
-				if (response.headers ["x-ratelimit-remaining"] == 0) {
-					var theLimit = response.headers ["x-ratelimit-limit"];
-					callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
+				if (response.statusCode == 404) {
+					callback ({message: "The file \"" + path + "\" was not found."});
 					}
 				else {
-					try {
-						console.log ("getGitHubObject: path == " + path + ", " + utils.secondsSince (whenstart) + " secs.");
-						callback (undefined, JSON.parse (jsontext));
+					if (response.headers ["x-ratelimit-remaining"] == 0) {
+						var theLimit = response.headers ["x-ratelimit-limit"];
+						callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
 						}
-					catch (err) {
-						callback (err);
+					else {
+						try {
+							console.log ("getGitHubObject: path == " + path + ", " + utils.secondsSince (whenstart) + " secs.");
+							callback (undefined, JSON.parse (jsontext));
+							}
+						catch (err) {
+							callback (err);
+							}
 						}
 					}
 				}
@@ -93,31 +98,36 @@ function getTemplate (host, callback) {
 	getGitHubObject (host, "template/template.txt", function (err, jstruct) {
 		if (err) {
 			console.log ("getTemplate: err.message == " + err.message);
-			callback (undefined);
+			callback (err);
 			}
 		else {
 			var buffer = new Buffer (jstruct.content, "base64"); 
-			callback (buffer.toString ());
+			callback (undefined, buffer.toString ());
 			}
 		});
 	}
 function renderThroughTemplate (pagetable, callback) {
-	getTemplate (pagetable.host, function (templatetext) { 
-		function setPagePropertiesJson () {
-			var myprops = new Object ();
-			utils.copyScalars (pagetable, myprops);
-			delete myprops.bodytext;
-			pagetable.pageproperties = utils.jsonStringify (myprops);
+	getTemplate (pagetable.host, function (err, templatetext) { 
+		if (err) {
+			callback (err);
 			}
-		if (pagetable.title === undefined) {
-			pagetable.title = utils.stringLastField (pagetable.path, "/");
+		else {
+			function setPagePropertiesJson () {
+				var myprops = new Object ();
+				utils.copyScalars (pagetable, myprops);
+				delete myprops.bodytext;
+				pagetable.pageproperties = utils.jsonStringify (myprops);
+				}
+			if (pagetable.title === undefined) {
+				pagetable.title = utils.stringLastField (pagetable.path, "/");
+				}
+			pagetable.createdstring = longTimeFormat (pagetable.created);
+			pagetable.modifiedstring = longTimeFormat (pagetable.modified);
+			pagetable.now = new Date ();
+			setPagePropertiesJson ();
+			var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
+			callback (undefined, htmltext);
 			}
-		pagetable.createdstring = longTimeFormat (pagetable.created);
-		pagetable.modifiedstring = longTimeFormat (pagetable.modified);
-		pagetable.now = new Date ();
-		setPagePropertiesJson ();
-		var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
-		callback (htmltext);
 		});
 	}
 
@@ -138,6 +148,12 @@ function yamlIze (jsontext) {
 function deYamlIze (data) {
 	const delimiter = "---\n";
 	var filetext = data.toString ();
+	function justText (s) {
+		var jstruct = {
+			text: s
+			}
+		return (utils.jsonStringify (jstruct));
+		}
 	if (utils.beginsWith (filetext, delimiter)) {
 		var frontmatter = utils.stringNthField (filetext, delimiter, 2);
 		var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));
@@ -146,82 +162,87 @@ function deYamlIze (data) {
 			jstruct.text = remainingtext;
 			return (utils.jsonStringify (jstruct));
 			}
-		return (filetext);
+		return (justText (filetext));
 		}
-	return (filetext);
+	return (justText (filetext));
 	}
 function longTimeFormat (when) { 
 	return (dateFormat (when, "dddd mmmm d, yyyy; h:MM TT Z"));
 	}
-	function handleHttpRequest (theRequest) {
-		var now = new Date ();
-		function notFound (message) {
-			theRequest.httpReturn (404, "text/plain", message);
+function handleHttpRequest (theRequest) {
+	var now = new Date ();
+	function notFound (message) {
+		theRequest.httpReturn (404, "text/plain", message);
+		}
+	function getFileContent (jstruct, callback) {
+		if (jstruct.encoding == "base64") {
+			var buffer = new Buffer (jstruct.content, "base64"); 
+			callback (buffer);
 			}
-		function getFileContent (jstruct, callback) {
-			if (jstruct.encoding == "base64") {
-				var buffer = new Buffer (jstruct.content, "base64"); 
-				callback (buffer);
-				}
-			else {
-				httpRequest (jstruct.download_url, function (err, response, fileContent) {
-					if (err || (response.statusCode !== 200)) {
-						notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
-						}
-					else {
-						callback (fileContent);
-						}
-					});
-				}
-			}
-		function serveObject (path) {
-			getGitHubObject (theRequest.lowerhost, path, function (err, jstruct) {
-				if (err) {
-					notFound (err.message);
+		else {
+			httpRequest (jstruct.download_url, function (err, response, fileContent) {
+				if (err || (response.statusCode !== 200)) {
+					notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
 					}
 				else {
-					if (Array.isArray (jstruct)) { //it's a directory
-						var flIndexFileServed = false;
-						for (var i = 0; i < jstruct.length; i++) {
-							if (utils.beginsWith (jstruct [i].name, config.indexFileName)) {
-								serveObject (path + jstruct [i].name);
-								flIndexFileServed = true;
-								break;
-								}
-							}
-						if (!flIndexFileServed) {
-							notFound ("Couldn't serve the page because there was no \"" + config.indexFileName + "\" file in the directory.");
-							}
-						}
-					else {
-						getFileContent (jstruct, function (fileContent) {
-							var ext = getFileExtension (jstruct.download_url);
-							function serveMarkdown () {
-								var pagetable = JSON.parse (deYamlIze (fileContent.toString ()));
-								pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
-								pagetable.host = theRequest.lowerhost;
-								pagetable.path = theRequest.lowerpath;
-								pagetable.ext = ext;
-								delete pagetable.text;
-								renderThroughTemplate (pagetable, function (htmltext) {
-									theRequest.httpReturn (200, "text/html", htmltext);
-									});
-								}
-							switch (ext) {
-								case "md":
-									serveMarkdown ();
-									break;
-								default:
-									theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);
-									break;
-								}
-							});
-						}
+					callback (fileContent);
 					}
 				});
 			}
-		serveObject (theRequest.path);
 		}
+	function serveObject (path) {
+		getGitHubObject (theRequest.lowerhost, path, function (err, jstruct) {
+			if (err) {
+				notFound (err.message);
+				}
+			else {
+				if (Array.isArray (jstruct)) { //it's a directory
+					var flIndexFileServed = false;
+					for (var i = 0; i < jstruct.length; i++) {
+						if (utils.beginsWith (jstruct [i].name, config.indexFileName)) {
+							serveObject (path + jstruct [i].name);
+							flIndexFileServed = true;
+							break;
+							}
+						}
+					if (!flIndexFileServed) {
+						notFound ("Couldn't serve the page because there was no \"" + config.indexFileName + "\" file in the directory.");
+						}
+					}
+				else {
+					getFileContent (jstruct, function (fileContent) {
+						var ext = getFileExtension (jstruct.download_url);
+						function serveMarkdown () {
+							var pagetable = JSON.parse (deYamlIze (fileContent.toString ()));
+							pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
+							pagetable.host = theRequest.lowerhost;
+							pagetable.path = theRequest.lowerpath;
+							pagetable.ext = ext;
+							delete pagetable.text;
+							renderThroughTemplate (pagetable, function (err, htmltext) {
+								if (err) {
+									notFound (err.message);
+									}
+								else {
+									theRequest.httpReturn (200, "text/html", htmltext);
+									}
+								});
+							}
+						switch (ext) {
+							case "md":
+								serveMarkdown ();
+								break;
+							default:
+								theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);
+								break;
+							}
+						});
+					}
+				}
+			});
+		}
+	serveObject (theRequest.path);
+	}
 function init (userConfig) {
 	console.log ("\n" + myProductName + " v" + myVersion + "\n");
 	for (var x in userConfig) {

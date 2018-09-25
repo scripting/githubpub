@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.5";  
+const myProductName = "githubpub", myVersion = "0.5.8";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -24,6 +24,7 @@ const myProductName = "githubpub", myVersion = "0.5.5";
 
 exports.init = init;
 
+const fs = require ("fs");
 const utils = require ("daveutils");
 const davehttp = require ("davehttp"); 
 const request = require ("request"); 
@@ -33,103 +34,15 @@ const dateFormat = require ("dateformat");
 
 var config = {
 	port: 80,
+	flPostEnabled: true,
 	apiUrl: "https://api.github.com/repos/",
 	urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
 	indexFileName: "index"
 	};
 
-function httpRequest (url, callback) {
-	var options = {
-		url: url,
-		jar: true, //"remember cookies for future use"
-		maxRedirects: 5,
-		headers: {
-			"User-Agent": myProductName + " v" + myVersion
-			}
-		};
-	request (options, callback);
-	}
-
-function getGitHubObject (host, path, callback) {
-	if (!utils.beginsWith (path, "/")) {
-		path = "/" + path;
-		}
-	var domain = config.domains [host.toLowerCase ()];
-	if (domain === undefined) {
-		callback ({message: "The domain \"" + host + "\" is not defined."});
-		}
-	else {
-		var whenstart = new Date ();
-		var url = config.apiUrl + domain.username + "/" + domain.repository + "/contents/" + domain.path + path;
-		
-		if ((config.clientId !== undefined) && (config.clientSecret !== undefined)) {
-			url += "?client_id=" + config.clientId + "&client_secret=" + config.clientSecret;
-			}
-		
-		httpRequest (url, function (err, response, jsontext) {
-			if (err) {
-				callback (err);
-				}
-			else {
-				if (response.statusCode == 404) {
-					callback ({message: "The file \"" + path + "\" was not found."});
-					}
-				else {
-					if (response.headers ["x-ratelimit-remaining"] == 0) {
-						var theLimit = response.headers ["x-ratelimit-limit"];
-						callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
-						}
-					else {
-						try {
-							console.log ("getGitHubObject: path == " + path + ", " + utils.secondsSince (whenstart) + " secs.");
-							callback (undefined, JSON.parse (jsontext));
-							}
-						catch (err) {
-							callback (err);
-							}
-						}
-					}
-				}
-			});
-		}
-	}
-function getTemplate (host, callback) {
-	getGitHubObject (host, "template/template.txt", function (err, jstruct) {
-		if (err) {
-			console.log ("getTemplate: err.message == " + err.message);
-			callback (err);
-			}
-		else {
-			var buffer = new Buffer (jstruct.content, "base64"); 
-			callback (undefined, buffer.toString ());
-			}
-		});
-	}
-function renderThroughTemplate (pagetable, callback) {
-	getTemplate (pagetable.host, function (err, templatetext) { 
-		if (err) {
-			callback (err);
-			}
-		else {
-			function setPagePropertiesJson () {
-				var myprops = new Object ();
-				utils.copyScalars (pagetable, myprops);
-				delete myprops.bodytext;
-				pagetable.pageproperties = utils.jsonStringify (myprops);
-				}
-			if (pagetable.title === undefined) {
-				pagetable.title = utils.stringLastField (pagetable.path, "/");
-				}
-			pagetable.createdstring = longTimeFormat (pagetable.created);
-			pagetable.modifiedstring = longTimeFormat (pagetable.modified);
-			pagetable.now = new Date ();
-			setPagePropertiesJson ();
-			var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
-			callback (undefined, htmltext);
-			}
-		});
-	}
+var cache = {
+	};
 
 function getFileExtension (url) {
 	return (utils.stringLastField (url, ".").toLowerCase ());
@@ -168,6 +81,150 @@ function deYamlIze (data) {
 	}
 function longTimeFormat (when) { 
 	return (dateFormat (when, "dddd mmmm d, yyyy; h:MM TT Z"));
+	}
+function httpRequest (url, callback) {
+	var options = {
+		url: url,
+		jar: true, //"remember cookies for future use"
+		maxRedirects: 5,
+		headers: {
+			"User-Agent": myProductName + " v" + myVersion
+			}
+		};
+	request (options, callback);
+	}
+
+function addToCache (host, path, jstruct) {
+	var now = new Date ();
+	if (cache [host] === undefined) {
+		cache [host] = {
+			};
+		}
+	if (cache [host] [path] === undefined) {
+		cache [host] [path] = {
+			ctAdds: 0,
+			whenRef: now
+			};
+		}
+	cache [host] [path].ctAdds++;
+	cache [host] [path].whenAdd = now;
+	cache [host] [path].jstruct = jstruct;
+	}
+function cacheRef (host, path) {
+	var now = new Date ();
+	if (cache [host] !== undefined) {
+		if (cache [host] [path] !== undefined) {
+			cache [host] [path].ct++;
+			cache [host] [path].whenRef = now;
+			return (cache [host] [path].jstruct);
+			}
+		}
+	return (undefined);
+	}
+function cacheDelete (username, repository, path) {
+	username = username.toLowerCase ();
+	repository = repository.toLowerCase ();
+	path = path.toLowerCase ();
+	for (x in config.domains) {
+		var domain = config.domains [x];
+		if (domain.username.toLowerCase () == username) {
+			if (domain.repository.toLowerCase () == repository) {
+				var cachepath = utils.stringDelete (path, 1, domain.path.length);
+				if (cache [x] !== undefined) {
+					if (cache [x] [cachepath] !== undefined) {
+						delete cache [x] [cachepath];
+						return (true);
+						}
+					}
+				}
+			}
+		}
+	return (false); //it wasn't there, nothing deleted
+	}
+
+function getGitHubObject (host, path, callback) {
+	if (!utils.beginsWith (path, "/")) {
+		path = "/" + path;
+		}
+	var domain = config.domains [host.toLowerCase ()];
+	if (domain === undefined) {
+		callback ({message: "The domain \"" + host + "\" is not defined."});
+		}
+	else {
+		var jstruct = cacheRef (host, path);
+		if (jstruct !== undefined) {
+			callback (undefined, jstruct);
+			}
+		else {
+			var whenstart = new Date ();
+			var url = config.apiUrl + domain.username + "/" + domain.repository + "/contents/" + domain.path + path;
+			if ((config.clientId !== undefined) && (config.clientSecret !== undefined)) {
+				url += "?client_id=" + config.clientId + "&client_secret=" + config.clientSecret;
+				}
+			httpRequest (url, function (err, response, jsontext) {
+				if (err) {
+					callback (err);
+					}
+				else {
+					if (response.statusCode == 404) {
+						callback ({message: "The file \"" + path + "\" was not found."});
+						}
+					else {
+						if (response.headers ["x-ratelimit-remaining"] == 0) {
+							var theLimit = response.headers ["x-ratelimit-limit"];
+							callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
+							}
+						else {
+							try {
+								var jstruct = JSON.parse (jsontext);
+								addToCache (host, path, jstruct);
+								callback (undefined, jstruct);
+								}
+							catch (err) {
+								callback (err);
+								}
+							}
+						}
+					}
+				});
+			}
+		}
+	}
+function getTemplate (host, callback) {
+	getGitHubObject (host, "template/template.txt", function (err, jstruct) {
+		if (err) {
+			console.log ("getTemplate: err.message == " + err.message);
+			callback (err);
+			}
+		else {
+			var buffer = new Buffer (jstruct.content, "base64"); 
+			callback (undefined, buffer.toString ());
+			}
+		});
+	}
+function renderThroughTemplate (pagetable, callback) {
+	getTemplate (pagetable.host, function (err, templatetext) { 
+		if (err) {
+			callback (err);
+			}
+		else {
+			function setPagePropertiesJson () {
+				var myprops = new Object ();
+				utils.copyScalars (pagetable, myprops);
+				delete myprops.bodytext;
+				pagetable.pageproperties = utils.jsonStringify (myprops);
+				}
+			if (pagetable.title === undefined) {
+				pagetable.title = utils.stringLastField (pagetable.path, "/");
+				}
+			pagetable.createdstring = longTimeFormat (pagetable.created);
+			pagetable.modifiedstring = longTimeFormat (pagetable.modified);
+			pagetable.now = new Date ();
+			setPagePropertiesJson ();
+			var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
+			callback (undefined, htmltext);
+			}
+		});
 	}
 function handleHttpRequest (theRequest) {
 	var now = new Date ();
@@ -241,7 +298,27 @@ function handleHttpRequest (theRequest) {
 				}
 			});
 		}
-	serveObject (theRequest.path);
+	function handleGitHubEvent (jsontext) {
+		var jstruct = JSON.parse (theRequest.postBody);
+		var owner = jstruct.repository.owner.name;
+		var repo = jstruct.repository.name;
+		var path = jstruct.commits [0].modified [0];
+		console.log ("handleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path);
+		cacheDelete (owner, repo, path);
+		if (path != "blog/data.json") {
+			fs.writeFile ("eventInfo.json", utils.jsonStringify (jstruct), function (err) {
+				});
+			}
+		theRequest.httpReturn (200, "text/plain", "Thanks for the message.");
+		}
+	switch (theRequest.lowerpath) {
+		case "/eventfromgithub":
+			handleGitHubEvent (theRequest.postBody);
+			break;
+		default:
+			serveObject (theRequest.path);
+			break;
+		}
 	}
 function init (userConfig) {
 	console.log ("\n" + myProductName + " v" + myVersion + "\n");

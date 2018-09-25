@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.8";  
+const myProductName = "githubpub", myVersion = "0.5.9";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -35,6 +35,7 @@ const dateFormat = require ("dateformat");
 var config = {
 	port: 80,
 	flPostEnabled: true,
+	flAllowAccessFromAnywhere: true,
 	apiUrl: "https://api.github.com/repos/",
 	urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
@@ -305,15 +306,24 @@ function handleHttpRequest (theRequest) {
 		var path = jstruct.commits [0].modified [0];
 		console.log ("handleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path);
 		cacheDelete (owner, repo, path);
-		if (path != "blog/data.json") {
+		if (path === undefined) {
 			fs.writeFile ("eventInfo.json", utils.jsonStringify (jstruct), function (err) {
 				});
 			}
 		theRequest.httpReturn (200, "text/plain", "Thanks for the message.");
 		}
+	function handleEditorEvent (username, repo, path) {
+		console.log ("handleEditorEvent: username == " + username + ", repo == " + repo + ", path == " + path);
+		cacheDelete (username, repo, path);
+		theRequest.httpReturn (200, "text/plain", "Thanks for the message.");
+		}
 	switch (theRequest.lowerpath) {
 		case "/eventfromgithub":
 			handleGitHubEvent (theRequest.postBody);
+			break;
+		case "/eventfromeditor":
+			var params = theRequest.params;
+			handleEditorEvent (params.username, params.repo, params.path);
 			break;
 		default:
 			serveObject (theRequest.path);

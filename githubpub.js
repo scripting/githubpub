@@ -1,7 +1,7 @@
-const myProductName = "githubpub", myVersion = "0.5.9";  
+const myProductName = "githubpub", myVersion = "0.5.12";  
 
 /*  The MIT License (MIT)
-	Copyright (c) 2014-2017 Dave Winer
+	Copyright (c) 2014-2018 Dave Winer
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +36,16 @@ var config = {
 	port: 80,
 	flPostEnabled: true,
 	flAllowAccessFromAnywhere: true,
+	flDebugMessagesFromGitHub: true,
 	apiUrl: "https://api.github.com/repos/",
 	urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
-	indexFileName: "index"
+	indexFileName: "index",
+	defaultFilesLocation: {
+		username: "scripting",
+		repository: "githubpub",
+		path: "defaultfiles"
+		}
 	};
 
 var cache = {
@@ -95,55 +101,109 @@ function httpRequest (url, callback) {
 	request (options, callback);
 	}
 
-function addToCache (host, path, jstruct) {
+
+function cacheDump () {
+	for (var username in cache) {
+		for (var repository in cache [username]) {
+			for (var path in cache [username] [repository]) {
+				console.log (username + "." + repository + "." + path);
+				}
+			}
+		}
+	}
+function addToCache (username, repository, path, data) {
 	var now = new Date ();
-	if (cache [host] === undefined) {
-		cache [host] = {
+	if (!utils.beginsWith (path, "/")) {
+		path = "/" + path;
+		}
+	if (cache [username] === undefined) {
+		cache [username] = {
 			};
 		}
-	if (cache [host] [path] === undefined) {
-		cache [host] [path] = {
+	if (cache [username] [repository] === undefined) {
+		cache [username] [repository] = {
+			};
+		}
+	if (cache [username] [repository] [path] === undefined) {
+		cache [username] [repository] [path] = {
 			ctAdds: 0,
 			whenRef: now
 			};
 		}
-	cache [host] [path].ctAdds++;
-	cache [host] [path].whenAdd = now;
-	cache [host] [path].jstruct = jstruct;
+	cache [username] [repository] [path].ctAdds++;
+	cache [username] [repository] [path].whenAdd = now;
+	cache [username] [repository] [path].data = data;
 	}
-function cacheRef (host, path) {
+function cacheRef (username, repository, path) {
 	var now = new Date ();
-	if (cache [host] !== undefined) {
-		if (cache [host] [path] !== undefined) {
-			cache [host] [path].ct++;
-			cache [host] [path].whenRef = now;
-			return (cache [host] [path].jstruct);
+	if (cache [username] !== undefined) {
+		if (cache [username] [repository] !== undefined) {
+			if (cache [username] [repository] [path] !== undefined) {
+				var item = cache [username] [repository] [path];
+				item.ct++;
+				item.whenRef = now;
+				return (item.data);
+				}
 			}
 		}
 	return (undefined);
 	}
 function cacheDelete (username, repository, path) {
-	username = username.toLowerCase ();
-	repository = repository.toLowerCase ();
-	path = path.toLowerCase ();
-	for (x in config.domains) {
-		var domain = config.domains [x];
-		if (domain.username.toLowerCase () == username) {
-			if (domain.repository.toLowerCase () == repository) {
-				var cachepath = utils.stringDelete (path, 1, domain.path.length);
-				if (cache [x] !== undefined) {
-					if (cache [x] [cachepath] !== undefined) {
-						delete cache [x] [cachepath];
-						return (true);
-						}
-					}
+	if (!utils.beginsWith (path, "/")) {
+		path = "/" + path;
+		}
+	if (cache [username] !== undefined) {
+		if (cache [username] [repository] !== undefined) {
+			if (cache [username] [repository] [path] !== undefined) {
+				delete cache [username] [repository] [path];
 				}
 			}
 		}
-	return (false); //it wasn't there, nothing deleted
+	}
+function getFromGitHub (username, repository, path, callback) {
+	if (!utils.beginsWith (path, "/")) {
+		path = "/" + path;
+		}
+	var data = cacheRef (username, repository, path);
+	if (data !== undefined) {
+		callback (undefined, data);
+		}
+	else {
+		var whenstart = new Date ();
+		var url = config.apiUrl + username + "/" + repository + "/contents/" + path;
+		if ((config.clientId !== undefined) && (config.clientSecret !== undefined)) {
+			url += "?client_id=" + config.clientId + "&client_secret=" + config.clientSecret;
+			}
+		httpRequest (url, function (err, response, jsontext) {
+			if (err) {
+				callback (err);
+				}
+			else {
+				if (response.statusCode == 404) {
+					callback ({message: "The file \"" + path + "\" was not found."});
+					}
+				else {
+					if (response.headers ["x-ratelimit-remaining"] == 0) {
+						var theLimit = response.headers ["x-ratelimit-limit"];
+						callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
+						}
+					else {
+						try {
+							var jstruct = JSON.parse (jsontext);
+							addToCache (username, repository, path, jstruct);
+							callback (undefined, jstruct);
+							}
+						catch (err) {
+							callback (err);
+							}
+						}
+					}
+				}
+			});
+		}
 	}
 
-function getGitHubObject (host, path, callback) {
+function getUserObject (host, path, callback) {
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
@@ -152,47 +212,20 @@ function getGitHubObject (host, path, callback) {
 		callback ({message: "The domain \"" + host + "\" is not defined."});
 		}
 	else {
-		var jstruct = cacheRef (host, path);
-		if (jstruct !== undefined) {
-			callback (undefined, jstruct);
-			}
-		else {
-			var whenstart = new Date ();
-			var url = config.apiUrl + domain.username + "/" + domain.repository + "/contents/" + domain.path + path;
-			if ((config.clientId !== undefined) && (config.clientSecret !== undefined)) {
-				url += "?client_id=" + config.clientId + "&client_secret=" + config.clientSecret;
+		getFromGitHub (domain.username, domain.repository, domain.path + path, function (err, jstruct) {
+			if (err) {
+				var loc = config.defaultFilesLocation;
+				getFromGitHub (loc.username, loc.repository, loc.path + path, callback);
 				}
-			httpRequest (url, function (err, response, jsontext) {
-				if (err) {
-					callback (err);
-					}
-				else {
-					if (response.statusCode == 404) {
-						callback ({message: "The file \"" + path + "\" was not found."});
-						}
-					else {
-						if (response.headers ["x-ratelimit-remaining"] == 0) {
-							var theLimit = response.headers ["x-ratelimit-limit"];
-							callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
-							}
-						else {
-							try {
-								var jstruct = JSON.parse (jsontext);
-								addToCache (host, path, jstruct);
-								callback (undefined, jstruct);
-								}
-							catch (err) {
-								callback (err);
-								}
-							}
-						}
-					}
-				});
-			}
+			else {
+				callback (undefined, jstruct);
+				}
+			})
 		}
 	}
+
 function getTemplate (host, callback) {
-	getGitHubObject (host, "template/template.txt", function (err, jstruct) {
+	getUserObject (host, "template/template.txt", function (err, jstruct) {
 		if (err) {
 			console.log ("getTemplate: err.message == " + err.message);
 			callback (err);
@@ -249,7 +282,7 @@ function handleHttpRequest (theRequest) {
 			}
 		}
 	function serveObject (path) {
-		getGitHubObject (theRequest.lowerhost, path, function (err, jstruct) {
+		getUserObject (theRequest.lowerhost, path, function (err, jstruct) {
 			if (err) {
 				notFound (err.message);
 				}
@@ -301,16 +334,21 @@ function handleHttpRequest (theRequest) {
 		}
 	function handleGitHubEvent (jsontext) {
 		var jstruct = JSON.parse (theRequest.postBody);
+		if (config.flDebugMessagesFromGitHub) {
+			var f = "events/" + Number (new Date ()) + ".json";
+			utils.sureFilePath (f, function () {
+				fs.writeFile (f, utils.jsonStringify (jstruct), function (err) {
+					});
+				});
+			}
 		var owner = jstruct.repository.owner.name;
 		var repo = jstruct.repository.name;
 		var path = jstruct.commits [0].modified [0];
-		console.log ("handleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path);
-		cacheDelete (owner, repo, path);
-		if (path === undefined) {
-			fs.writeFile ("eventInfo.json", utils.jsonStringify (jstruct), function (err) {
-				});
+		if (path !== undefined) { //something was modified, might be in the cache
+			console.log ("handleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path);
+			cacheDelete (owner, repo, path);
+			theRequest.httpReturn (200, "text/plain", "Thanks for the message.");
 			}
-		theRequest.httpReturn (200, "text/plain", "Thanks for the message.");
 		}
 	function handleEditorEvent (username, repo, path) {
 		console.log ("handleEditorEvent: username == " + username + ", repo == " + repo + ", path == " + path);

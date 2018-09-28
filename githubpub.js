@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.12";  
+const myProductName = "githubpub", myVersion = "0.5.17";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -23,6 +23,7 @@ const myProductName = "githubpub", myVersion = "0.5.12";
 	*/
 
 exports.init = init;
+exports.handleRequest = handleExternalRequest; //9/28/18by DW
 
 const fs = require ("fs");
 const utils = require ("daveutils");
@@ -36,7 +37,8 @@ var config = {
 	port: 80,
 	flPostEnabled: true,
 	flAllowAccessFromAnywhere: true,
-	flDebugMessagesFromGitHub: true,
+	flDebugMessagesFromGitHub: false,
+	flDebugObjectsFromGitHub: true,
 	apiUrl: "https://api.github.com/repos/",
 	urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
@@ -191,6 +193,13 @@ function getFromGitHub (username, repository, path, callback) {
 						try {
 							var jstruct = JSON.parse (jsontext);
 							addToCache (username, repository, path, jstruct);
+							if (config.flDebugObjectsFromGitHub) {
+								var f = "debug/objects/" + Number (new Date ()) + ".json";
+								utils.sureFilePath (f, function () {
+									fs.writeFile (f, utils.jsonStringify (jstruct), function (err) {
+										});
+									});
+								}
 							callback (undefined, jstruct);
 							}
 						catch (err) {
@@ -202,7 +211,6 @@ function getFromGitHub (username, repository, path, callback) {
 			});
 		}
 	}
-
 function getUserObject (host, path, callback) {
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
@@ -223,7 +231,6 @@ function getUserObject (host, path, callback) {
 			})
 		}
 	}
-
 function getTemplate (host, callback) {
 	getUserObject (host, "template/template.txt", function (err, jstruct) {
 		if (err) {
@@ -266,23 +273,28 @@ function handleHttpRequest (theRequest) {
 		theRequest.httpReturn (404, "text/plain", message);
 		}
 	function getFileContent (jstruct, callback) {
-		if (jstruct.encoding == "base64") {
-			var buffer = new Buffer (jstruct.content, "base64"); 
-			callback (buffer);
+		if (jstruct.message !== undefined) { //9/26/18 by DW -- I think this means it was an error, haven't found ref in GH docs
+			notFound (jstruct.message);
 			}
 		else {
-			httpRequest (jstruct.download_url, function (err, response, fileContent) {
-				if (err || (response.statusCode !== 200)) {
-					notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
-					}
-				else {
-					callback (fileContent);
-					}
-				});
+			if (jstruct.encoding == "base64") {
+				var buffer = new Buffer (jstruct.content, "base64"); 
+				callback (buffer);
+				}
+			else {
+				httpRequest (jstruct.download_url, function (err, response, fileContent) {
+					if (err || (response.statusCode !== 200)) {
+						notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
+						}
+					else {
+						callback (fileContent);
+						}
+					});
+				}
 			}
 		}
-	function serveObject (path) {
-		getUserObject (theRequest.lowerhost, path, function (err, jstruct) {
+	function serveObject (host, path) {
+		getUserObject (host, path, function (err, jstruct) {
 			if (err) {
 				notFound (err.message);
 				}
@@ -291,7 +303,7 @@ function handleHttpRequest (theRequest) {
 					var flIndexFileServed = false;
 					for (var i = 0; i < jstruct.length; i++) {
 						if (utils.beginsWith (jstruct [i].name, config.indexFileName)) {
-							serveObject (path + jstruct [i].name);
+							serveObject (host, path + jstruct [i].name);
 							flIndexFileServed = true;
 							break;
 							}
@@ -302,7 +314,7 @@ function handleHttpRequest (theRequest) {
 					}
 				else {
 					getFileContent (jstruct, function (fileContent) {
-						var ext = getFileExtension (jstruct.download_url);
+						var ext = getFileExtension (path); 
 						function serveMarkdown () {
 							var pagetable = JSON.parse (deYamlIze (fileContent.toString ()));
 							pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
@@ -335,7 +347,7 @@ function handleHttpRequest (theRequest) {
 	function handleGitHubEvent (jsontext) {
 		var jstruct = JSON.parse (theRequest.postBody);
 		if (config.flDebugMessagesFromGitHub) {
-			var f = "events/" + Number (new Date ()) + ".json";
+			var f = "debug/events/" + Number (new Date ()) + ".json";
 			utils.sureFilePath (f, function () {
 				fs.writeFile (f, utils.jsonStringify (jstruct), function (err) {
 					});
@@ -364,16 +376,34 @@ function handleHttpRequest (theRequest) {
 			handleEditorEvent (params.username, params.repo, params.path);
 			break;
 		default:
-			serveObject (theRequest.path);
+			serveObject (theRequest.lowerhost, theRequest.path);
 			break;
 		}
 	}
-function init (userConfig) {
+
+function handleExternalRequest (options, callback) { //9/28/18 by DW -- an external caller is making a request
+	var theRequest = {
+		lowerhost: options.host.toLowerCase (),
+		lowerpath: options.path.toLowerCase (),
+		path: options.path,
+		postBody: options.postBody,
+		params: options.params,
+		httpReturn: callback
+		};
+	handleHttpRequest (theRequest);
+	}
+
+function init (userConfig, flHandleHttpHere) {
+	if (flHandleHttpHere === undefined) {
+		flHandleHttpHere = true;
+		}
 	console.log ("\n" + myProductName + " v" + myVersion + "\n");
 	for (var x in userConfig) {
 		config [x] = userConfig [x];
 		}
-	davehttp.start (config, function (theRequest) {
-		handleHttpRequest (theRequest);
-		});
+	if (flHandleHttpHere) {
+		davehttp.start (config, function (theRequest) {
+			handleHttpRequest (theRequest);
+			});
+		}
 	}

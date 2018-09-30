@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.20";  
+const myProductName = "githubpub", myVersion = "0.5.21";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -30,6 +30,7 @@ exports.cacheDelete = cacheDelete;
 exports.cacheDump = cacheDump;
 exports.getCacheSize = getCacheSize;
 exports.getFromGitHub = getFromGitHub;
+exports.getRepositoryDomain = getRepositoryDomain;
 
 const fs = require ("fs");
 const utils = require ("daveutils");
@@ -107,6 +108,17 @@ function httpRequest (url, callback) {
 			}
 		};
 	request (options, callback);
+	}
+function getRepositoryDomain (username, repository) { //9/30/18 by DW
+	username = utils.stringLower (username);
+	repository = utils.stringLower (repository);
+	for (var domain in config.domains) {
+		var item = config.domains [domain];
+		if ((utils.stringLower (item.username) == username) && (utils.stringLower (item.repository) == repository)) {
+			return (domain);
+			}
+		}
+	return (undefined);
 	}
 
 function cacheDump (callback) {
@@ -289,30 +301,23 @@ function handleHttpRequest (theRequest) {
 		theRequest.httpReturn (404, "text/plain", message);
 		}
 	function getFileContent (jstruct, callback) {
-		console.log ("getFileContent: jstruct == " + utils.jsonStringify (jstruct));
-		console.log ("getFileContent: jstruct.type == " + jstruct.type);
-		if (jstruct.type == "Buffer") { //9/28/18 by DW
-			callback (Buffer.from (jstruct.data));
+		if (jstruct.message !== undefined) { //9/26/18 by DW -- I think this means it was an error, haven't found ref in GH docs
+			notFound (jstruct.message);
 			}
 		else {
-			if (jstruct.message !== undefined) { //9/26/18 by DW -- I think this means it was an error, haven't found ref in GH docs
-				notFound (jstruct.message);
+			if (jstruct.encoding == "base64") {
+				var buffer = new Buffer (jstruct.content, "base64"); 
+				callback (buffer);
 				}
 			else {
-				if (jstruct.encoding == "base64") {
-					var buffer = new Buffer (jstruct.content, "base64"); 
-					callback (buffer);
-					}
-				else {
-					httpRequest (jstruct.download_url, function (err, response, fileContent) {
-						if (err || (response.statusCode !== 200)) {
-							notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
-							}
-						else {
-							callback (fileContent);
-							}
-						});
-					}
+				httpRequest (jstruct.download_url, function (err, response, fileContent) {
+					if (err || (response.statusCode !== 200)) {
+						notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
+						}
+					else {
+						callback (fileContent);
+						}
+					});
 				}
 			}
 		}

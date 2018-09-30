@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.17";  
+const myProductName = "githubpub", myVersion = "0.5.20";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -23,7 +23,13 @@ const myProductName = "githubpub", myVersion = "0.5.17";
 	*/
 
 exports.init = init;
-exports.handleRequest = handleExternalRequest; //9/28/18by DW
+exports.handleRequest = handleExternalRequest;
+exports.addToCache = addToCache;
+exports.cacheRef = cacheRef;
+exports.cacheDelete = cacheDelete;
+exports.cacheDump = cacheDump;
+exports.getCacheSize = getCacheSize;
+exports.getFromGitHub = getFromGitHub;
 
 const fs = require ("fs");
 const utils = require ("daveutils");
@@ -103,12 +109,14 @@ function httpRequest (url, callback) {
 	request (options, callback);
 	}
 
-
-function cacheDump () {
+function cacheDump (callback) {
+	if (callback === undefined) {
+		callback = console.log;
+		}
 	for (var username in cache) {
 		for (var repository in cache [username]) {
 			for (var path in cache [username] [repository]) {
-				console.log (username + "." + repository + "." + path);
+				callback (username + "." + repository + "." + path);
 				}
 			}
 		}
@@ -162,6 +170,14 @@ function cacheDelete (username, repository, path) {
 			}
 		}
 	}
+function getCacheSize () {
+	var ct = 0;
+	cacheDump (function (s) {
+		ct++;
+		});
+	return (ct);
+	}
+
 function getFromGitHub (username, repository, path, callback) {
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
@@ -273,23 +289,30 @@ function handleHttpRequest (theRequest) {
 		theRequest.httpReturn (404, "text/plain", message);
 		}
 	function getFileContent (jstruct, callback) {
-		if (jstruct.message !== undefined) { //9/26/18 by DW -- I think this means it was an error, haven't found ref in GH docs
-			notFound (jstruct.message);
+		console.log ("getFileContent: jstruct == " + utils.jsonStringify (jstruct));
+		console.log ("getFileContent: jstruct.type == " + jstruct.type);
+		if (jstruct.type == "Buffer") { //9/28/18 by DW
+			callback (Buffer.from (jstruct.data));
 			}
 		else {
-			if (jstruct.encoding == "base64") {
-				var buffer = new Buffer (jstruct.content, "base64"); 
-				callback (buffer);
+			if (jstruct.message !== undefined) { //9/26/18 by DW -- I think this means it was an error, haven't found ref in GH docs
+				notFound (jstruct.message);
 				}
 			else {
-				httpRequest (jstruct.download_url, function (err, response, fileContent) {
-					if (err || (response.statusCode !== 200)) {
-						notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
-						}
-					else {
-						callback (fileContent);
-						}
-					});
+				if (jstruct.encoding == "base64") {
+					var buffer = new Buffer (jstruct.content, "base64"); 
+					callback (buffer);
+					}
+				else {
+					httpRequest (jstruct.download_url, function (err, response, fileContent) {
+						if (err || (response.statusCode !== 200)) {
+							notFound ("Error getting the content of the file \"" + jstruct.name + ".\"");
+							}
+						else {
+							callback (fileContent);
+							}
+						});
+					}
 				}
 			}
 		}

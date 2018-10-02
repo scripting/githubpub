@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.21";   
+const myProductName = "githubpub", myVersion = "0.5.22";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -30,7 +30,9 @@ exports.cacheDelete = cacheDelete;
 exports.cacheDump = cacheDump;
 exports.getCacheSize = getCacheSize;
 exports.getFromGitHub = getFromGitHub;
+exports.getContentFromGitHub = getContentFromGitHub; //10/2/18 by DW
 exports.getRepositoryDomain = getRepositoryDomain;
+exports.saveToGitHub = saveToGitHub; //10/2/18 by DW
 
 const fs = require ("fs");
 const utils = require ("daveutils");
@@ -64,6 +66,10 @@ function getFileExtension (url) {
 	return (utils.stringLastField (url, ".").toLowerCase ());
 	}
 function fileExtensionToMime (ext) {
+	return (utils.httpExt2MIME (ext));
+	}
+function urlToMime (url) {
+	var ext = getFileExtension (url);
 	return (utils.httpExt2MIME (ext));
 	}
 function yamlIze (jsontext) {
@@ -189,8 +195,7 @@ function getCacheSize () {
 		});
 	return (ct);
 	}
-
-function getFromGitHub (username, repository, path, callback) {
+function getFromGitHub (username, repository, path, callback) { //calls back with the JSON structure GitHub returns
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
@@ -239,6 +244,20 @@ function getFromGitHub (username, repository, path, callback) {
 			});
 		}
 	}
+function getContentFromGitHub (username, repository, path, callback) { //calls back with the content GitHub returned
+	getFromGitHub (username, repository, path, function (err, jstruct) {
+		if (err) {
+			callback (err);
+			}
+		else {
+			var content = jstruct.content;
+			if (jstruct.encoding == "base64") {
+				content = new Buffer (content, "base64"); 
+				}
+			callback (undefined, content);
+			}
+		});
+	}
 function getUserObject (host, path, callback) {
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
@@ -271,6 +290,46 @@ function getTemplate (host, callback) {
 			}
 		});
 	}
+
+function saveToGitHub (options, callback) { //10/2/18 by DW
+	getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {
+		var bodyStruct = { 
+			message: options.message,
+			committer: {
+				name: options.committer.name,
+				email: options.committer.email
+				},
+			content: new Buffer (options.data).toString ("base64")
+			};
+		if (jstruct !== undefined) {
+			bodyStruct.sha = jstruct.sha;
+			}
+		var url = "https://api.github.com/repos/" + options.username + "/" + options.repository + "/contents/" + options.path;
+		var theRequest = {
+			method: "PUT",
+			url: url,
+			body: JSON.stringify (bodyStruct),
+			headers: {
+				"User-Agent": options.userAgent,
+				"Authorization": "token " + options.accessToken,
+				"Content-Type": options.type
+				}
+			};
+		request (theRequest, function (err, response, body) { 
+			if (err) {
+				console.log ("saveToGitHub: err.message == " + err.message);
+				callback (err);
+				}
+			else {
+				var jstruct = {
+					domain: getRepositoryDomain (options.username, options.repository)
+					};
+				callback (undefined, jstruct);
+				}
+			});
+		});
+	}
+
 function renderThroughTemplate (pagetable, callback) {
 	getTemplate (pagetable.host, function (err, templatetext) { 
 		if (err) {
@@ -408,7 +467,6 @@ function handleHttpRequest (theRequest) {
 			break;
 		}
 	}
-
 function handleExternalRequest (options, callback) { //9/28/18 by DW -- an external caller is making a request
 	var theRequest = {
 		lowerhost: options.host.toLowerCase (),
@@ -420,7 +478,6 @@ function handleExternalRequest (options, callback) { //9/28/18 by DW -- an exter
 		};
 	handleHttpRequest (theRequest);
 	}
-
 function init (userConfig, flHandleHttpHere) {
 	if (flHandleHttpHere === undefined) {
 		flHandleHttpHere = true;

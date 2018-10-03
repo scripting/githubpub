@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.22";   
+const myProductName = "githubpub", myVersion = "0.5.23";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -290,7 +290,6 @@ function getTemplate (host, callback) {
 			}
 		});
 	}
-
 function saveToGitHub (options, callback) { //10/2/18 by DW
 	getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {
 		var bodyStruct = { 
@@ -329,7 +328,6 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 			});
 		});
 	}
-
 function renderThroughTemplate (pagetable, callback) {
 	getTemplate (pagetable.host, function (err, templatetext) { 
 		if (err) {
@@ -444,15 +442,15 @@ function handleHttpRequest (theRequest) {
 		var repo = jstruct.repository.name;
 		var path = jstruct.commits [0].modified [0];
 		if (path !== undefined) { //something was modified, might be in the cache
-			console.log ("handleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path);
+			console.log ("\nhandleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path + "\n");
 			cacheDelete (owner, repo, path);
-			theRequest.httpReturn (200, "text/plain", "Thanks for the message.");
+			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
 		}
 	function handleEditorEvent (username, repo, path) {
-		console.log ("handleEditorEvent: username == " + username + ", repo == " + repo + ", path == " + path);
+		console.log ("\nhandleEditorEvent: username == " + username + ", repo == " + repo + ", path == " + path + "\n");
 		cacheDelete (username, repo, path);
-		theRequest.httpReturn (200, "text/plain", "Thanks for the message.");
+		theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 		}
 	switch (theRequest.lowerpath) {
 		case "/eventfromgithub":
@@ -461,6 +459,9 @@ function handleHttpRequest (theRequest) {
 		case "/eventfromeditor":
 			var params = theRequest.params;
 			handleEditorEvent (params.username, params.repo, params.path);
+			break;
+		case "/getdomains":
+			theRequest.httpReturn (200, "application/json", utils.jsonStringify (config.domains));
 			break;
 		default:
 			serveObject (theRequest.lowerhost, theRequest.path);

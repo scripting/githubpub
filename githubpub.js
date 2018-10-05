@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.23";   
+const myProductName = "githubpub", myVersion = "0.5.29";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -33,6 +33,7 @@ exports.getFromGitHub = getFromGitHub;
 exports.getContentFromGitHub = getContentFromGitHub; //10/2/18 by DW
 exports.getRepositoryDomain = getRepositoryDomain;
 exports.saveToGitHub = saveToGitHub; //10/2/18 by DW
+exports.getUserInfo = getUserInfo; //10/5/18 by DW
 
 const fs = require ("fs");
 const utils = require ("daveutils");
@@ -41,17 +42,19 @@ const request = require ("request");
 const marked = require ("marked");
 const yaml = require ("js-yaml");
 const dateFormat = require ("dateformat");
+const qs = require ("querystring");
 
 var config = {
 	port: 80,
 	flPostEnabled: true,
 	flAllowAccessFromAnywhere: true,
 	flDebugMessagesFromGitHub: false,
-	flDebugObjectsFromGitHub: true,
+	flDebugObjectsFromGitHub: false,
 	apiUrl: "https://api.github.com/repos/",
 	urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
 	indexFileName: "index",
+	userAgent: myProductName + " v" + myVersion,
 	defaultFilesLocation: {
 		username: "scripting",
 		repository: "githubpub",
@@ -80,26 +83,20 @@ function yamlIze (jsontext) {
 	var s = delimiter + yaml.safeDump (jstruct) + delimiter + text;
 	return (s);
 	}
-function deYamlIze (data) {
+function deYamlIze (data) { //this version came from englishServer, and correctly returns a struct in all cases
 	const delimiter = "---\n";
 	var filetext = data.toString ();
-	function justText (s) {
-		var jstruct = {
-			text: s
-			}
-		return (utils.jsonStringify (jstruct));
-		}
 	if (utils.beginsWith (filetext, delimiter)) {
 		var frontmatter = utils.stringNthField (filetext, delimiter, 2);
 		var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));
 		if (frontmatter.length > 0) {
 			var jstruct = yaml.safeLoad (frontmatter);
 			jstruct.text = remainingtext;
-			return (utils.jsonStringify (jstruct));
+			return (jstruct);
 			}
-		return (justText (filetext));
+		return ({text: filetext});
 		}
-	return (justText (filetext));
+	return ({text: filetext});
 	}
 function longTimeFormat (when) { 
 	return (dateFormat (when, "dddd mmmm d, yyyy; h:MM TT Z"));
@@ -352,8 +349,43 @@ function renderThroughTemplate (pagetable, callback) {
 			}
 		});
 	}
+function getUserInfo (accessToken, callback) {
+	var myRequest = {
+		method: "GET",
+		url: "https://api.github.com/user",
+		headers: {
+			"User-Agent": config.userAgent,
+			"Authorization": "token " + accessToken
+			}
+		};
+	request (myRequest, function (err, response, body) { 
+		var myResponse = {
+			flError: true,
+			message: undefined
+			};
+		if (err) {
+			myResponse.message = err.message;
+			}
+		else {
+			try {
+				myResponse.flError = false;
+				myResponse.info = JSON.parse (body);
+				}
+			catch (err) {
+				myResponse.message = err.message;
+				}
+			}
+		callback (myResponse);
+		});
+	}
 function handleHttpRequest (theRequest) {
-	var now = new Date ();
+	var accessToken = theRequest.params.accessToken, now = new Date ();
+	function returnData (jstruct) {
+		theRequest.httpReturn (200, "application/json", utils.jsonStringify (jstruct));
+		}
+	function returnError (jstruct) {
+		theRequest.httpReturn (500, "application/json", utils.jsonStringify (jstruct));
+		}
 	function notFound (message) {
 		theRequest.httpReturn (404, "text/plain", message);
 		}
@@ -401,7 +433,7 @@ function handleHttpRequest (theRequest) {
 					getFileContent (jstruct, function (fileContent) {
 						var ext = getFileExtension (path); 
 						function serveMarkdown () {
-							var pagetable = JSON.parse (deYamlIze (fileContent.toString ()));
+							var pagetable = deYamlIze (fileContent.toString ());
 							pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
 							pagetable.host = theRequest.lowerhost;
 							pagetable.path = theRequest.lowerpath;
@@ -452,16 +484,130 @@ function handleHttpRequest (theRequest) {
 		cacheDelete (username, repo, path);
 		theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 		}
+	function handleOauthCallback () {
+		var params = {
+			client_id: config.clientId,
+			client_secret: config.clientSecret,
+			code: theRequest.params.code
+			};
+		var apiUrl = "https://github.com/login/oauth/access_token?" + utils.buildParamList (params);
+		var githubRequest = {
+			method: "POST",
+			url: apiUrl
+			};
+		console.log ("handleOauthCallback: githubRequest === " + utils.jsonStringify (githubRequest));
+		request (githubRequest, function (err, response, body) {
+			if (err) {
+				console.log (err.message);
+				theRequest.httpReturn (500, "text/plain", err.message);
+				}
+			else {
+				var postbody = qs.parse (body);
+				var httpResponse = theRequest.sysResponse;
+				var urlRedirect = config.urlEnglishApp + "?access_token=" + postbody.access_token;
+				httpResponse.writeHead (302, {"location": urlRedirect});
+				httpResponse.end ("Redirect to this URL: " + urlRedirect);
+				theRequest.httpReturn (200, "text/plain", "We got the callback bubba.");
+				}
+			});
+		}
 	switch (theRequest.lowerpath) {
-		case "/eventfromgithub":
+		case "/now":
+			theRequest.httpReturn (200, "text/plain", new Date ());
+			return;
+		case "/oauthcallback":
+			handleOauthCallback ();
+			break;
+		case "/eventfromgithub": //webhook call
 			handleGitHubEvent (theRequest.postBody);
 			break;
-		case "/eventfromeditor":
+		case "/eventfromeditor": //indicated object changed, remove from cache (ping)
 			var params = theRequest.params;
 			handleEditorEvent (params.username, params.repo, params.path);
 			break;
 		case "/getdomains":
-			theRequest.httpReturn (200, "application/json", utils.jsonStringify (config.domains));
+			returnData (config.domains);
+			break;
+		case "/getuserinfo":
+			getUserInfo (accessToken, function (result) {
+				returnData (result);
+				});
+			break;
+		case "/get":
+			var username = theRequest.params.username;
+			var repository = theRequest.params.repo;
+			var path = theRequest.params.path;
+			getContentFromGitHub (username, repository, path, function (err, content) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					theRequest.httpReturn (200, urlToMime (path), content);
+					}
+				});
+			break;
+		case "/save":
+			var options = {
+				username: theRequest.params.username,
+				repository: theRequest.params.repo,
+				path: theRequest.params.path,
+				accessToken: accessToken,
+				data: theRequest.params.text,
+				type: "text/plain",
+				committer: {
+					name: theRequest.params.name,
+					email: theRequest.params.email
+					},
+				message: theRequest.params.msg,
+				userAgent: config.userAgent
+				};
+			saveToGitHub (options, function (err, result) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					returnData (result);
+					}
+				});
+			break;
+		case "/savepost":
+			var options = {
+				username: theRequest.params.username,
+				repository: theRequest.params.repo,
+				path: theRequest.params.path,
+				accessToken: accessToken,
+				data: yamlIze (theRequest.params.text), //this is the diff
+				type: "text/plain",
+				committer: {
+					name: theRequest.params.name,
+					email: theRequest.params.email
+					},
+				message: theRequest.params.msg,
+				userAgent: config.userAgent
+				};
+			saveToGitHub (options, function (err, result) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					returnData (result);
+					}
+				});
+			break;
+		case "/getpost":
+			var username = theRequest.params.username;
+			var repository = theRequest.params.repo;
+			var path = theRequest.params.path;
+			getContentFromGitHub (username, repository, path, function (err, content) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					var returnStruct = deYamlIze (content);
+					returnStruct.domain = gitpub.getRepositoryDomain (username, repository);
+					returnData (returnStruct);
+					}
+				});
 			break;
 		default:
 			serveObject (theRequest.lowerhost, theRequest.path);
@@ -475,6 +621,7 @@ function handleExternalRequest (options, callback) { //9/28/18 by DW -- an exter
 		path: options.path,
 		postBody: options.postBody,
 		params: options.params,
+		sysResponse: options.sysResponse,
 		httpReturn: callback
 		};
 	handleHttpRequest (theRequest);

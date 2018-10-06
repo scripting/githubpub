@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.35";   
+const myProductName = "githubpub", myVersion = "0.5.36";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -31,7 +31,7 @@ exports.cacheDump = cacheDump;
 exports.getCacheSize = getCacheSize;
 exports.getFromGitHub = getFromGitHub;
 exports.getContentFromGitHub = getContentFromGitHub; //10/2/18 by DW
-exports.getRepositoryDomain = getRepositoryDomain;
+//exports.getRepositoryDomain = getRepositoryDomain;
 exports.saveToGitHub = saveToGitHub; //10/2/18 by DW
 exports.getUserInfo = getUserInfo; //10/5/18 by DW
 
@@ -68,9 +68,6 @@ var cache = {
 function getFileExtension (url) {
 	return (utils.stringLastField (url, ".").toLowerCase ());
 	}
-function fileExtensionToMime (ext) {
-	return (utils.httpExt2MIME (ext));
-	}
 function urlToMime (url) {
 	var ext = getFileExtension (url);
 	return (utils.httpExt2MIME (ext));
@@ -83,29 +80,7 @@ function yamlIze (jsontext) {
 	var s = delimiter + yaml.safeDump (jstruct) + delimiter + text;
 	return (s);
 	}
-//function deYamlIze (data) {
-	//const delimiter = "---\n";
-	//var filetext = data.toString ();
-	//function justText (s) {
-		//var jstruct = {
-			//text: s
-			//}
-		//return (utils.jsonStringify (jstruct));
-		//}
-	//if (utils.beginsWith (filetext, delimiter)) {
-		//var frontmatter = utils.stringNthField (filetext, delimiter, 2);
-		//var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));
-		//if (frontmatter.length > 0) {
-			//var jstruct = yaml.safeLoad (frontmatter);
-			//console.log ("\ndeYamlIze: frontmatter == \n" + frontmatter + "\n");
-			//jstruct.text = remainingtext;
-			//return (utils.jsonStringify (jstruct));
-			//}
-		//return (justText (filetext));
-		//}
-	//return (justText (filetext));
-	//}
-function deYamlIze (data) { //this version came from englishServer, and correctly returns a struct in all cases
+function deYamlIze (data) { 
 	const delimiter = "---\n";
 	var filetext = data.toString ();
 	if (utils.beginsWith (filetext, delimiter)) {
@@ -134,18 +109,17 @@ function httpRequest (url, callback) {
 		};
 	request (options, callback);
 	}
-function getRepositoryDomain (username, repository) { //9/30/18 by DW
-	username = utils.stringLower (username);
-	repository = utils.stringLower (repository);
-	for (var domain in config.domains) {
-		var item = config.domains [domain];
-		if ((utils.stringLower (item.username) == username) && (utils.stringLower (item.repository) == repository)) {
-			return (domain);
-			}
-		}
-	return (undefined);
-	}
-
+//function getRepositoryDomain (username, repository) { //9/30/18 by DW
+	//username = utils.stringLower (username);
+	//repository = utils.stringLower (repository);
+	//for (var domain in config.domains) {
+		//var item = config.domains [domain];
+		//if ((utils.stringLower (item.username) == username) && (utils.stringLower (item.repository) == repository)) {
+			//return (domain);
+			//}
+		//}
+	//return (undefined);
+	//}
 function cacheDump (callback) {
 	if (callback === undefined) {
 		callback = console.log;
@@ -492,7 +466,6 @@ function handleHttpRequest (theRequest) {
 				else {
 					getFileContent (jstruct, function (fileContent) {
 						var ext = getFileExtension (path); 
-						//var ext = getFileExtension (jstruct.download_url);
 						function serveMarkdown () {
 							var pagetable = deYamlIze (fileContent.toString ());
 							pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
@@ -517,7 +490,7 @@ function handleHttpRequest (theRequest) {
 								//theRequest.httpReturn (200, "text/plain", fileContent);
 								//break;
 							default:
-								theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);
+								theRequest.httpReturn (200, urlToMime (path), fileContent);
 								break;
 							}
 						});
@@ -538,7 +511,7 @@ function handleHttpRequest (theRequest) {
 		var repo = jstruct.repository.name;
 		var path = jstruct.commits [0].modified [0];
 		if (path !== undefined) { //something was modified, might be in the cache
-			console.log ("\nhandleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path + "\n");
+			//console.log ("\nhandleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path + "\n");
 			cacheDelete (owner, repo, path);
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
@@ -546,7 +519,7 @@ function handleHttpRequest (theRequest) {
 	function handleEditorEvent (domain, path) {
 		var dstruct = config.domains [domain.toLowerCase ()]
 		if (dstruct !== undefined) {
-			console.log ("\nhandleEditorEvent: domain == " + domain + ", path == " + path + "\n");
+			//console.log ("\nhandleEditorEvent: domain == " + domain + ", path == " + path + "\n");
 			cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
@@ -713,7 +686,7 @@ function handleHttpRequest (theRequest) {
 					}
 				else {
 					var returnStruct = deYamlIze (content);
-					returnStruct.domain = gitpub.getRepositoryDomain (username, repository);
+					returnStruct.domain = domain;
 					returnData (returnStruct);
 					}
 				});

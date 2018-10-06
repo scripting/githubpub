@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.35&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.36&quot;;   "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -45,7 +45,7 @@
 		<outline text="exports.getCacheSize = getCacheSize;"></outline>
 		<outline text="exports.getFromGitHub = getFromGitHub;"></outline>
 		<outline text="exports.getContentFromGitHub = getContentFromGitHub; //10/2/18 by DW"></outline>
-		<outline text="exports.getRepositoryDomain = getRepositoryDomain;"></outline>
+		<outline isComment="true" text="exports.getRepositoryDomain = getRepositoryDomain;"></outline>
 		<outline text="exports.saveToGitHub = saveToGitHub; //10/2/18 by DW"></outline>
 		<outline text="exports.getUserInfo = getUserInfo; //10/5/18 by DW"></outline>
 		<outline text=""></outline>
@@ -86,10 +86,6 @@
 			<outline text="return (utils.stringLastField (url, &quot;.&quot;).toLowerCase ());"></outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text="function fileExtensionToMime (ext) {">
-			<outline text="return (utils.httpExt2MIME (ext));"></outline>
-			<outline text="}"></outline>
-			</outline>
 		<outline text="function urlToMime (url) {">
 			<outline text="var ext = getFileExtension (url);"></outline>
 			<outline text="return (utils.httpExt2MIME (ext));"></outline>
@@ -104,34 +100,7 @@
 			<outline text="return (s);"></outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline isComment="true" text="function deYamlIze (data) {">
-			<outline text="const delimiter = &quot;---\n&quot;;"></outline>
-			<outline text="var filetext = data.toString ();"></outline>
-			<outline text="function justText (s) {">
-				<outline text="var jstruct = {">
-					<outline text="text: s"></outline>
-					<outline text="}"></outline>
-					</outline>
-				<outline text="return (utils.jsonStringify (jstruct));"></outline>
-				<outline text="}"></outline>
-				</outline>
-			<outline text="if (utils.beginsWith (filetext, delimiter)) {">
-				<outline text="var frontmatter = utils.stringNthField (filetext, delimiter, 2);"></outline>
-				<outline text="var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));"></outline>
-				<outline text="if (frontmatter.length &gt; 0) {">
-					<outline text="var jstruct = yaml.safeLoad (frontmatter);"></outline>
-					<outline isComment="true" text="console.log (&quot;\ndeYamlIze: frontmatter == \n&quot; + frontmatter + &quot;\n&quot;);"></outline>
-					<outline text="jstruct.text = remainingtext;"></outline>
-					<outline text="return (utils.jsonStringify (jstruct));"></outline>
-					<outline text="}"></outline>
-					</outline>
-				<outline text="return (justText (filetext));"></outline>
-				<outline text="}"></outline>
-				</outline>
-			<outline text="return (justText (filetext));"></outline>
-			<outline text="}"></outline>
-			</outline>
-		<outline text="function deYamlIze (data) { //this version came from englishServer, and correctly returns a struct in all cases">
+		<outline text="function deYamlIze (data) { ">
 			<outline text="const delimiter = &quot;---\n&quot;;"></outline>
 			<outline text="var filetext = data.toString ();"></outline>
 			<outline text="if (utils.beginsWith (filetext, delimiter)) {">
@@ -167,7 +136,7 @@
 			<outline text="request (options, callback);"></outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text="function getRepositoryDomain (username, repository) { //9/30/18 by DW">
+		<outline isComment="true" text="function getRepositoryDomain (username, repository) { //9/30/18 by DW">
 			<outline text="username = utils.stringLower (username);"></outline>
 			<outline text="repository = utils.stringLower (repository);"></outline>
 			<outline text="for (var domain in config.domains) {">
@@ -181,7 +150,6 @@
 			<outline text="return (undefined);"></outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text=""></outline>
 		<outline text="function cacheDump (callback) {">
 			<outline text="if (callback === undefined) {">
 				<outline text="callback = console.log;"></outline>
@@ -633,7 +601,6 @@
 						<outline text="else {">
 							<outline text="getFileContent (jstruct, function (fileContent) {">
 								<outline text="var ext = getFileExtension (path); "></outline>
-								<outline isComment="true" text="var ext = getFileExtension (jstruct.download_url);"></outline>
 								<outline text="function serveMarkdown () {">
 									<outline text="var pagetable = deYamlIze (fileContent.toString ());"></outline>
 									<outline text="pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text"></outline>
@@ -664,7 +631,7 @@
 										<outline text="break;"></outline>
 										</outline>
 									<outline text="default:">
-										<outline text="theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);"></outline>
+										<outline text="theRequest.httpReturn (200, urlToMime (path), fileContent);"></outline>
 										<outline text="break;"></outline>
 										</outline>
 									<outline text="}"></outline>
@@ -695,7 +662,7 @@
 				<outline text="var repo = jstruct.repository.name;"></outline>
 				<outline text="var path = jstruct.commits [0].modified [0];"></outline>
 				<outline text="if (path !== undefined) { //something was modified, might be in the cache">
-					<outline text="console.log (&quot;\nhandleGitHubEvent: owner == &quot; + owner + &quot;, repo == &quot; + repo + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
+					<outline isComment="true" text="console.log (&quot;\nhandleGitHubEvent: owner == &quot; + owner + &quot;, repo == &quot; + repo + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
 					<outline text="cacheDelete (owner, repo, path);"></outline>
 					<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;Thanks for the ping.&quot;);"></outline>
 					<outline text="}"></outline>
@@ -705,7 +672,7 @@
 			<outline text="function handleEditorEvent (domain, path) {">
 				<outline text="var dstruct = config.domains [domain.toLowerCase ()]"></outline>
 				<outline text="if (dstruct !== undefined) {">
-					<outline text="console.log (&quot;\nhandleEditorEvent: domain == &quot; + domain + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
+					<outline isComment="true" text="console.log (&quot;\nhandleEditorEvent: domain == &quot; + domain + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
 					<outline text="cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);"></outline>
 					<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;Thanks for the ping.&quot;);"></outline>
 					<outline text="}"></outline>
@@ -909,7 +876,7 @@
 							</outline>
 						<outline text="else {">
 							<outline text="var returnStruct = deYamlIze (content);"></outline>
-							<outline text="returnStruct.domain = gitpub.getRepositoryDomain (username, repository);"></outline>
+							<outline text="returnStruct.domain = domain;"></outline>
 							<outline text="returnData (returnStruct);"></outline>
 							<outline text="}"></outline>
 							</outline>

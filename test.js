@@ -2,6 +2,8 @@
 //you can access my test site through http://localhost:1402/
 
 const gitpub = require ("./src/githubpub.js");
+//const gitpub = require ("githubpub");
+//const utils = require ("daveutils");
 const fs = require ("fs");
 const davehttp = require ("davehttp"); 
 

@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.29&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.35&quot;;   "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -65,7 +65,7 @@
 			<outline text="flDebugMessagesFromGitHub: false,"></outline>
 			<outline text="flDebugObjectsFromGitHub: false,"></outline>
 			<outline text="apiUrl: &quot;https://api.github.com/repos/&quot;,"></outline>
-			<outline text="urlMarkdownTemplate: &quot;http://fargo.io/code/shared/githubpub/template/template.txt&quot;, "></outline>
+			<outline isComment="true" text="urlMarkdownTemplate: &quot;http://fargo.io/code/shared/githubpub/template/template.txt&quot;, "></outline>
 			<outline text="flLogToConsole: true,"></outline>
 			<outline text="indexFileName: &quot;index&quot;,"></outline>
 			<outline text="userAgent: myProductName + &quot; v&quot; + myVersion,"></outline>
@@ -349,22 +349,36 @@
 				</outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text="function getContentFromGitHub (username, repository, path, callback) { //calls back with the content GitHub returned">
-			<outline text="getFromGitHub (username, repository, path, function (err, jstruct) {">
-				<outline text="if (err) {">
-					<outline text="callback (err);"></outline>
+		<outline text="function getContentFromGitHub (domain, path, callback) { //calls back with the content GitHub returned">
+			<outline text="var dstruct = config.domains [domain.toLowerCase ()]"></outline>
+			<outline text="if (dstruct === undefined) {">
+				<outline text="var s = &quot;The domain \&quot;&quot; + domain + &quot;\&quot; is not defined.&quot;;"></outline>
+				<outline text="console.log (&quot;getContentFromGitHub: s == &quot; + s);"></outline>
+				<outline text="callback ({message: s});"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="else {">
+				<outline text="if (!utils.beginsWith (path, &quot;/&quot;)) {">
+					<outline text="path = &quot;/&quot; + path;"></outline>
 					<outline text="}"></outline>
 					</outline>
-				<outline text="else {">
-					<outline text="var content = jstruct.content;"></outline>
-					<outline text="if (jstruct.encoding == &quot;base64&quot;) {">
-						<outline text="content = new Buffer (content, &quot;base64&quot;); "></outline>
+				<outline text="getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, function (err, jstruct) {">
+					<outline text="if (err) {">
+						<outline text="callback (err);"></outline>
 						<outline text="}"></outline>
 						</outline>
-					<outline text="callback (undefined, content);"></outline>
-					<outline text="}"></outline>
+					<outline text="else {">
+						<outline text="var content = jstruct.content;"></outline>
+						<outline text="if (jstruct.encoding == &quot;base64&quot;) {">
+							<outline text="content = new Buffer (content, &quot;base64&quot;); "></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="callback (undefined, content);"></outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="});"></outline>
 					</outline>
-				<outline text="});"></outline>
+				<outline text="}"></outline>
 				</outline>
 			<outline text="}"></outline>
 			</outline>
@@ -373,13 +387,13 @@
 				<outline text="path = &quot;/&quot; + path;"></outline>
 				<outline text="}"></outline>
 				</outline>
-			<outline text="var domain = config.domains [host.toLowerCase ()];"></outline>
-			<outline text="if (domain === undefined) {">
+			<outline text="var dstruct = config.domains [host.toLowerCase ()];"></outline>
+			<outline text="if (dstruct === undefined) {">
 				<outline text="callback ({message: &quot;The domain \&quot;&quot; + host + &quot;\&quot; is not defined.&quot;});"></outline>
 				<outline text="}"></outline>
 				</outline>
 			<outline text="else {">
-				<outline text="getFromGitHub (domain.username, domain.repository, domain.path + path, function (err, jstruct) {">
+				<outline text="getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, function (err, jstruct) {">
 					<outline text="if (err) {">
 						<outline text="var loc = config.defaultFilesLocation;"></outline>
 						<outline text="getFromGitHub (loc.username, loc.repository, loc.path + path, callback);"></outline>
@@ -412,51 +426,70 @@
 			<outline text="}"></outline>
 			</outline>
 		<outline text="function saveToGitHub (options, callback) { //10/2/18 by DW">
-			<outline text="getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {">
-				<outline text="var bodyStruct = { ">
-					<outline text="message: options.message,"></outline>
-					<outline text="committer: {">
-						<outline text="name: options.committer.name,"></outline>
-						<outline text="email: options.committer.email"></outline>
-						<outline text="},"></outline>
-						</outline>
-					<outline text="content: new Buffer (options.data).toString (&quot;base64&quot;)"></outline>
-					<outline text="};"></outline>
-					</outline>
-				<outline text="if (jstruct !== undefined) {">
-					<outline text="bodyStruct.sha = jstruct.sha;"></outline>
+			<outline text="var lowerdomain = options.domain.toLowerCase ();"></outline>
+			<outline text="var dstruct = config.domains [lowerdomain]"></outline>
+			<outline text="if (dstruct === undefined) {">
+				<outline text="var s = &quot;The domain \&quot;&quot; + lowerdomain + &quot;\&quot; is not defined.&quot;;"></outline>
+				<outline text="console.log (&quot;saveToGitHub: s == &quot; + s);"></outline>
+				<outline text="callback ({message: s});"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="else {">
+				<outline text="if (!utils.beginsWith (options.path, &quot;/&quot;)) {">
+					<outline text="options.path = &quot;/&quot; + options.path;"></outline>
 					<outline text="}"></outline>
 					</outline>
-				<outline text="var url = &quot;https://api.github.com/repos/&quot; + options.username + &quot;/&quot; + options.repository + &quot;/contents/&quot; + options.path;"></outline>
-				<outline text="var theRequest = {">
-					<outline text="method: &quot;PUT&quot;,"></outline>
-					<outline text="url: url,"></outline>
-					<outline text="body: JSON.stringify (bodyStruct),"></outline>
-					<outline text="headers: {">
-						<outline text="&quot;User-Agent&quot;: options.userAgent,"></outline>
-						<outline text="&quot;Authorization&quot;: &quot;token &quot; + options.accessToken,"></outline>
-						<outline text="&quot;Content-Type&quot;: options.type"></outline>
-						<outline text="}"></outline>
-						</outline>
-					<outline text="};"></outline>
-					</outline>
-				<outline text="request (theRequest, function (err, response, body) { ">
-					<outline text="if (err) {">
-						<outline text="console.log (&quot;saveToGitHub: err.message == &quot; + err.message);"></outline>
-						<outline text="callback (err);"></outline>
-						<outline text="}"></outline>
-						</outline>
-					<outline text="else {">
-						<outline text="var jstruct = {">
-							<outline text="domain: getRepositoryDomain (options.username, options.repository)"></outline>
-							<outline text="};"></outline>
+				<outline text="var actualpath = dstruct.path + options.path;"></outline>
+				<outline text="getFromGitHub (dstruct.username, dstruct.repository, actualpath, function (err, jstruct) {">
+					<outline text="var bodyStruct = { ">
+						<outline text="message: options.message,"></outline>
+						<outline text="committer: {">
+							<outline text="name: options.committer.name,"></outline>
+							<outline text="email: options.committer.email"></outline>
+							<outline text="},"></outline>
 							</outline>
-						<outline text="callback (undefined, jstruct);"></outline>
+						<outline text="content: new Buffer (options.data).toString (&quot;base64&quot;)"></outline>
+						<outline text="};"></outline>
+						</outline>
+					<outline text="if (jstruct !== undefined) {">
+						<outline text="bodyStruct.sha = jstruct.sha;"></outline>
 						<outline text="}"></outline>
+						</outline>
+					<outline text="var url = &quot;https://api.github.com/repos/&quot; + dstruct.username + &quot;/&quot; + dstruct.repository + &quot;/contents/&quot; + actualpath;"></outline>
+					<outline text="var theRequest = {">
+						<outline text="method: &quot;PUT&quot;,"></outline>
+						<outline text="url: url,"></outline>
+						<outline text="body: JSON.stringify (bodyStruct),"></outline>
+						<outline text="headers: {">
+							<outline text="&quot;User-Agent&quot;: options.userAgent,"></outline>
+							<outline text="&quot;Authorization&quot;: &quot;token &quot; + options.accessToken,"></outline>
+							<outline text="&quot;Content-Type&quot;: options.type"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="};"></outline>
+						</outline>
+					<outline isComment="true" text="console.log (&quot;saveToGitHub: theRequest == &quot; + utils.jsonStringify (theRequest));"></outline>
+					<outline text="request (theRequest, function (err, response, body) { ">
+						<outline text="if (err) {">
+							<outline text="console.log (&quot;saveToGitHub: err.message == &quot; + err.message);"></outline>
+							<outline text="callback (err);"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="else {">
+							<outline text="var jstruct = {">
+								<outline text="domain: lowerdomain,"></outline>
+								<outline text="urlHtml: &quot;http://&quot; + lowerdomain + options.path,"></outline>
+								<outline text="urlGitHub: &quot;https://github.com/&quot; + dstruct.username + &quot;/&quot; + dstruct.repository + &quot;/blob/master/&quot; + actualpath"></outline>
+								<outline text="};"></outline>
+								</outline>
+							<outline text="callback (undefined, jstruct);"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="});"></outline>
 						</outline>
 					<outline text="});"></outline>
 					</outline>
-				<outline text="});"></outline>
+				<outline text="}"></outline>
 				</outline>
 			<outline text="}"></outline>
 			</outline>
@@ -669,10 +702,14 @@
 					</outline>
 				<outline text="}"></outline>
 				</outline>
-			<outline text="function handleEditorEvent (username, repo, path) {">
-				<outline text="console.log (&quot;\nhandleEditorEvent: username == &quot; + username + &quot;, repo == &quot; + repo + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
-				<outline text="cacheDelete (username, repo, path);"></outline>
-				<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;Thanks for the ping.&quot;);"></outline>
+			<outline text="function handleEditorEvent (domain, path) {">
+				<outline text="var dstruct = config.domains [domain.toLowerCase ()]"></outline>
+				<outline text="if (dstruct !== undefined) {">
+					<outline text="console.log (&quot;\nhandleEditorEvent: domain == &quot; + domain + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
+					<outline text="cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);"></outline>
+					<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;Thanks for the ping.&quot;);"></outline>
+					<outline text="}"></outline>
+					</outline>
 				<outline text="}"></outline>
 				</outline>
 			<outline text="function handleOauthCallback () {">
@@ -704,7 +741,7 @@
 						<outline isComment="true" text="console.log (body);"></outline>
 						<outline text="var postbody = qs.parse (body);"></outline>
 						<outline text="var httpResponse = theRequest.sysResponse;"></outline>
-						<outline text="var urlRedirect = config.urlEnglishApp + &quot;?access_token=&quot; + postbody.access_token;"></outline>
+						<outline text="var urlRedirect = config.urlEditorApp + &quot;?access_token=&quot; + postbody.access_token;"></outline>
 						<outline text="httpResponse.writeHead (302, {&quot;location&quot;: urlRedirect});"></outline>
 						<outline text="httpResponse.end (&quot;Redirect to this URL: &quot; + urlRedirect);"></outline>
 						<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;We got the callback bubba.&quot;);"></outline>
@@ -724,7 +761,7 @@
 					<outline isComment="true" text="var apiUrl = &quot;https://github.com/login/oauth/access_token&quot;;"></outline>
 					<outline isComment="true" text="apiUrl += &quot;?client_id=&quot; + config.clientId;"></outline>
 					<outline isComment="true" text="apiUrl += &quot;&amp;client_secret=&quot; + config.clientSecret;"></outline>
-					<outline isComment="true" text="apiUrl += &quot;&amp;code=&quot; + theRequest.params.code;"></outline>
+					<outline isComment="true" text="apiUrl += &quot;&amp;code=&quot; + theRequest.params.code;g"></outline>
 					<outline isComment="true" text="var githubRequest = {">
 						<outline text="method: &quot;POST&quot;,"></outline>
 						<outline text="url: apiUrl"></outline>
@@ -759,7 +796,7 @@
 					</outline>
 				<outline text="case &quot;/eventfromeditor&quot;: //indicated object changed, remove from cache (ping)">
 					<outline text="var params = theRequest.params;"></outline>
-					<outline text="handleEditorEvent (params.username, params.repo, params.path);"></outline>
+					<outline text="handleEditorEvent (params.domain, params.path);"></outline>
 					<outline text="break;"></outline>
 					</outline>
 				<outline text="case &quot;/getdomains&quot;:">
@@ -774,10 +811,11 @@
 					<outline text="break;"></outline>
 					</outline>
 				<outline text="case &quot;/get&quot;:">
-					<outline text="var username = theRequest.params.username;"></outline>
-					<outline text="var repository = theRequest.params.repo;"></outline>
+					<outline text="var domain = theRequest.params.domain;"></outline>
 					<outline text="var path = theRequest.params.path;"></outline>
-					<outline text="getContentFromGitHub (username, repository, path, function (err, content) {">
+					<outline isComment="true" text="var username = theRequest.params.username;"></outline>
+					<outline isComment="true" text="var repository = theRequest.params.repo;"></outline>
+					<outline text="getContentFromGitHub (domain, path, function (err, content) {">
 						<outline text="if (err) {">
 							<outline text="returnError (err);"></outline>
 							<outline text="}"></outline>
@@ -792,8 +830,9 @@
 					</outline>
 				<outline text="case &quot;/save&quot;:">
 					<outline text="var options = {">
-						<outline text="username: theRequest.params.username,"></outline>
-						<outline text="repository: theRequest.params.repo,"></outline>
+						<outline text="domain: theRequest.params.domain,"></outline>
+						<outline isComment="true" text="username: theRequest.params.username,"></outline>
+						<outline isComment="true" text="repository: theRequest.params.repo,"></outline>
 						<outline text="path: theRequest.params.path,"></outline>
 						<outline text="accessToken: accessToken,"></outline>
 						<outline text="data: theRequest.params.text,"></outline>
@@ -831,8 +870,9 @@
 						<outline text="}"></outline>
 						</outline>
 					<outline text="var options = {">
-						<outline text="username: theRequest.params.username,"></outline>
-						<outline text="repository: theRequest.params.repo,"></outline>
+						<outline text="domain: theRequest.params.domain,"></outline>
+						<outline isComment="true" text="username: theRequest.params.username,"></outline>
+						<outline isComment="true" text="repository: theRequest.params.repo,"></outline>
 						<outline text="path: theRequest.params.path,"></outline>
 						<outline text="accessToken: accessToken,"></outline>
 						<outline text="data: yamlIze (theRequest.params.text), //this is the diff"></outline>
@@ -860,28 +900,9 @@
 					<outline text="break;"></outline>
 					</outline>
 				<outline text="case &quot;/getpost&quot;:">
-					<outline isComment="true" text="function deYamlIze (data) {">
-						<outline text="const delimiter = &quot;---\n&quot;;"></outline>
-						<outline text="var filetext = data.toString ();"></outline>
-						<outline text="if (utils.beginsWith (filetext, delimiter)) {">
-							<outline text="var frontmatter = utils.stringNthField (filetext, delimiter, 2);"></outline>
-							<outline text="var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));"></outline>
-							<outline text="if (frontmatter.length &gt; 0) {">
-								<outline text="var jstruct = yaml.safeLoad (frontmatter);"></outline>
-								<outline text="jstruct.text = remainingtext;"></outline>
-								<outline text="return (jstruct);"></outline>
-								<outline text="}"></outline>
-								</outline>
-							<outline text="return ({text: filetext});"></outline>
-							<outline text="}"></outline>
-							</outline>
-						<outline text="return ({text: filetext});"></outline>
-						<outline text="}"></outline>
-						</outline>
-					<outline text="var username = theRequest.params.username;"></outline>
-					<outline text="var repository = theRequest.params.repo;"></outline>
+					<outline text="var domain = theRequest.params.domain;"></outline>
 					<outline text="var path = theRequest.params.path;"></outline>
-					<outline text="getContentFromGitHub (username, repository, path, function (err, content) {">
+					<outline text="getContentFromGitHub (domain, path, function (err, content) {">
 						<outline text="if (err) {">
 							<outline text="returnError (err);"></outline>
 							<outline text="}"></outline>

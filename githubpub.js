@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.29";   
+const myProductName = "githubpub", myVersion = "0.5.35";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -51,7 +51,7 @@ var config = {
 	flDebugMessagesFromGitHub: false,
 	flDebugObjectsFromGitHub: false,
 	apiUrl: "https://api.github.com/repos/",
-	urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
+	//urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
 	indexFileName: "index",
 	userAgent: myProductName + " v" + myVersion,
@@ -83,6 +83,28 @@ function yamlIze (jsontext) {
 	var s = delimiter + yaml.safeDump (jstruct) + delimiter + text;
 	return (s);
 	}
+//function deYamlIze (data) {
+	//const delimiter = "---\n";
+	//var filetext = data.toString ();
+	//function justText (s) {
+		//var jstruct = {
+			//text: s
+			//}
+		//return (utils.jsonStringify (jstruct));
+		//}
+	//if (utils.beginsWith (filetext, delimiter)) {
+		//var frontmatter = utils.stringNthField (filetext, delimiter, 2);
+		//var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));
+		//if (frontmatter.length > 0) {
+			//var jstruct = yaml.safeLoad (frontmatter);
+			//console.log ("\ndeYamlIze: frontmatter == \n" + frontmatter + "\n");
+			//jstruct.text = remainingtext;
+			//return (utils.jsonStringify (jstruct));
+			//}
+		//return (justText (filetext));
+		//}
+	//return (justText (filetext));
+	//}
 function deYamlIze (data) { //this version came from englishServer, and correctly returns a struct in all cases
 	const delimiter = "---\n";
 	var filetext = data.toString ();
@@ -167,6 +189,7 @@ function cacheRef (username, repository, path) {
 				var item = cache [username] [repository] [path];
 				item.ct++;
 				item.whenRef = now;
+				//console.log ("cacheRef: serving from cache, username == " + username + ", repository == " + repository + ", path == " + path);
 				return (item.data);
 				}
 			}
@@ -174,9 +197,14 @@ function cacheRef (username, repository, path) {
 	return (undefined);
 	}
 function cacheDelete (username, repository, path) {
+	//
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
+	//
+	//console.log ("cacheDelete --- here's a dump of the cache.")
+	//cacheDump ();
+	//
 	if (cache [username] !== undefined) {
 		if (cache [username] [repository] !== undefined) {
 			if (cache [username] [repository] [path] !== undefined) {
@@ -198,6 +226,7 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 		}
 	var data = cacheRef (username, repository, path);
 	if (data !== undefined) {
+		//console.log ("getFromGitHub: serving from cache, path == " + path);
 		callback (undefined, data);
 		}
 	else {
@@ -215,6 +244,7 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 					callback ({message: "The file \"" + path + "\" was not found."});
 					}
 				else {
+					//console.log ("getFromGitHub: response.headers == " + utils.jsonStringify (response.headers))
 					if (response.headers ["x-ratelimit-remaining"] == 0) {
 						var theLimit = response.headers ["x-ratelimit-limit"];
 						callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
@@ -222,6 +252,7 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 					else {
 						try {
 							var jstruct = JSON.parse (jsontext);
+							//console.log ("getFromGitHub: path == " + path + ", " + utils.secondsSince (whenstart) + " secs.");
 							addToCache (username, repository, path, jstruct);
 							if (config.flDebugObjectsFromGitHub) {
 								var f = "debug/objects/" + Number (new Date ()) + ".json";
@@ -241,30 +272,41 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 			});
 		}
 	}
-function getContentFromGitHub (username, repository, path, callback) { //calls back with the content GitHub returned
-	getFromGitHub (username, repository, path, function (err, jstruct) {
-		if (err) {
-			callback (err);
+function getContentFromGitHub (domain, path, callback) { //calls back with the content GitHub returned
+	var dstruct = config.domains [domain.toLowerCase ()]
+	if (dstruct === undefined) {
+		var s = "The domain \"" + domain + "\" is not defined.";
+		console.log ("getContentFromGitHub: s == " + s);
+		callback ({message: s});
+		}
+	else {
+		if (!utils.beginsWith (path, "/")) {
+			path = "/" + path;
 			}
-		else {
-			var content = jstruct.content;
-			if (jstruct.encoding == "base64") {
-				content = new Buffer (content, "base64"); 
+		getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, function (err, jstruct) {
+			if (err) {
+				callback (err);
 				}
-			callback (undefined, content);
-			}
-		});
+			else {
+				var content = jstruct.content;
+				if (jstruct.encoding == "base64") {
+					content = new Buffer (content, "base64"); 
+					}
+				callback (undefined, content);
+				}
+			});
+		}
 	}
 function getUserObject (host, path, callback) {
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
-	var domain = config.domains [host.toLowerCase ()];
-	if (domain === undefined) {
+	var dstruct = config.domains [host.toLowerCase ()];
+	if (dstruct === undefined) {
 		callback ({message: "The domain \"" + host + "\" is not defined."});
 		}
 	else {
-		getFromGitHub (domain.username, domain.repository, domain.path + path, function (err, jstruct) {
+		getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, function (err, jstruct) {
 			if (err) {
 				var loc = config.defaultFilesLocation;
 				getFromGitHub (loc.username, loc.repository, loc.path + path, callback);
@@ -288,42 +330,58 @@ function getTemplate (host, callback) {
 		});
 	}
 function saveToGitHub (options, callback) { //10/2/18 by DW
-	getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {
-		var bodyStruct = { 
-			message: options.message,
-			committer: {
-				name: options.committer.name,
-				email: options.committer.email
-				},
-			content: new Buffer (options.data).toString ("base64")
-			};
-		if (jstruct !== undefined) {
-			bodyStruct.sha = jstruct.sha;
+	var lowerdomain = options.domain.toLowerCase ();
+	var dstruct = config.domains [lowerdomain]
+	if (dstruct === undefined) {
+		var s = "The domain \"" + lowerdomain + "\" is not defined.";
+		console.log ("saveToGitHub: s == " + s);
+		callback ({message: s});
+		}
+	else {
+		if (!utils.beginsWith (options.path, "/")) {
+			options.path = "/" + options.path;
 			}
-		var url = "https://api.github.com/repos/" + options.username + "/" + options.repository + "/contents/" + options.path;
-		var theRequest = {
-			method: "PUT",
-			url: url,
-			body: JSON.stringify (bodyStruct),
-			headers: {
-				"User-Agent": options.userAgent,
-				"Authorization": "token " + options.accessToken,
-				"Content-Type": options.type
+		var actualpath = dstruct.path + options.path;
+		getFromGitHub (dstruct.username, dstruct.repository, actualpath, function (err, jstruct) {
+			var bodyStruct = { 
+				message: options.message,
+				committer: {
+					name: options.committer.name,
+					email: options.committer.email
+					},
+				content: new Buffer (options.data).toString ("base64")
+				};
+			if (jstruct !== undefined) {
+				bodyStruct.sha = jstruct.sha;
 				}
-			};
-		request (theRequest, function (err, response, body) { 
-			if (err) {
-				console.log ("saveToGitHub: err.message == " + err.message);
-				callback (err);
-				}
-			else {
-				var jstruct = {
-					domain: getRepositoryDomain (options.username, options.repository)
-					};
-				callback (undefined, jstruct);
-				}
+			var url = "https://api.github.com/repos/" + dstruct.username + "/" + dstruct.repository + "/contents/" + actualpath;
+			var theRequest = {
+				method: "PUT",
+				url: url,
+				body: JSON.stringify (bodyStruct),
+				headers: {
+					"User-Agent": options.userAgent,
+					"Authorization": "token " + options.accessToken,
+					"Content-Type": options.type
+					}
+				};
+			//console.log ("saveToGitHub: theRequest == " + utils.jsonStringify (theRequest));
+			request (theRequest, function (err, response, body) { 
+				if (err) {
+					console.log ("saveToGitHub: err.message == " + err.message);
+					callback (err);
+					}
+				else {
+					var jstruct = {
+						domain: lowerdomain,
+						urlHtml: "http://" + lowerdomain + options.path,
+						urlGitHub: "https://github.com/" + dstruct.username + "/" + dstruct.repository + "/blob/master/" + actualpath
+						};
+					callback (undefined, jstruct);
+					}
+				});
 			});
-		});
+		}
 	}
 function renderThroughTemplate (pagetable, callback) {
 	getTemplate (pagetable.host, function (err, templatetext) { 
@@ -390,6 +448,8 @@ function handleHttpRequest (theRequest) {
 		theRequest.httpReturn (404, "text/plain", message);
 		}
 	function getFileContent (jstruct, callback) {
+		//console.log ("getFileContent: jstruct == " + utils.jsonStringify (jstruct));
+		//console.log ("getFileContent: jstruct.type == " + jstruct.type);
 		if (jstruct.message !== undefined) { //9/26/18 by DW -- I think this means it was an error, haven't found ref in GH docs
 			notFound (jstruct.message);
 			}
@@ -432,6 +492,7 @@ function handleHttpRequest (theRequest) {
 				else {
 					getFileContent (jstruct, function (fileContent) {
 						var ext = getFileExtension (path); 
+						//var ext = getFileExtension (jstruct.download_url);
 						function serveMarkdown () {
 							var pagetable = deYamlIze (fileContent.toString ());
 							pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
@@ -452,6 +513,9 @@ function handleHttpRequest (theRequest) {
 							case "md":
 								serveMarkdown ();
 								break;
+							//case "txt":
+								//theRequest.httpReturn (200, "text/plain", fileContent);
+								//break;
 							default:
 								theRequest.httpReturn (200, fileExtensionToMime (ext), fileContent);
 								break;
@@ -479,10 +543,13 @@ function handleHttpRequest (theRequest) {
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
 		}
-	function handleEditorEvent (username, repo, path) {
-		console.log ("\nhandleEditorEvent: username == " + username + ", repo == " + repo + ", path == " + path + "\n");
-		cacheDelete (username, repo, path);
-		theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
+	function handleEditorEvent (domain, path) {
+		var dstruct = config.domains [domain.toLowerCase ()]
+		if (dstruct !== undefined) {
+			console.log ("\nhandleEditorEvent: domain == " + domain + ", path == " + path + "\n");
+			cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);
+			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
+			}
 		}
 	function handleOauthCallback () {
 		var params = {
@@ -491,9 +558,14 @@ function handleHttpRequest (theRequest) {
 			code: theRequest.params.code
 			};
 		var apiUrl = "https://github.com/login/oauth/access_token?" + utils.buildParamList (params);
+		//apiUrl += "?client_id=" + config.clientId;
+		//apiUrl += "&client_secret=" + config.clientSecret;
+		//apiUrl += "&code=" + theRequest.params.code;
 		var githubRequest = {
 			method: "POST",
 			url: apiUrl
+			//followRedirect: true, 
+			//headers: {Accept: "application/json"}
 			};
 		console.log ("handleOauthCallback: githubRequest === " + utils.jsonStringify (githubRequest));
 		request (githubRequest, function (err, response, body) {
@@ -502,9 +574,10 @@ function handleHttpRequest (theRequest) {
 				theRequest.httpReturn (500, "text/plain", err.message);
 				}
 			else {
+				//console.log (body);
 				var postbody = qs.parse (body);
 				var httpResponse = theRequest.sysResponse;
-				var urlRedirect = config.urlEnglishApp + "?access_token=" + postbody.access_token;
+				var urlRedirect = config.urlEditorApp + "?access_token=" + postbody.access_token;
 				httpResponse.writeHead (302, {"location": urlRedirect});
 				httpResponse.end ("Redirect to this URL: " + urlRedirect);
 				theRequest.httpReturn (200, "text/plain", "We got the callback bubba.");
@@ -517,13 +590,39 @@ function handleHttpRequest (theRequest) {
 			return;
 		case "/oauthcallback":
 			handleOauthCallback ();
+			//var apiUrl = "https://github.com/login/oauth/access_token";
+			//apiUrl += "?client_id=" + config.clientId;
+			//apiUrl += "&client_secret=" + config.clientSecret;
+			//apiUrl += "&code=" + theRequest.params.code;g
+			//var githubRequest = {
+				//method: "POST",
+				//url: apiUrl
+				//followRedirect: true, 
+				//headers: {Accept: "application/json"}
+				//};
+			//console.log ("/oauthcallback: githubRequest == " + utils.jsonStringify (githubRequest));
+			//request (githubRequest, function (err, response, body) {
+				//if (err) {
+					//console.log (err.message);
+					//theRequest.httpReturn (500, "text/plain", err.message);
+					//}
+				//else {
+					//console.log (body);
+					//var postbody = qs.parse (body);
+					//var httpResponse = theRequest.sysResponse;
+					//var urlRedirect = config.urlEnglishApp + "?access_token=" + postbody.access_token;
+					//httpResponse.writeHead (302, {"location": urlRedirect});
+					//httpResponse.end ("Redirect to this URL: " + urlRedirect);
+					//theRequest.httpReturn (200, "text/plain", "We got the callback bubba.");
+					//}
+				//});
 			break;
 		case "/eventfromgithub": //webhook call
 			handleGitHubEvent (theRequest.postBody);
 			break;
 		case "/eventfromeditor": //indicated object changed, remove from cache (ping)
 			var params = theRequest.params;
-			handleEditorEvent (params.username, params.repo, params.path);
+			handleEditorEvent (params.domain, params.path);
 			break;
 		case "/getdomains":
 			returnData (config.domains);
@@ -534,10 +633,11 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/get":
-			var username = theRequest.params.username;
-			var repository = theRequest.params.repo;
+			var domain = theRequest.params.domain;
 			var path = theRequest.params.path;
-			getContentFromGitHub (username, repository, path, function (err, content) {
+			//var username = theRequest.params.username;
+			//var repository = theRequest.params.repo;
+			getContentFromGitHub (domain, path, function (err, content) {
 				if (err) {
 					returnError (err);
 					}
@@ -548,8 +648,9 @@ function handleHttpRequest (theRequest) {
 			break;
 		case "/save":
 			var options = {
-				username: theRequest.params.username,
-				repository: theRequest.params.repo,
+				domain: theRequest.params.domain,
+				//username: theRequest.params.username,
+				//repository: theRequest.params.repo,
 				path: theRequest.params.path,
 				accessToken: accessToken,
 				data: theRequest.params.text,
@@ -571,9 +672,18 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/savepost":
+			//function yamlIze (jsontext) {
+				//var jstruct = JSON.parse (jsontext);
+				//const delimiter = "---\n";
+				//var text = jstruct.text;
+				//delete jstruct.text;
+				//var s = delimiter + yaml.safeDump (jstruct) + delimiter + text;
+				//return (s);
+				//}
 			var options = {
-				username: theRequest.params.username,
-				repository: theRequest.params.repo,
+				domain: theRequest.params.domain,
+				//username: theRequest.params.username,
+				//repository: theRequest.params.repo,
 				path: theRequest.params.path,
 				accessToken: accessToken,
 				data: yamlIze (theRequest.params.text), //this is the diff
@@ -595,10 +705,9 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/getpost":
-			var username = theRequest.params.username;
-			var repository = theRequest.params.repo;
+			var domain = theRequest.params.domain;
 			var path = theRequest.params.path;
-			getContentFromGitHub (username, repository, path, function (err, content) {
+			getContentFromGitHub (domain, path, function (err, content) {
 				if (err) {
 					returnError (err);
 					}
@@ -615,6 +724,9 @@ function handleHttpRequest (theRequest) {
 		}
 	}
 function handleExternalRequest (options, callback) { //9/28/18 by DW -- an external caller is making a request
+	//Changes
+		//9/28/18; 11:24:09 AM by DW
+			//Created.
 	var theRequest = {
 		lowerhost: options.host.toLowerCase (),
 		lowerpath: options.path.toLowerCase (),
@@ -627,6 +739,9 @@ function handleExternalRequest (options, callback) { //9/28/18 by DW -- an exter
 	handleHttpRequest (theRequest);
 	}
 function init (userConfig, flHandleHttpHere) {
+	//Changes
+		//9/28/18; 11:30:36 AM by DW
+			//New optional param, flHandleHttpHere. If true, we set up the HTTP server, otherwise we just accept the config params. 
 	if (flHandleHttpHere === undefined) {
 		flHandleHttpHere = true;
 		}

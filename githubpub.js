@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.36";   
+const myProductName = "githubpub", myVersion = "0.5.37";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -31,7 +31,6 @@ exports.cacheDump = cacheDump;
 exports.getCacheSize = getCacheSize;
 exports.getFromGitHub = getFromGitHub;
 exports.getContentFromGitHub = getContentFromGitHub; //10/2/18 by DW
-//exports.getRepositoryDomain = getRepositoryDomain;
 exports.saveToGitHub = saveToGitHub; //10/2/18 by DW
 exports.getUserInfo = getUserInfo; //10/5/18 by DW
 
@@ -51,10 +50,10 @@ var config = {
 	flDebugMessagesFromGitHub: false,
 	flDebugObjectsFromGitHub: false,
 	apiUrl: "https://api.github.com/repos/",
-	//urlMarkdownTemplate: "http://fargo.io/code/shared/githubpub/template/template.txt", 
 	flLogToConsole: true,
 	indexFileName: "index",
 	userAgent: myProductName + " v" + myVersion,
+	templatePath: "template/template.txt",
 	defaultFilesLocation: {
 		username: "scripting",
 		repository: "githubpub",
@@ -65,6 +64,8 @@ var config = {
 var cache = {
 	};
 
+const yamlDelimiterString = "---\n";
+
 function getFileExtension (url) {
 	return (utils.stringLastField (url, ".").toLowerCase ());
 	}
@@ -74,18 +75,16 @@ function urlToMime (url) {
 	}
 function yamlIze (jsontext) {
 	var jstruct = JSON.parse (jsontext);
-	const delimiter = "---\n";
 	var text = jstruct.text;
 	delete jstruct.text;
-	var s = delimiter + yaml.safeDump (jstruct) + delimiter + text;
+	var s = yamlDelimiterString + yaml.safeDump (jstruct) + yamlDelimiterString + text;
 	return (s);
 	}
 function deYamlIze (data) { 
-	const delimiter = "---\n";
 	var filetext = data.toString ();
-	if (utils.beginsWith (filetext, delimiter)) {
-		var frontmatter = utils.stringNthField (filetext, delimiter, 2);
-		var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * delimiter.length));
+	if (utils.beginsWith (filetext, yamlDelimiterString)) {
+		var frontmatter = utils.stringNthField (filetext, yamlDelimiterString, 2);
+		var remainingtext = utils.stringDelete (filetext, 1, frontmatter.length + (2 * yamlDelimiterString.length));
 		if (frontmatter.length > 0) {
 			var jstruct = yaml.safeLoad (frontmatter);
 			jstruct.text = remainingtext;
@@ -109,17 +108,6 @@ function httpRequest (url, callback) {
 		};
 	request (options, callback);
 	}
-//function getRepositoryDomain (username, repository) { //9/30/18 by DW
-	//username = utils.stringLower (username);
-	//repository = utils.stringLower (repository);
-	//for (var domain in config.domains) {
-		//var item = config.domains [domain];
-		//if ((utils.stringLower (item.username) == username) && (utils.stringLower (item.repository) == repository)) {
-			//return (domain);
-			//}
-		//}
-	//return (undefined);
-	//}
 function cacheDump (callback) {
 	if (callback === undefined) {
 		callback = console.log;
@@ -163,7 +151,6 @@ function cacheRef (username, repository, path) {
 				var item = cache [username] [repository] [path];
 				item.ct++;
 				item.whenRef = now;
-				//console.log ("cacheRef: serving from cache, username == " + username + ", repository == " + repository + ", path == " + path);
 				return (item.data);
 				}
 			}
@@ -171,14 +158,9 @@ function cacheRef (username, repository, path) {
 	return (undefined);
 	}
 function cacheDelete (username, repository, path) {
-	//
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
-	//
-	//console.log ("cacheDelete --- here's a dump of the cache.")
-	//cacheDump ();
-	//
 	if (cache [username] !== undefined) {
 		if (cache [username] [repository] !== undefined) {
 			if (cache [username] [repository] [path] !== undefined) {
@@ -200,7 +182,6 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 		}
 	var data = cacheRef (username, repository, path);
 	if (data !== undefined) {
-		//console.log ("getFromGitHub: serving from cache, path == " + path);
 		callback (undefined, data);
 		}
 	else {
@@ -218,7 +199,6 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 					callback ({message: "The file \"" + path + "\" was not found."});
 					}
 				else {
-					//console.log ("getFromGitHub: response.headers == " + utils.jsonStringify (response.headers))
 					if (response.headers ["x-ratelimit-remaining"] == 0) {
 						var theLimit = response.headers ["x-ratelimit-limit"];
 						callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
@@ -226,7 +206,6 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 					else {
 						try {
 							var jstruct = JSON.parse (jsontext);
-							//console.log ("getFromGitHub: path == " + path + ", " + utils.secondsSince (whenstart) + " secs.");
 							addToCache (username, repository, path, jstruct);
 							if (config.flDebugObjectsFromGitHub) {
 								var f = "debug/objects/" + Number (new Date ()) + ".json";
@@ -271,7 +250,7 @@ function getContentFromGitHub (domain, path, callback) { //calls back with the c
 			});
 		}
 	}
-function getUserObject (host, path, callback) {
+function getUserObject (host, path, callback) { //get object from user repo, if not found, look in the default location for the system
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
@@ -292,7 +271,7 @@ function getUserObject (host, path, callback) {
 		}
 	}
 function getTemplate (host, callback) {
-	getUserObject (host, "template/template.txt", function (err, jstruct) {
+	getUserObject (host, config.templatePath, function (err, jstruct) {
 		if (err) {
 			console.log ("getTemplate: err.message == " + err.message);
 			callback (err);
@@ -328,7 +307,7 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 			if (jstruct !== undefined) {
 				bodyStruct.sha = jstruct.sha;
 				}
-			var url = "https://api.github.com/repos/" + dstruct.username + "/" + dstruct.repository + "/contents/" + actualpath;
+			var url = config.apiUrl + dstruct.username + "/" + dstruct.repository + "/contents/" + actualpath;
 			var theRequest = {
 				method: "PUT",
 				url: url,
@@ -339,7 +318,6 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 					"Content-Type": options.type
 					}
 				};
-			//console.log ("saveToGitHub: theRequest == " + utils.jsonStringify (theRequest));
 			request (theRequest, function (err, response, body) { 
 				if (err) {
 					console.log ("saveToGitHub: err.message == " + err.message);
@@ -422,8 +400,6 @@ function handleHttpRequest (theRequest) {
 		theRequest.httpReturn (404, "text/plain", message);
 		}
 	function getFileContent (jstruct, callback) {
-		//console.log ("getFileContent: jstruct == " + utils.jsonStringify (jstruct));
-		//console.log ("getFileContent: jstruct.type == " + jstruct.type);
 		if (jstruct.message !== undefined) { //9/26/18 by DW -- I think this means it was an error, haven't found ref in GH docs
 			notFound (jstruct.message);
 			}
@@ -486,9 +462,6 @@ function handleHttpRequest (theRequest) {
 							case "md":
 								serveMarkdown ();
 								break;
-							//case "txt":
-								//theRequest.httpReturn (200, "text/plain", fileContent);
-								//break;
 							default:
 								theRequest.httpReturn (200, urlToMime (path), fileContent);
 								break;
@@ -511,7 +484,6 @@ function handleHttpRequest (theRequest) {
 		var repo = jstruct.repository.name;
 		var path = jstruct.commits [0].modified [0];
 		if (path !== undefined) { //something was modified, might be in the cache
-			//console.log ("\nhandleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path + "\n");
 			cacheDelete (owner, repo, path);
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
@@ -519,7 +491,6 @@ function handleHttpRequest (theRequest) {
 	function handleEditorEvent (domain, path) {
 		var dstruct = config.domains [domain.toLowerCase ()]
 		if (dstruct !== undefined) {
-			//console.log ("\nhandleEditorEvent: domain == " + domain + ", path == " + path + "\n");
 			cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
@@ -531,14 +502,9 @@ function handleHttpRequest (theRequest) {
 			code: theRequest.params.code
 			};
 		var apiUrl = "https://github.com/login/oauth/access_token?" + utils.buildParamList (params);
-		//apiUrl += "?client_id=" + config.clientId;
-		//apiUrl += "&client_secret=" + config.clientSecret;
-		//apiUrl += "&code=" + theRequest.params.code;
 		var githubRequest = {
 			method: "POST",
 			url: apiUrl
-			//followRedirect: true, 
-			//headers: {Accept: "application/json"}
 			};
 		console.log ("handleOauthCallback: githubRequest === " + utils.jsonStringify (githubRequest));
 		request (githubRequest, function (err, response, body) {
@@ -547,7 +513,6 @@ function handleHttpRequest (theRequest) {
 				theRequest.httpReturn (500, "text/plain", err.message);
 				}
 			else {
-				//console.log (body);
 				var postbody = qs.parse (body);
 				var httpResponse = theRequest.sysResponse;
 				var urlRedirect = config.urlEditorApp + "?access_token=" + postbody.access_token;
@@ -563,32 +528,6 @@ function handleHttpRequest (theRequest) {
 			return;
 		case "/oauthcallback":
 			handleOauthCallback ();
-			//var apiUrl = "https://github.com/login/oauth/access_token";
-			//apiUrl += "?client_id=" + config.clientId;
-			//apiUrl += "&client_secret=" + config.clientSecret;
-			//apiUrl += "&code=" + theRequest.params.code;g
-			//var githubRequest = {
-				//method: "POST",
-				//url: apiUrl
-				//followRedirect: true, 
-				//headers: {Accept: "application/json"}
-				//};
-			//console.log ("/oauthcallback: githubRequest == " + utils.jsonStringify (githubRequest));
-			//request (githubRequest, function (err, response, body) {
-				//if (err) {
-					//console.log (err.message);
-					//theRequest.httpReturn (500, "text/plain", err.message);
-					//}
-				//else {
-					//console.log (body);
-					//var postbody = qs.parse (body);
-					//var httpResponse = theRequest.sysResponse;
-					//var urlRedirect = config.urlEnglishApp + "?access_token=" + postbody.access_token;
-					//httpResponse.writeHead (302, {"location": urlRedirect});
-					//httpResponse.end ("Redirect to this URL: " + urlRedirect);
-					//theRequest.httpReturn (200, "text/plain", "We got the callback bubba.");
-					//}
-				//});
 			break;
 		case "/eventfromgithub": //webhook call
 			handleGitHubEvent (theRequest.postBody);
@@ -608,8 +547,6 @@ function handleHttpRequest (theRequest) {
 		case "/get":
 			var domain = theRequest.params.domain;
 			var path = theRequest.params.path;
-			//var username = theRequest.params.username;
-			//var repository = theRequest.params.repo;
 			getContentFromGitHub (domain, path, function (err, content) {
 				if (err) {
 					returnError (err);
@@ -622,8 +559,6 @@ function handleHttpRequest (theRequest) {
 		case "/save":
 			var options = {
 				domain: theRequest.params.domain,
-				//username: theRequest.params.username,
-				//repository: theRequest.params.repo,
 				path: theRequest.params.path,
 				accessToken: accessToken,
 				data: theRequest.params.text,
@@ -645,18 +580,8 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/savepost":
-			//function yamlIze (jsontext) {
-				//var jstruct = JSON.parse (jsontext);
-				//const delimiter = "---\n";
-				//var text = jstruct.text;
-				//delete jstruct.text;
-				//var s = delimiter + yaml.safeDump (jstruct) + delimiter + text;
-				//return (s);
-				//}
 			var options = {
 				domain: theRequest.params.domain,
-				//username: theRequest.params.username,
-				//repository: theRequest.params.repo,
 				path: theRequest.params.path,
 				accessToken: accessToken,
 				data: yamlIze (theRequest.params.text), //this is the diff
@@ -697,9 +622,6 @@ function handleHttpRequest (theRequest) {
 		}
 	}
 function handleExternalRequest (options, callback) { //9/28/18 by DW -- an external caller is making a request
-	//Changes
-		//9/28/18; 11:24:09 AM by DW
-			//Created.
 	var theRequest = {
 		lowerhost: options.host.toLowerCase (),
 		lowerpath: options.path.toLowerCase (),
@@ -712,9 +634,6 @@ function handleExternalRequest (options, callback) { //9/28/18 by DW -- an exter
 	handleHttpRequest (theRequest);
 	}
 function init (userConfig, flHandleHttpHere) {
-	//Changes
-		//9/28/18; 11:30:36 AM by DW
-			//New optional param, flHandleHttpHere. If true, we set up the HTTP server, otherwise we just accept the config params. 
 	if (flHandleHttpHere === undefined) {
 		flHandleHttpHere = true;
 		}

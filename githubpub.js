@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.37";   
+const myProductName = "githubpub", myVersion = "0.5.41";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -283,57 +283,66 @@ function getTemplate (host, callback) {
 		});
 	}
 function saveToGitHub (options, callback) { //10/2/18 by DW
-	var lowerdomain = options.domain.toLowerCase ();
-	var dstruct = config.domains [lowerdomain]
-	if (dstruct === undefined) {
-		var s = "The domain \"" + lowerdomain + "\" is not defined.";
-		console.log ("saveToGitHub: s == " + s);
-		callback ({message: s});
-		}
-	else {
+	if (options.domain !== undefined) {
+		var lowerdomain = options.domain.toLowerCase ();
+		var dstruct = config.domains [lowerdomain]
+		if (dstruct === undefined) {
+			var s = "The domain \"" + lowerdomain + "\" is not defined.";
+			console.log ("saveToGitHub: s == " + s);
+			callback ({message: s});
+			return;
+			}
+		options.username = dstruct.username;
+		options.repository = dstruct.repository;
 		if (!utils.beginsWith (options.path, "/")) {
 			options.path = "/" + options.path;
 			}
-		var actualpath = dstruct.path + options.path;
-		getFromGitHub (dstruct.username, dstruct.repository, actualpath, function (err, jstruct) {
-			var bodyStruct = { 
-				message: options.message,
-				committer: {
-					name: options.committer.name,
-					email: options.committer.email
-					},
-				content: new Buffer (options.data).toString ("base64")
-				};
-			if (jstruct !== undefined) {
-				bodyStruct.sha = jstruct.sha;
-				}
-			var url = config.apiUrl + dstruct.username + "/" + dstruct.repository + "/contents/" + actualpath;
-			var theRequest = {
-				method: "PUT",
-				url: url,
-				body: JSON.stringify (bodyStruct),
-				headers: {
-					"User-Agent": options.userAgent,
-					"Authorization": "token " + options.accessToken,
-					"Content-Type": options.type
-					}
-				};
-			request (theRequest, function (err, response, body) { 
-				if (err) {
-					console.log ("saveToGitHub: err.message == " + err.message);
-					callback (err);
-					}
-				else {
-					var jstruct = {
-						domain: lowerdomain,
-						urlHtml: "http://" + lowerdomain + options.path,
-						urlGitHub: "https://github.com/" + dstruct.username + "/" + dstruct.repository + "/blob/master/" + actualpath
-						};
-					callback (undefined, jstruct);
-					}
-				});
-			});
+		options.origpath = options.path;
+		options.path = dstruct.path + options.path;
+		options.lowerdomain = lowerdomain;
 		}
+	cacheDelete (options.username, options.repository, options.path); //make sure we don't use the cached version, if any
+	getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {
+		var bodyStruct = { 
+			message: options.message,
+			committer: {
+				name: options.committer.name,
+				email: options.committer.email
+				},
+			content: new Buffer (options.data).toString ("base64")
+			};
+		if (jstruct !== undefined) {
+			bodyStruct.sha = jstruct.sha;
+			}
+		var url = config.apiUrl + options.username + "/" + options.repository + "/contents/" + options.path;
+		var theRequest = {
+			method: "PUT",
+			url: url,
+			body: JSON.stringify (bodyStruct),
+			headers: {
+				"User-Agent": options.userAgent,
+				"Authorization": "token " + options.accessToken,
+				"Content-Type": options.type
+				}
+			};
+		request (theRequest, function (err, response, body) { 
+			if (err) {
+				console.log ("saveToGitHub: err.message == " + err.message);
+				callback (err);
+				}
+			else {
+				console.log ("saveToGitHub: response == " + utils.jsonStringify (response));
+				var jstruct = {
+					urlGitHub: "https://github.com/" + options.username + "/" + options.repository + "/blob/master/" + options.path
+					};
+				if (options.domain !== undefined) {
+					jstruct.domain = options.lowerdomain; 
+					jstruct.urlHtml = "http://" + options.lowerdomain + options.origpath;
+					}
+				callback (undefined, jstruct);
+				}
+			});
+		});
 	}
 function renderThroughTemplate (pagetable, callback) {
 	getTemplate (pagetable.host, function (err, templatetext) { 
@@ -388,8 +397,18 @@ function getUserInfo (accessToken, callback) {
 		callback (myResponse);
 		});
 	}
+
+function getContent (jstruct) {
+	if (jstruct.encoding == "base64") {
+		return (new Buffer (jstruct.content, "base64")); 
+		}
+	else {
+		return (jstruct.content);
+		}
+	}
+
 function handleHttpRequest (theRequest) {
-	var accessToken = theRequest.params.accessToken, now = new Date ();
+	var accessToken = theRequest.params.accessToken, params = theRequest.params, now = new Date ();
 	function returnData (jstruct) {
 		theRequest.httpReturn (200, "application/json", utils.jsonStringify (jstruct));
 		}
@@ -616,6 +635,42 @@ function handleHttpRequest (theRequest) {
 					}
 				});
 			break;
+		
+		case "/repoget": //instead of a domain, take a username/repository to identify the location -- 10/10/18 by DW
+			getFromGitHub (params.username, params.repository, params.path, function (err, jstruct) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					theRequest.httpReturn (200, urlToMime (params.path), getContent (jstruct));
+					}
+				});
+			break;
+		case "/reposave":
+			var options = {
+				username: theRequest.params.username,
+				repository: theRequest.params.repo,
+				path: theRequest.params.path,
+				accessToken: accessToken,
+				data: theRequest.params.text,
+				type: "text/plain",
+				committer: {
+					name: theRequest.params.name,
+					email: theRequest.params.email
+					},
+				message: theRequest.params.msg,
+				userAgent: config.userAgent
+				};
+			saveToGitHub (options, function (err, result) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					returnData (result);
+					}
+				});
+			break;
+		
 		default:
 			serveObject (theRequest.lowerhost, theRequest.path);
 			break;

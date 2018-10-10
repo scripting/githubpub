@@ -1,10 +1,10 @@
-### The API
+## The API
 
 It's a simple REST API that allows you to access a blog repostory at two levels. You can access any item in the repo, read and write; or blog posts. 
 
 The difference is that blog posts have a common structure, are returned 
 
-#### domains
+### domains
 
 The server is configured around the concept of a domain. 
 
@@ -22,7 +22,7 @@ When a request comes into the GHP server for a given domain, it looks for the in
 
 And a single GHP server can serve multiple websites. 
 
-#### englishblog1.scripting.com
+### englishblog1.scripting.com
 
 In all the examples I'll use this domain. The three properties for the domain are:
 
@@ -34,7 +34,7 @@ In all the examples I'll use this domain. The three properties for the domain ar
 
 <a href="https://github.com/scripting/myEnglishBlog/tree/master/blog">Here's</a> the actual location. 
 
-#### get
+### get
 
 Here's an example:
 

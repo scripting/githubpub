@@ -42,7 +42,7 @@ In all the examples I'll use this domain. The three properties:
 
 Here's an example:
 
-<code>http://english.scripting.com/getpost?domain=englishblog1.scripting.com&path=data.json</code>
+<code>http://english.scripting.com/get?domain=englishblog1.scripting.com&path=data.json</code>
 
 
 

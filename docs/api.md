@@ -50,3 +50,9 @@ Converts from YAML to JSON.
 
 <code>http://english.scripting.com/getpost?domain=englishblog1.scripting.com&path=/posts/2018/10/10/132303.md</code>
 
+### repoget
+
+Get the object without using the domain.
+
+<code>http://english.scripting.com/repoget?username=scripting&repository=myEnglishBlog&path=/blog/posts/2018/10/10/132303.md</code>
+

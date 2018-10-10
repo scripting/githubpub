@@ -1,8 +1,10 @@
 ## githubpub's API
 
-It's a simple REST API that allows you to access a blog repostory at two levels. You can access any item in the repo, read and write; or blog posts. 
+It's a simple REST API that allows you to access a blog repostory at two levels. 
 
-The difference is that blog posts have a common structure, are returned 
+1. Just data.
+
+2. Markdown files with YAML-encoded metadata, returned as a JSON struct. 
 
 ### domains
 

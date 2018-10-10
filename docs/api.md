@@ -1,4 +1,4 @@
-## The API
+## githubpub's API
 
 It's a simple REST API that allows you to access a blog repostory at two levels. You can access any item in the repo, read and write; or blog posts. 
 

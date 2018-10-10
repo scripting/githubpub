@@ -24,9 +24,11 @@ When a request comes into the GHP server for a given domain, it looks for the in
 
 And a single GHP server can serve multiple websites. 
 
+There is also a way to get around the domain and access an item directly, using username, repository and path.
+
 ### englishblog1.scripting.com
 
-In all the examples I'll use this domain. The three properties for the domain are:
+In all the examples I'll use this domain. The three properties:
 
 1. scripting
 
@@ -40,7 +42,7 @@ In all the examples I'll use this domain. The three properties for the domain ar
 
 Here's an example:
 
-<code></code>
+<code>http://english.scripting.com/getpost?domain=englishblog1.scripting.com&path=data.json</code>
 
 
 

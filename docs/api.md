@@ -40,9 +40,9 @@ In all the examples I'll use this domain. The three properties:
 
 ### get
 
-Here's an example:
-
 <code>http://english.scripting.com/get?domain=englishblog1.scripting.com&path=data.json</code>
 
+### getpost
 
+<code>http://english.scripting.com/getpost?domain=englishblog1.scripting.com&path=/posts/2018/10/10/132303.md</code>
 

@@ -40,9 +40,13 @@ In all the examples I'll use this domain. The three properties:
 
 ### get
 
+Returns the data in the object without interpretation.
+
 <code>http://english.scripting.com/get?domain=englishblog1.scripting.com&path=/posts/2018/10/10/132303.md</code>
 
 ### getpost
+
+Converts from YAML to JSON.
 
 <code>http://english.scripting.com/getpost?domain=englishblog1.scripting.com&path=/posts/2018/10/10/132303.md</code>
 

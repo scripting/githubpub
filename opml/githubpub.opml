@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.41&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.43&quot;;   "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -57,6 +57,7 @@
 		<outline text="const yaml = require (&quot;js-yaml&quot;);"></outline>
 		<outline text="const dateFormat = require (&quot;dateformat&quot;);"></outline>
 		<outline text="const qs = require (&quot;querystring&quot;);"></outline>
+		<outline text="const rss = require (&quot;daverss&quot;);"></outline>
 		<outline text=""></outline>
 		<outline text="var config = {">
 			<outline text="port: 80,"></outline>
@@ -70,6 +71,10 @@
 			<outline text="indexFileName: &quot;index&quot;,"></outline>
 			<outline text="userAgent: myProductName + &quot; v&quot; + myVersion,"></outline>
 			<outline text="templatePath: &quot;template/template.txt&quot;,"></outline>
+			<outline text="dataPath: &quot;data.json&quot;, //10/11/18 by DW"></outline>
+			<outline text="rssPath: &quot;rss.xml&quot;,  //10/11/18 by DW"></outline>
+			<outline text="defaultNameCommitter: &quot;Bull Mancuso&quot;,"></outline>
+			<outline text="defaultEmailCommitter: &quot;bull@mancuso.com&quot;,"></outline>
 			<outline text="defaultFilesLocation: {">
 				<outline text="username: &quot;scripting&quot;,"></outline>
 				<outline text="repository: &quot;githubpub&quot;,"></outline>
@@ -396,6 +401,36 @@
 				</outline>
 			<outline text="}"></outline>
 			</outline>
+		<outline text="function renderThroughTemplate (pagetable, callback) {">
+			<outline text="getTemplate (pagetable.host, function (err, templatetext) { ">
+				<outline text="if (err) {">
+					<outline text="callback (err);"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="else {">
+					<outline text="function setPagePropertiesJson () {">
+						<outline text="var myprops = new Object ();"></outline>
+						<outline text="utils.copyScalars (pagetable, myprops);"></outline>
+						<outline text="delete myprops.bodytext;"></outline>
+						<outline text="pagetable.pageproperties = utils.jsonStringify (myprops);"></outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="if (pagetable.title === undefined) {">
+						<outline text="pagetable.title = utils.stringLastField (pagetable.path, &quot;/&quot;);"></outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="pagetable.createdstring = longTimeFormat (pagetable.created);"></outline>
+					<outline text="pagetable.modifiedstring = longTimeFormat (pagetable.modified);"></outline>
+					<outline text="pagetable.now = new Date ();"></outline>
+					<outline text="setPagePropertiesJson ();"></outline>
+					<outline text="var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, &quot;[%&quot;, &quot;%]&quot;);"></outline>
+					<outline text="callback (undefined, htmltext);"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
 		<outline text="function saveToGitHub (options, callback) { //10/2/18 by DW">
 			<outline isComment="true" text="Changes">
 				<outline text="10/10/18; 10:26:05 AM by DW">
@@ -425,6 +460,18 @@
 				</outline>
 			<outline text="cacheDelete (options.username, options.repository, options.path); //make sure we don't use the cached version, if any"></outline>
 			<outline text="getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {">
+				<outline text="if (options.committer === undefined) {">
+					<outline text="options.committer = {">
+						<outline text="name: config.defaultNameCommitter,"></outline>
+						<outline text="email: config.defaultEmailCommitter"></outline>
+						<outline text="};"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="if (options.message === undefined) {">
+					<outline text="options.message = &quot;.&quot;;"></outline>
+					<outline text="}"></outline>
+					</outline>
 				<outline text="var bodyStruct = { ">
 					<outline text="message: options.message,"></outline>
 					<outline text="committer: {">
@@ -480,34 +527,121 @@
 				</outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text="function renderThroughTemplate (pagetable, callback) {">
-			<outline text="getTemplate (pagetable.host, function (err, templatetext) { ">
+		<outline text="function saveGitHubFile (accessToken, host, path, data, callback) {">
+			<outline text="var options = {">
+				<outline text="domain: host,"></outline>
+				<outline text="path: path,"></outline>
+				<outline text="accessToken: accessToken,"></outline>
+				<outline text="data: data,"></outline>
+				<outline text="type: urlToMime (path),"></outline>
+				<outline isComment="true" text="committer: {">
+					<outline text="name: theRequest.params.name,"></outline>
+					<outline text="email: theRequest.params.email"></outline>
+					<outline text="},"></outline>
+					</outline>
+				<outline isComment="true" text="message: theRequest.params.msg,"></outline>
+				<outline text="userAgent: config.userAgent"></outline>
+				<outline text="};"></outline>
+				</outline>
+			<outline text="saveToGitHub (options, callback);"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function getFlatPostList (blogData) {">
+			<outline text="var theList = [];"></outline>
+			<outline text="for (var i = 0; i &lt; blogData.posts.subs.length; i++) {">
+				<outline text="var year = blogData.posts.subs [i];"></outline>
+				<outline text="for (var j = 0; j &lt; year.subs.length; j++) {">
+					<outline text="var month = year.subs [j];"></outline>
+					<outline text="for (var k = 0; k &lt; month.subs.length; k++) {">
+						<outline text="var day = month.subs [k];"></outline>
+						<outline text="for (var l = 0; l &lt; day.subs.length; l++) {">
+							<outline text="var post = day.subs [l];"></outline>
+							<outline isComment="true" text="console.log (post.title);"></outline>
+							<outline text="theList.push (post);"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="return (theList);"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function buildBlogRss (accessToken, host, callback) {">
+			<outline text="getUserObject (host, config.dataPath, function (err, jstruct) {">
 				<outline text="if (err) {">
+					<outline text="console.log (&quot;buildBlogRss: err.message == &quot; + err.message);"></outline>
 					<outline text="callback (err);"></outline>
 					<outline text="}"></outline>
 					</outline>
 				<outline text="else {">
-					<outline text="function setPagePropertiesJson () {">
-						<outline text="var myprops = new Object ();"></outline>
-						<outline text="utils.copyScalars (pagetable, myprops);"></outline>
-						<outline text="delete myprops.bodytext;"></outline>
-						<outline text="pagetable.pageproperties = utils.jsonStringify (myprops);"></outline>
+					<outline text="var jsontext = getContent (jstruct);"></outline>
+					<outline text="var blogData = JSON.parse (jsontext);"></outline>
+					<outline isComment="true" text="console.log (&quot;buildBlogRss: jstruct == &quot; + utils.jsonStringify (blogData));"></outline>
+					<outline text="var headElements = {">
+						<outline text="title: blogData.title,"></outline>
+						<outline text="link: undefined,"></outline>
+						<outline text="description: blogData.description,"></outline>
+						<outline text="language: blogData.language,"></outline>
+						<outline text="generator: myProductName + &quot; v&quot; + myVersion,"></outline>
+						<outline text="docs: &quot;http://cyber.law.harvard.edu/rss/rss.html&quot;,"></outline>
+						<outline isComment="true" text="twitterScreenName: localStorage.twScreenName,"></outline>
+						<outline text="maxFeedItems: blogData.maxFeedItems,"></outline>
+						<outline text="appDomain: host,"></outline>
+						<outline text=""></outline>
+						<outline text="flRssCloudEnabled:  true,"></outline>
+						<outline text="rssCloudDomain:  blogData.cloud.domain,"></outline>
+						<outline text="rssCloudPort:  blogData.cloud.port,"></outline>
+						<outline text="rssCloudPath: blogData.cloud.path,"></outline>
+						<outline text="rssCloudRegisterProcedure:  &quot;&quot;,"></outline>
+						<outline text="rssCloudProtocol:  blogData.cloud.protocol"></outline>
 						<outline text="}"></outline>
 						</outline>
-					<outline text="if (pagetable.title === undefined) {">
-						<outline text="pagetable.title = utils.stringLastField (pagetable.path, &quot;/&quot;);"></outline>
+					<outline text="var flatPostList = getFlatPostList (blogData), rssHistory = new Array ();"></outline>
+					<outline text="for (var i = 0; i &lt; flatPostList.length; i++) {">
+						<outline text="var item = flatPostList [i];"></outline>
+						<outline text="if (item.urlHtml) {">
+							<outline text="var obj = {">
+								<outline text="title: item.title,"></outline>
+								<outline text="description: item.description,"></outline>
+								<outline text="when: item.created,"></outline>
+								<outline text="link: item.urlHtml,"></outline>
+								<outline text="guid: {">
+									<outline text="flPermalink: true,"></outline>
+									<outline text="value: item.urlHtml"></outline>
+									<outline text="}"></outline>
+									</outline>
+								<outline text="};"></outline>
+								</outline>
+							<outline text="rssHistory.push (obj);"></outline>
+							<outline text="}"></outline>
+							</outline>
 						<outline text="}"></outline>
 						</outline>
-					<outline text="pagetable.createdstring = longTimeFormat (pagetable.created);"></outline>
-					<outline text="pagetable.modifiedstring = longTimeFormat (pagetable.modified);"></outline>
-					<outline text="pagetable.now = new Date ();"></outline>
-					<outline text="setPagePropertiesJson ();"></outline>
-					<outline text="var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, &quot;[%&quot;, &quot;%]&quot;);"></outline>
-					<outline text="callback (undefined, htmltext);"></outline>
+					<outline text="var xmltext = rss.buildRssFeed (headElements, rssHistory);"></outline>
+					<outline isComment="true" text="console.log (&quot;buildBlogRss: xmltext == &quot; + xmltext);"></outline>
+					<outline text="saveGitHubFile (accessToken, host, config.rssPath, xmltext, function (err, jstruct) {">
+						<outline text="if (!err) {">
+							<outline text="console.log (&quot;buildBlogRss: jstruct == &quot; + utils.jsonStringify (jstruct));"></outline>
+							<outline text="var urlServer = &quot;http://&quot; + blogData.cloud.domain + &quot;:&quot; + blogData.cloud.port + blogData.cloud.path;"></outline>
+							<outline text="rss.cloudPing (urlServer, jstruct.urlHtml);"></outline>
+							<outline text="if (callback !== undefined) {">
+								<outline text="callback (undefined, jstruct);"></outline>
+								<outline text="}"></outline>
+								</outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="});"></outline>
+						</outline>
 					<outline text="}"></outline>
 					</outline>
 				<outline text="});"></outline>
 				</outline>
+			<outline isComment="true" text=""></outline>
+			<outline isComment="true" text=""></outline>
+			<outline isComment="true" text=""></outline>
 			<outline text="}"></outline>
 			</outline>
 		<outline text="function getUserInfo (accessToken, callback) {">
@@ -548,7 +682,6 @@
 				</outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text=""></outline>
 		<outline text="function getContent (jstruct) {">
 			<outline text="if (jstruct.encoding == &quot;base64&quot;) {">
 				<outline text="return (new Buffer (jstruct.content, &quot;base64&quot;)); "></outline>
@@ -560,7 +693,6 @@
 				</outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text=""></outline>
 		<outline text="function handleHttpRequest (theRequest) {">
 			<outline text="var accessToken = theRequest.params.accessToken, params = theRequest.params, now = new Date ();"></outline>
 			<outline text="function returnData (jstruct) {">
@@ -967,6 +1099,21 @@
 							</outline>
 						<outline text="else {">
 							<outline text="returnData (result);"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="});"></outline>
+						</outline>
+					<outline text="break;"></outline>
+					</outline>
+				<outline text=""></outline>
+				<outline text="case &quot;/buildrss&quot;: ">
+					<outline text="buildBlogRss (accessToken, params.domain, function (err, data) {">
+						<outline text="if (err) {">
+							<outline text="returnError (err);"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="else {">
+							<outline text="returnData (data);"></outline>
 							<outline text="}"></outline>
 							</outline>
 						<outline text="});"></outline>

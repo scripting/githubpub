@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.41";   
+const myProductName = "githubpub", myVersion = "0.5.43";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -42,6 +42,7 @@ const marked = require ("marked");
 const yaml = require ("js-yaml");
 const dateFormat = require ("dateformat");
 const qs = require ("querystring");
+const rss = require ("daverss");
 
 var config = {
 	port: 80,
@@ -54,6 +55,10 @@ var config = {
 	indexFileName: "index",
 	userAgent: myProductName + " v" + myVersion,
 	templatePath: "template/template.txt",
+	dataPath: "data.json", //10/11/18 by DW
+	rssPath: "rss.xml",  //10/11/18 by DW
+	defaultNameCommitter: "Bull Mancuso",
+	defaultEmailCommitter: "bull@mancuso.com",
 	defaultFilesLocation: {
 		username: "scripting",
 		repository: "githubpub",
@@ -282,6 +287,30 @@ function getTemplate (host, callback) {
 			}
 		});
 	}
+function renderThroughTemplate (pagetable, callback) {
+	getTemplate (pagetable.host, function (err, templatetext) { 
+		if (err) {
+			callback (err);
+			}
+		else {
+			function setPagePropertiesJson () {
+				var myprops = new Object ();
+				utils.copyScalars (pagetable, myprops);
+				delete myprops.bodytext;
+				pagetable.pageproperties = utils.jsonStringify (myprops);
+				}
+			if (pagetable.title === undefined) {
+				pagetable.title = utils.stringLastField (pagetable.path, "/");
+				}
+			pagetable.createdstring = longTimeFormat (pagetable.created);
+			pagetable.modifiedstring = longTimeFormat (pagetable.modified);
+			pagetable.now = new Date ();
+			setPagePropertiesJson ();
+			var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
+			callback (undefined, htmltext);
+			}
+		});
+	}
 function saveToGitHub (options, callback) { //10/2/18 by DW
 	if (options.domain !== undefined) {
 		var lowerdomain = options.domain.toLowerCase ();
@@ -303,6 +332,15 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 		}
 	cacheDelete (options.username, options.repository, options.path); //make sure we don't use the cached version, if any
 	getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {
+		if (options.committer === undefined) {
+			options.committer = {
+				name: config.defaultNameCommitter,
+				email: config.defaultEmailCommitter
+				};
+			}
+		if (options.message === undefined) {
+			options.message = ".";
+			}
 		var bodyStruct = { 
 			message: options.message,
 			committer: {
@@ -344,27 +382,88 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 			});
 		});
 	}
-function renderThroughTemplate (pagetable, callback) {
-	getTemplate (pagetable.host, function (err, templatetext) { 
+function saveGitHubFile (accessToken, host, path, data, callback) {
+	var options = {
+		domain: host,
+		path: path,
+		accessToken: accessToken,
+		data: data,
+		type: urlToMime (path),
+		userAgent: config.userAgent
+		};
+	saveToGitHub (options, callback);
+	}
+function getFlatPostList (blogData) {
+	var theList = [];
+	for (var i = 0; i < blogData.posts.subs.length; i++) {
+		var year = blogData.posts.subs [i];
+		for (var j = 0; j < year.subs.length; j++) {
+			var month = year.subs [j];
+			for (var k = 0; k < month.subs.length; k++) {
+				var day = month.subs [k];
+				for (var l = 0; l < day.subs.length; l++) {
+					var post = day.subs [l];
+					theList.push (post);
+					}
+				}
+			}
+		return (theList);
+		}
+	}
+function buildBlogRss (accessToken, host, callback) {
+	getUserObject (host, config.dataPath, function (err, jstruct) {
 		if (err) {
+			console.log ("buildBlogRss: err.message == " + err.message);
 			callback (err);
 			}
 		else {
-			function setPagePropertiesJson () {
-				var myprops = new Object ();
-				utils.copyScalars (pagetable, myprops);
-				delete myprops.bodytext;
-				pagetable.pageproperties = utils.jsonStringify (myprops);
+			var jsontext = getContent (jstruct);
+			var blogData = JSON.parse (jsontext);
+			var headElements = {
+				title: blogData.title,
+				link: undefined,
+				description: blogData.description,
+				language: blogData.language,
+				generator: myProductName + " v" + myVersion,
+				docs: "http://cyber.law.harvard.edu/rss/rss.html",
+				maxFeedItems: blogData.maxFeedItems,
+				appDomain: host,
+				
+				flRssCloudEnabled:  true,
+				rssCloudDomain:  blogData.cloud.domain,
+				rssCloudPort:  blogData.cloud.port,
+				rssCloudPath: blogData.cloud.path,
+				rssCloudRegisterProcedure:  "",
+				rssCloudProtocol:  blogData.cloud.protocol
 				}
-			if (pagetable.title === undefined) {
-				pagetable.title = utils.stringLastField (pagetable.path, "/");
+			var flatPostList = getFlatPostList (blogData), rssHistory = new Array ();
+			for (var i = 0; i < flatPostList.length; i++) {
+				var item = flatPostList [i];
+				if (item.urlHtml) {
+					var obj = {
+						title: item.title,
+						description: item.description,
+						when: item.created,
+						link: item.urlHtml,
+						guid: {
+							flPermalink: true,
+							value: item.urlHtml
+							}
+						};
+					rssHistory.push (obj);
+					}
 				}
-			pagetable.createdstring = longTimeFormat (pagetable.created);
-			pagetable.modifiedstring = longTimeFormat (pagetable.modified);
-			pagetable.now = new Date ();
-			setPagePropertiesJson ();
-			var htmltext = utils.multipleReplaceAll (templatetext, pagetable, false, "[%", "%]");
-			callback (undefined, htmltext);
+			var xmltext = rss.buildRssFeed (headElements, rssHistory);
+			saveGitHubFile (accessToken, host, config.rssPath, xmltext, function (err, jstruct) {
+				if (!err) {
+					console.log ("buildBlogRss: jstruct == " + utils.jsonStringify (jstruct));
+					var urlServer = "http://" + blogData.cloud.domain + ":" + blogData.cloud.port + blogData.cloud.path;
+					rss.cloudPing (urlServer, jstruct.urlHtml);
+					if (callback !== undefined) {
+						callback (undefined, jstruct);
+						}
+					}
+				});
 			}
 		});
 	}
@@ -397,7 +496,6 @@ function getUserInfo (accessToken, callback) {
 		callback (myResponse);
 		});
 	}
-
 function getContent (jstruct) {
 	if (jstruct.encoding == "base64") {
 		return (new Buffer (jstruct.content, "base64")); 
@@ -406,7 +504,6 @@ function getContent (jstruct) {
 		return (jstruct.content);
 		}
 	}
-
 function handleHttpRequest (theRequest) {
 	var accessToken = theRequest.params.accessToken, params = theRequest.params, now = new Date ();
 	function returnData (jstruct) {
@@ -667,6 +764,17 @@ function handleHttpRequest (theRequest) {
 					}
 				else {
 					returnData (result);
+					}
+				});
+			break;
+		
+		case "/buildrss": 
+			buildBlogRss (accessToken, params.domain, function (err, data) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					returnData (data);
 					}
 				});
 			break;

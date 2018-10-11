@@ -22,6 +22,10 @@ Go to the <a href="https://github.com/settings/developers">Developer settings</a
 
 Choose anything for Application name, Homepage URL and Application description. 
 
+For Homepage URL, enter, If you're using the English editor.
+
+<code>http://scripting.com/english/testing/</code>
+
 For Authorization callback URL, enter:
 
 <code>http://admin.myghp.com/oauthcallback</code>

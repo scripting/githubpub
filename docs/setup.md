@@ -4,7 +4,7 @@ Assuming you're going to use English Editor as your editor for GitHub blog posts
 
 ### Things to decide before setting up
 
-Your GitHubPub server is going to need a couple of domain names:
+Your GitHubPub setup needs a couple of domain names:
 
 1. The domain you will use to talk to the GHP server for authoring and administration. Suppose this is admin.myghp.com.
 

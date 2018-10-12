@@ -74,9 +74,7 @@ I documented this clearly so it would be easy to replace the editor I provide wi
 
 ### save
 
-Saves an object that's not a blog post.
-
-Takes these params:
+Saves an object that's not a blog post. Takes these params:
 
 1. accessToken -- see <a href="#accesstoken">above</a>.
 

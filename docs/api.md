@@ -90,3 +90,15 @@ Saves an object that's not a blog post. Takes these params:
 
 1. msg -- the commit message (optional).
 
+### savepost
+
+Saves an object that is a blog post. Same params as save, with the exception that the data param is called text and is assumed to be JSON-formatted, and it's converted to YAML before uploading to GitHub. See the routine yamlIze in githubpub.js for details.
+
+### reposave
+
+Does what save does, except instead of specifying a domain, the caller provides username and repo params, and the path is the full path relative to the root of the repository. 
+
+### buildrss
+
+Takes two params, accessToken and domain, and builds the RSS feed for that domain. It assumes the data file is at data.json and it writes the feed to rss.xml.
+

@@ -78,17 +78,17 @@ Saves an object that's not a blog post.
 
 Takes these params:
 
-accessToken -- see <a href="#accesstoken">above</a>.
+1. accessToken -- see <a href="#accesstoken">above</a>.
 
-domain -- the domain the object is being saved to (see <a href="#domains">above</a>). Example: myblog.bullmancuso.com.
+1. domain -- the domain the object is being saved to (see <a href="#domains">above</a>). Example: myblog.bullmancuso.com.
 
-path -- where it should be stored.
+1. path -- where it should be stored.
 
-data -- the data you want to store for the object. Could be JSON or Markdown text, or whatever you like. 
+1. data -- the data you want to store for the object. Could be JSON or Markdown text, or whatever you like. 
 
-name -- the name of the committer (optional).
+1. name -- the name of the committer (optional).
 
-email -- the committer's email address (optional).
+1. email -- the committer's email address (optional).
 
-msg -- the commit message (optional).
+1. msg -- the commit message (optional).
 

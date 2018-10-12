@@ -26,7 +26,7 @@ And a single GHP server can serve multiple websites.
 
 There is also a way to get around the domain and access an item directly, using username, repository and path.
 
-### englishblog1.scriptinggg.com
+### englishblog1.scripting.com
 
 In all the examples I'll use this domain. The three properties:
 

@@ -62,13 +62,15 @@ The <i>get</i> calls are unauthenticated, but every <i>save</i> call must have a
 
 1. The editor redirects to https://github.com/login/oauth/authorize with parameters client_id, scope and redirect_url. 
 
-2. If the user authorizes the app, it calls back to the URL specified in the configuration on GitHub with a <i>code</i> param. GHP implements this.
+2. If the user authorizes the app, GitHub calls back to the URL specified in the configuration on GitHub with a <i>code</i> param. 
 
 3. GHP calls GitHub with the clientId, clientSecret and the code from the previous step, to request an access token. 
 
-4. It returns with the token to GHP. 
+4. GitHub returns the token to GHP. 
 
-5. It redirects to the editor with an access_token param. The editor should save that in localStorage and send that to GHP along with every operation that saves dat or blog posts. 
+5. GHP redirects to the editor with an <i>access_token</i> param. The editor saves that in localStorage and sends it to GHP along with every operation that saves dat or blog posts. 
 
 I documented this clearly so it would be easy to replace the editor I provide with others.
+
+
 

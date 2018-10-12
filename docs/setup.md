@@ -50,5 +50,21 @@ Any value in the config object in githubpub.js can be overridden in config.json.
 
 ### WebHooks setup (optional)
 
+GHP is set up to respond to WebHook calls from GitHub that say that an object in a given repository has changed. When we receive such a message, we remove that object from our cache, if it was there, so the next time it's referenced, we reload it from the repository, instead of serving it from the cache. This is how you set it up.
 
+1. Go to the <i>Settings</i> page for the repository you are using to host your a blog.
+
+2. Click on <i>Webhooks</i> in the menu in the left margin of the page.
+
+3. Click the <i>Add webhook</i> button. 
+
+4. For Payload URL, enter http://admin.myghp.com/eventfromgithub -- where admin.myghp.com is the domain name of your GHP server. See above for an explanation.
+
+5. For <i>Content type,</i> choose application/json.
+
+6. Leave <i>Secret</i> empty.
+
+7. Under events that trigger this webhook, select "Just the push event."
+
+8. Check <i>Active</i> and then click <i>Add webhook.</i>
 

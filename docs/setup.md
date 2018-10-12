@@ -38,11 +38,13 @@ All configuration is through a config.json file in the same folder as the github
 
 Here's an <a href="https://gist.github.com/scripting/842eed0670f643a51dfa2e3972f220da">example</a> of a config.json file. It contains the items that every configuration should define for itself. 
 
-1. port -- the port that the HTTP server runs on.
+1. port -- the port that the HTTP server runs on. The default is 1402
 
 2. clientId and clientSecret -- the values from the GitHub setup.
 
 3. domains -- an object containing sub-objects configuring each blog that's hosted by GHP. Each specifies a username, repository and path, where all the data for the blog is maintained. 
+
+Any value in the config object in githubpub.js can be overridden in config.json. 
 
 
 

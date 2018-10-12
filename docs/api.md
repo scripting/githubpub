@@ -4,7 +4,7 @@ It's a simple REST API that allows you to access a blog repostory at two levels.
 
 1. Just data. 
 
-2. Markdown files with YAML-encoded metadata, returned as a JSON struct. 
+2. Blog posts which are Markdown files with YAML-encoded metadata, returned as a JSON struct. 
 
 ### domains
 

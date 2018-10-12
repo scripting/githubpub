@@ -72,5 +72,23 @@ The <i>get</i> calls are unauthenticated, but every <i>save</i> call must have a
 
 I documented this clearly so it would be easy to replace the editor I provide with others.
 
+### save
 
+Saves an object that's not a blog post.
+
+Takes these params:
+
+accessToken -- see above.
+
+domain -- the domain the object is being saved to (see above). Example: myblog.bullmancuso.com.
+
+path -- where it should be stored.
+
+data -- the data you want to store for the object. Could be JSON or Markdown text, or whatever you like. 
+
+name -- the name of the committer (optional).
+
+email -- the committer's email address (optional).
+
+msg -- the commit message (optional).
 

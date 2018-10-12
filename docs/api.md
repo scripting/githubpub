@@ -56,3 +56,19 @@ Get the object without using the domain.
 
 <code>http://english.scripting.com/repoget?username=scripting&repository=myEnglishBlog&path=/blog/posts/2018/10/10/132303.md</code>
 
+### accessToken
+
+The <i>get</i> calls are unauthenticated, but every <i>save</i> call must have an <i>accessToken</i> parameter, which is obtained via an OAuth login. The login "dance" is handled by githubpub.js. This is how it works. 
+
+1. The editor redirects to https://github.com/login/oauth/authorize with parameters client_id, scope and redirect_url. 
+
+2. If the user authorizes the app, it calls back to the URL specified in the configuration on GitHub with a <i>code</i> param. GHP implements this.
+
+3. GHP calls GitHub with the clientId, clientSecret and the code from the previous step, to request an access token. 
+
+4. It returns with the token to GHP. 
+
+5. It redirects to the editor with an access_token param. The editor should save that in localStorage and send that to GHP along with every operation that saves dat or blog posts. 
+
+I documented this clearly so it would be easy to replace the editor I provide with others.
+

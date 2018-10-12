@@ -30,7 +30,11 @@ For Authorization callback URL, enter:
 
 <code>http://admin.myghp.com/oauthcallback</code>
 
+Copy <i>Client ID</i> and <i>Client Secret</i> from the settings page for the app. You'll need these in the config.json file for the Node app.
+
 ### Configuring your server
 
+All configuration is through a config.json file in the same folder as the githubpub.js app.
 
+Here's an <a href="https://gist.github.com/scripting/842eed0670f643a51dfa2e3972f220da">example</a> of a config.json file. 
 

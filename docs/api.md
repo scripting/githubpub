@@ -26,7 +26,7 @@ And a single GHP server can serve multiple websites.
 
 There is also a way to get around the domain and access an item directly, using username, repository and path.
 
-### englishblog1.scripting.com
+### englishblog1.scriptinggg.com
 
 In all the examples I'll use this domain. The three properties:
 
@@ -78,9 +78,9 @@ Saves an object that's not a blog post.
 
 Takes these params:
 
-accessToken -- see above.
+accessToken -- see <a href="#accesstoken">above</a>.
 
-domain -- the domain the object is being saved to (see above). Example: myblog.bullmancuso.com.
+domain -- the domain the object is being saved to (see <a href="#domains">above</a>). Example: myblog.bullmancuso.com.
 
 path -- where it should be stored.
 

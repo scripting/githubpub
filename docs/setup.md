@@ -36,5 +36,13 @@ Copy <i>Client ID</i> and <i>Client Secret</i> from the settings page for the ap
 
 All configuration is through a config.json file in the same folder as the githubpub.js app.
 
-Here's an <a href="https://gist.github.com/scripting/842eed0670f643a51dfa2e3972f220da">example</a> of a config.json file. 
+Here's an <a href="https://gist.github.com/scripting/842eed0670f643a51dfa2e3972f220da">example</a> of a config.json file. It contains the items that every configuration should define for itself. 
+
+1. port -- the port that the HTTP server runs on.
+
+2. clientId and clientSecret -- the values from the GitHub setup.
+
+3. domains -- an object containing sub-objects configuring each blog that's hosted by GHP. Each specifies a username, repository and path, where all the data for the blog is maintained. 
+
+
 

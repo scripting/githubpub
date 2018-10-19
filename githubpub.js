@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.45";   
+const myProductName = "githubpub", myVersion = "0.5.46";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -49,7 +49,7 @@ var config = {
 	flLogToConsole: true,
 	flPostEnabled: true,
 	flAllowAccessFromAnywhere: true,
-	flDebugMessagesFromGitHub: false,
+	flDebugMessagesFromGitHub: true,
 	flDebugObjectsFromGitHub: false,
 	apiUrl: "https://api.github.com/repos/",
 	indexFileName: "index",
@@ -173,6 +173,13 @@ function cacheDelete (username, repository, path) {
 				delete cache [username] [repository] [path];
 				}
 			}
+		}
+	}
+function cacheDeleteParent (username, repository, pathChild) {
+	if (pathChild !== undefined) {
+		var pathParent = utils.stringPopLastField (pathChild, "/") + "/";
+		console.log ("cacheDeleteParent: username == " + username + ", repository == " + repository + ", pathParent == " + pathParent);
+		cacheDelete (username, repository, pathParent);
 		}
 	}
 function getCacheSize () {
@@ -411,6 +418,21 @@ function getFlatPostList (blogData) {
 		return (theList);
 		}
 	}
+
+function getBlogData (host, callback) {
+	getUserObject (host, config.dataPath, function (err, jstruct) {
+		if (err) {
+			console.log ("getBlogData: err.message == " + err.message);
+			callback (err);
+			}
+		else {
+			var jsontext = getContent (jstruct);
+			var blogData = JSON.parse (jsontext);
+			callback (undefined, blogData);
+			}
+		});
+	}
+
 function buildBlogRss (options, callback) {
 	var host = options.domain;
 	options.path = config.rssPath;
@@ -543,6 +565,34 @@ function handleHttpRequest (theRequest) {
 			}
 		}
 	function serveObject (host, path) {
+		function getHomePageText (host, callback) {
+			getBlogData (host, function (err, blogData) {
+				var htmltext = "", indentlevel = 0;
+				function add (s) {
+					htmltext +=  utils.filledString ("\t", indentlevel) + s + "\n";
+					}
+				if (err) {
+					callback ("Can't build the home page because there was an error: " + err.message);
+					}
+				else {
+					var flatPostList = getFlatPostList (blogData);
+					add ("<ul class=\"ulHomePageItems\">"); indentlevel++;
+					for (var i = 0; i < flatPostList.length; i++) {
+						var item = flatPostList [i];
+						if (item.urlHtml) {
+							var whenstring = dateFormat (item.created, "dddd mmmm d, yyyy; h:MM TT Z");
+							add ("<li>"); indentlevel++;
+							add ("<div class=\"divItemTitle\"><a href=\"" + item.urlHtml + "\">" + item.title + "</a></div>");
+							add ("<div class=\"divItemDescription\">" + item.description + "</div>");
+							add ("<div class=\"divItemWhenPosted\">" + whenstring + "</div>");
+							add ("</li>"); indentlevel--;
+							}
+						}
+					add ("</ul>"); indentlevel--;
+					callback (htmltext);
+					}
+				});
+			}
 		getUserObject (host, path, function (err, jstruct) {
 			if (err) {
 				notFound (err.message);
@@ -551,8 +601,9 @@ function handleHttpRequest (theRequest) {
 				if (Array.isArray (jstruct)) { //it's a directory
 					var flIndexFileServed = false;
 					for (var i = 0; i < jstruct.length; i++) {
-						if (utils.beginsWith (jstruct [i].name, config.indexFileName)) {
-							serveObject (host, path + jstruct [i].name);
+						var name = jstruct [i].name;
+						if (utils.beginsWith (name, config.indexFileName)) {
+							serveObject (host, path + name);
 							flIndexFileServed = true;
 							break;
 							}
@@ -566,19 +617,33 @@ function handleHttpRequest (theRequest) {
 						var ext = getFileExtension (path); 
 						function serveMarkdown () {
 							var pagetable = deYamlIze (fileContent.toString ());
-							pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
-							pagetable.host = theRequest.lowerhost;
-							pagetable.path = theRequest.lowerpath;
-							pagetable.ext = ext;
-							delete pagetable.text;
-							renderThroughTemplate (pagetable, function (err, htmltext) {
-								if (err) {
-									notFound (err.message);
-									}
-								else {
-									theRequest.httpReturn (200, "text/html", htmltext);
-									}
-								});
+							function doRender (pagetable) {
+								pagetable.host = theRequest.lowerhost;
+								pagetable.path = theRequest.lowerpath;
+								pagetable.ext = ext;
+								delete pagetable.text;
+								renderThroughTemplate (pagetable, function (err, htmltext) {
+									if (err) {
+										notFound (err.message);
+										}
+									else {
+										theRequest.httpReturn (200, "text/html", htmltext);
+										}
+									});
+								}
+							if (pagetable.description === undefined) {
+								pagetable.description = "";
+								}
+							if (utils.getBoolean (pagetable.flHomePage)) {
+								getHomePageText (host, function (hptext) {
+									pagetable.bodytext = hptext;
+									doRender (pagetable);
+									});
+								}
+							else {
+								pagetable.bodytext = marked (pagetable.text); //where deYamlIze stores the markdown text
+								doRender (pagetable);
+								}
 							}
 						switch (ext) {
 							case "md":
@@ -605,8 +670,17 @@ function handleHttpRequest (theRequest) {
 		var owner = jstruct.repository.owner.name;
 		var repo = jstruct.repository.name;
 		var path = jstruct.commits [0].modified [0];
+		if (path === undefined) { //10/19/18 by DW
+			path = jstruct.commits [0].removed [0];
+			}
 		if (path !== undefined) { //something was modified, might be in the cache
+			console.log ("\nhandleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path + "\n");
 			cacheDelete (owner, repo, path);
+			
+			//check if parent needs to be removed from cache too -- 10/19/18 by DW
+				cacheDeleteParent (owner, repo, jstruct.commits [0].removed [0]);
+				cacheDeleteParent (owner, repo, jstruct.commits [0].added [0]);
+			
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
 		}
@@ -661,6 +735,13 @@ function handleHttpRequest (theRequest) {
 		case "/getdomains":
 			returnData (config.domains);
 			break;
+		case "/getcache": //10/19/18 by DW -- for debugging cache stuff
+			var flatlist = new Array ();
+			cacheDump (function (s) {
+				flatlist.push (s);
+				});
+			returnData (flatlist);
+			return;
 		case "/getuserinfo":
 			getUserInfo (accessToken, function (result) {
 				returnData (result);

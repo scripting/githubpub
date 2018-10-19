@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.43";   
+const myProductName = "githubpub", myVersion = "0.5.45";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -45,15 +45,16 @@ const qs = require ("querystring");
 const rss = require ("daverss");
 
 var config = {
-	port: 80,
+	port: 1402,
+	flLogToConsole: true,
 	flPostEnabled: true,
 	flAllowAccessFromAnywhere: true,
 	flDebugMessagesFromGitHub: false,
 	flDebugObjectsFromGitHub: false,
 	apiUrl: "https://api.github.com/repos/",
-	flLogToConsole: true,
 	indexFileName: "index",
 	userAgent: myProductName + " v" + myVersion,
+	urlEditorApp: "http://scripting.com/english/testing/", //9/16/18 by DW
 	templatePath: "template/template.txt",
 	dataPath: "data.json", //10/11/18 by DW
 	rssPath: "rss.xml",  //10/11/18 by DW
@@ -410,7 +411,9 @@ function getFlatPostList (blogData) {
 		return (theList);
 		}
 	}
-function buildBlogRss (accessToken, host, callback) {
+function buildBlogRss (options, callback) {
+	var host = options.domain;
+	options.path = config.rssPath;
 	getUserObject (host, config.dataPath, function (err, jstruct) {
 		if (err) {
 			console.log ("buildBlogRss: err.message == " + err.message);
@@ -421,7 +424,7 @@ function buildBlogRss (accessToken, host, callback) {
 			var blogData = JSON.parse (jsontext);
 			var headElements = {
 				title: blogData.title,
-				link: undefined,
+				link: "http://" + host + "/",
 				description: blogData.description,
 				language: blogData.language,
 				generator: myProductName + " v" + myVersion,
@@ -440,9 +443,12 @@ function buildBlogRss (accessToken, host, callback) {
 			for (var i = 0; i < flatPostList.length; i++) {
 				var item = flatPostList [i];
 				if (item.urlHtml) {
+					
+					console.log (utils.jsonStringify (item));
+					
 					var obj = {
 						title: item.title,
-						description: item.description,
+						text: item.description,
 						when: item.created,
 						link: item.urlHtml,
 						guid: {
@@ -454,9 +460,9 @@ function buildBlogRss (accessToken, host, callback) {
 					}
 				}
 			var xmltext = rss.buildRssFeed (headElements, rssHistory);
-			saveGitHubFile (accessToken, host, config.rssPath, xmltext, function (err, jstruct) {
+			options.data = xmltext;
+			saveToGitHub (options, function (err, jstruct) {
 				if (!err) {
-					console.log ("buildBlogRss: jstruct == " + utils.jsonStringify (jstruct));
 					var urlServer = "http://" + blogData.cloud.domain + ":" + blogData.cloud.port + blogData.cloud.path;
 					rss.cloudPing (urlServer, jstruct.urlHtml);
 					if (callback !== undefined) {
@@ -674,16 +680,16 @@ function handleHttpRequest (theRequest) {
 			break;
 		case "/save":
 			var options = {
-				domain: theRequest.params.domain,
-				path: theRequest.params.path,
+				domain: params.domain,
+				path: params.path,
 				accessToken: accessToken,
-				data: theRequest.params.text,
+				data: params.text,
 				type: "text/plain",
 				committer: {
-					name: theRequest.params.name,
-					email: theRequest.params.email
+					name: params.name,
+					email: params.email
 					},
-				message: theRequest.params.msg,
+				message: params.msg,
 				userAgent: config.userAgent
 				};
 			saveToGitHub (options, function (err, result) {
@@ -769,7 +775,17 @@ function handleHttpRequest (theRequest) {
 			break;
 		
 		case "/buildrss": 
-			buildBlogRss (accessToken, params.domain, function (err, data) {
+			var options = {
+				domain: params.domain,
+				accessToken: accessToken,
+				committer: {
+					name: params.name,
+					email: params.email
+					},
+				message: params.msg,
+				userAgent: config.userAgent
+				};
+			buildBlogRss (options, function (err, data) {
 				if (err) {
 					returnError (err);
 					}

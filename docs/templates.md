@@ -14,9 +14,11 @@ The net-effect is that you can use the default template by doing nothing, or can
 
 Macros are contained within [% and %].
 
-The values of macros can come from system values, like now (the time when the page is generated), title (the title of the page), or from the metadata stored with the post such as when it was created and modified, the description and bodytext. 
+The values of macros can come from system values, like [%now%] (the time when the page is generated), [%title%] (the title of the page), or from the metadata stored with the post such as when it was created and modified, the description and bodytext. 
 
 For a complete list of system macros, for now, look at renderThroughTemplate in githubpub.js (sorry for making you read the code). 
+
+The default template is a good place to look for ideas of how the templates work. 
 
 ### flHomePage
 

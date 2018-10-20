@@ -10,6 +10,10 @@ By convention the template folder can also have files named code.js or styles.cs
 
 The net-effect is that you can use the default template by doing nothing, or can customize or replace it by editing files in your repo.
 
+### View template command in English Editor
+
+If you use the English Editor to access your repository, you can find out definitively which template GHP is using with the View template in GitHub command in the Main menu. If goes through the exact same process that GHP goes through when rendering a page on your site. 
+
 ### Macros
 
 Macros are contained within [% and %].

@@ -10,3 +10,15 @@ By convention the template folder can also have files named code.js or styles.cs
 
 The net-effect is that you can use the default template by doing nothing, or can customize or replace it by editing files in your repo.
 
+### Macros
+
+Macros are contained within [% and %].
+
+The values of macros can come from system values, like now (the time when the page is generated), title (the title of the page), or from the metadata stored with the post such as when it was created and modified, the description and bodytext. 
+
+For a complete list of system macros, for now, look at renderThroughTemplate in githubpub.js (sorry for making you read the code). 
+
+### flHomePage
+
+There's a special bit of metadata called flHomePage. If present in the page, and true, GHP generates the bodytext as a reverse-chronologic list of recent posts, the description and publication date, and a link to the page for the post. 
+

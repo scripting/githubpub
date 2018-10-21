@@ -4,7 +4,11 @@ It's a simple editor that hooks into GitHubPub. Based on the medium-editor compo
 
 ### It's wizzy but it produces Markdown code
 
-You can use it as if you were using Medium, but when it saves text to the server it saves it as Markdown. However it is remarkably flexible. You can directly enter Markdown codes in the text and they will be correctly interpreted. You can also enter raw HTML code, and it should also work.
+You can use it as if you were using Medium, but when it saves text to the server it saves it as Markdown. However it is remarkably flexible. You can directly enter Markdown codes in the text and they will be correctly interpreted. 
+
+### You can also directly enter HTML code
+
+You can also enter raw HTML code, and it should also work.
 
 ### Insert HTML command
 

@@ -9,7 +9,7 @@
 		<script src="/template/code.js"></script>
 		<link rel="stylesheet" href="/template/styles.css"/>
 		<script>
-			var pagetable = [%pageproperties%];
+			var pagetable = [%pageproperties%]; 
 			</script>
 		</head>
 	<body>

@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css?family=Oswald:400,700');
+
+body {
+	font-family: Ubuntu;
+	font-size: 18px;
+	}
+.divPageBody {
+	width: 50%;
+	margin-top: 70px;
+	margin-left: auto;
+	margin-right: auto;
+	}
+
+.divSignOnContainer {
+	display: none;
+	}
+.divEditorContainer {
+	display: none;
+	}
+.mainTextArea {
+	font-size: 18px;
+	line-height: 140%;
+	width: 100%;
+	height: 200px;
+	}
+.titleInputItem {
+	width: 100%;
+	}
+.descriptionInputItem {
+	width: 100%;
+	}
+.titleInputItem, .descriptionInputItem {
+	font-size: 18px !important;
+	padding: 3px !important;
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	height: 36px !important;
+	}
+.titleInputItem {
+	width: 450px;
+	}
+.descriptionInputItem {
+	width: 100%;
+	}
+.divPostList {
+	margin-top: 20px;
+	}
+.divButtons {
+	margin-top: 20px;
+	}
+.btn {
+	width: 100px;
+	margin-right: 15px;
+	}
+.divPostList li {
+	list-style-type: none;
+	margin-bottom: .5em;
+	}
+
+/* styles for phone */
+	@media only screen 
+	and (min-device-width : 320px) 
+	and (max-device-width : 480px) {
+		body {
+			font-size: 16px;
+			}
+		.divPageBody {
+			width: 90%;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 90px;
+			}
+		
+		}
+/* styles for tablet */
+	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+		.divPageBody {
+			width: 75%;
+			margin-left: auto;
+			margin-right: auto;
+			}
+		}

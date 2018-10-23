@@ -1,0 +1,69 @@
+<html>
+	<head>
+		<title>Hello World for githubpub</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="http://fargo.io/code/jquery-1.9.1.min.js"></script>
+<link href="http://fargo.io/code/bootstrap.css" rel="stylesheet">
+<script src="http://fargo.io/code/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="http://scripting.com/code/fontawesome/css/all.css">
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500i,700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Rancho" rel="stylesheet">
+
+<script src="http://fargo.io/code/node/shared/utils.js"></script>
+<script src="http://fargo.io/code/node/shared/alertdialog.js"></script>
+<script src="http://fargo.io/code/node/shared/confirmdialog.js"></script>
+<script src="http://fargo.io/code/node/shared/askdialog.js"></script>
+<script src="http://fargo.io/code/strftime.js"></script>
+<script src="http://fargo.io/code/shared/ga.js"></script>
+<script src="http://fargo.io/code/shared/app.js"></script>
+
+<script src="http://fargo.io/code/shared/menus.js"></script>
+<link href="http://fargo.io/code/shared/menus.css" rel="stylesheet" type="text/css">
+
+<link href="http://fargo.io/code/shared/app.css" rel="stylesheet" type="text/css">
+<script src="http://fargo.io/code/shared/appprefs.js?x=2"></script>
+
+<script src="http://fargo.io/code/shared/jBeep.min.js"></script>
+<script src="http://fargo.io/code/shared/beep.js"></script>
+
+		<script src="http://scripting.com/code/githubpub/api/code.js"></script>
+		<script src="code.js"></script>
+		<link href="styles.css" rel="stylesheet" type="text/css">
+		</head>
+	<body>
+		<div class="divPageBody">
+			<div class="divEditorContainer" id="idEditorContainer">
+				<input type="text" class="xlarge titleInputItem" size="70" maxlength="300" id="idTitleEditor" placeholder="Title">
+				<input type="text" class="xlarge descriptionInputItem" size="70" maxlength="300" id="idDescriptionEditor" placeholder="Description">
+				<textarea class="mainTextArea" cols="86" rows="3" id="idBodyEditor" stylex="overflow: hidden; word-wrap: break-word; resize: horizontal; " placeholder="Body"></textarea>
+				<div class="divButtons">
+					<button id="idSaveButton"  class="btn btnSave" type="button" onclick="saveButtonClick ();">
+						Save
+						</button>
+					<button id="idPostListButton"  class="btn btnSave" type="button" onclick="postListButtonClick ();">
+						Post List
+						</button>
+					<button id="idSignOffButton"  class="btn btnSignOn" type="button" onclick="disconnectFromGitHub ();">
+						Log off
+						</button>
+					</div>
+				<div class="divPostList" id="idPostList">
+					</div>
+				</div>
+			<div class="divSignOnContainer" id="idSignOnContainer">
+				<center>
+					<button id="idSignOnButton"  class="btn btnSignOn" type="button" onclick="connectWithGitHub ();">
+						Click here to connect with GitHub
+						</button>
+					</center>
+				</div>
+			</div>
+		<script>
+			$(document).ready (function () {
+				startup ();
+				});
+			</script>
+		</body>
+	</html>

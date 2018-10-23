@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.46";   
+const myProductName = "githubpub", myVersion = "0.5.48";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -533,7 +533,7 @@ function getContent (jstruct) {
 		}
 	}
 function handleHttpRequest (theRequest) {
-	var accessToken = theRequest.params.accessToken, params = theRequest.params, now = new Date ();
+	var params = theRequest.params, accessToken = params.accessToken, now = new Date ();
 	function returnData (jstruct) {
 		theRequest.httpReturn (200, "application/json", utils.jsonStringify (jstruct));
 		}
@@ -618,22 +618,30 @@ function handleHttpRequest (theRequest) {
 						function serveMarkdown () {
 							var pagetable = deYamlIze (fileContent.toString ());
 							function doRender (pagetable) {
-								pagetable.host = theRequest.lowerhost;
-								pagetable.path = theRequest.lowerpath;
-								pagetable.ext = ext;
-								delete pagetable.text;
-								renderThroughTemplate (pagetable, function (err, htmltext) {
-									if (err) {
-										notFound (err.message);
+								getBlogData (host, function (err, blogData) {
+									if (!err) {
+										pagetable.blogTitle = blogData.title;
+										pagetable.blogDescription = blogData.description;
+										pagetable.blogLanguage = blogData.language;
 										}
-									else {
-										theRequest.httpReturn (200, "text/html", htmltext);
-										}
+									pagetable.host = theRequest.lowerhost;
+									pagetable.path = theRequest.lowerpath;
+									pagetable.ext = ext;
+									delete pagetable.text;
+									renderThroughTemplate (pagetable, function (err, htmltext) {
+										if (err) {
+											notFound (err.message);
+											}
+										else {
+											theRequest.httpReturn (200, "text/html", htmltext);
+											}
+										});
 									});
 								}
 							if (pagetable.description === undefined) {
 								pagetable.description = "";
 								}
+							pagetable.gitHubPubVersion = myVersion;
 							if (utils.getBoolean (pagetable.flHomePage)) {
 								getHomePageText (host, function (hptext) {
 									pagetable.bodytext = hptext;
@@ -819,7 +827,6 @@ function handleHttpRequest (theRequest) {
 					}
 				});
 			break;
-		
 		case "/repoget": //instead of a domain, take a username/repository to identify the location -- 10/10/18 by DW
 			getFromGitHub (params.username, params.repository, params.path, function (err, jstruct) {
 				if (err) {
@@ -854,7 +861,6 @@ function handleHttpRequest (theRequest) {
 					}
 				});
 			break;
-		
 		case "/buildrss": 
 			var options = {
 				domain: params.domain,
@@ -875,7 +881,16 @@ function handleHttpRequest (theRequest) {
 					}
 				});
 			break;
-		
+		case "/getgithubdata":
+			getUserObject (params.domain, params.path, function (err, jstruct) {
+				if (err) {
+					returnError (err);
+					}
+				else {
+					returnData (jstruct);
+					}
+				});
+			break;
 		default:
 			serveObject (theRequest.lowerhost, theRequest.path);
 			break;

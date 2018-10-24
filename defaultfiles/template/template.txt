@@ -20,6 +20,9 @@
 			<div class="divTitle">
 				[%title%]
 				</div>
+			<div class="divDescription">
+				[%description%]
+				</div>
 			<div class="divBodytext">
 				[%bodytext%]
 				</div>

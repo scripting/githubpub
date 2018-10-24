@@ -42,9 +42,6 @@ body {
 .descriptionInputItem {
 	width: 100%;
 	}
-.divPostList {
-	margin-top: 20px;
-	}
 .divButtons {
 	margin-top: 20px;
 	}
@@ -52,9 +49,31 @@ body {
 	width: 100px;
 	margin-right: 15px;
 	}
+.divPostList {
+	margin-top: 40px;
+	}
 .divPostList li {
 	list-style-type: none;
 	margin-bottom: .5em;
+	}
+.divPostList ul {
+	margin-left: 0;
+	}
+.divPostList a {
+	cursor: pointer;
+	color: black;
+	}
+.divPostList .aPostBeingEdited {
+	color: blue;
+	}
+.divIcons {
+	margin-top: 0px;
+	font-size: 25px;
+	}
+.divIcons i {
+	margin-left: 5px;
+	color: gray;
+	cursor: pointer;
 	}
 
 /* styles for phone */

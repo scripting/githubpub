@@ -28,6 +28,7 @@
 <script src="http://fargo.io/code/shared/jBeep.min.js"></script>
 <script src="http://fargo.io/code/shared/beep.js"></script>
 
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 		<script src="http://scripting.com/code/githubpub/api/code.js"></script>
 		<script src="code.js"></script>
 		<link href="styles.css" rel="stylesheet" type="text/css">
@@ -38,14 +39,18 @@
 				<input type="text" class="xlarge titleInputItem" size="70" maxlength="300" id="idTitleEditor" placeholder="Title">
 				<input type="text" class="xlarge descriptionInputItem" size="70" maxlength="300" id="idDescriptionEditor" placeholder="Description">
 				<textarea class="mainTextArea" cols="86" rows="3" id="idBodyEditor" stylex="overflow: hidden; word-wrap: break-word; resize: horizontal; " placeholder="Body"></textarea>
+				<div class="divIcons">
+					<a id="idEyeIconAnchor" target="_blank" title="Click here to see the rendering of this post."><i class="fa fa-eye"></i></a>
+					<a id="idGitHubIconAnchor" target="_blank" title="Click here to view the source for this post on GitHub."><i class="fa fa-github"></i></a>
+					</div>
 				<div class="divButtons">
-					<button id="idSaveButton"  class="btn btnSave" type="button" onclick="saveButtonClick ();">
+					<button id="idSaveButton"  class="btn" type="button" onclick="saveButtonClick ();">
 						Save
 						</button>
-					<button id="idPostListButton"  class="btn btnSave" type="button" onclick="postListButtonClick ();">
-						Post List
+					<button id="idNewPostButton"  class="btn" type="button" onclick="newPostButtonClick ();">
+						New Post
 						</button>
-					<button id="idSignOffButton"  class="btn btnSignOn" type="button" onclick="disconnectFromGitHub ();">
+					<button id="idSignOffButton"  class="btn" type="button" onclick="disconnectFromGitHub ();">
 						Log off
 						</button>
 					</div>

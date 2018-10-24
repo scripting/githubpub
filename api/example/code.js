@@ -62,27 +62,47 @@ function saveButtonClick () {
 		whenLastSave = new Date ();
 		});
 	}
+function updatePostList () {
+	myGitHubPubApp.buildPostList ("idPostList")
+	}
 function postListButtonClick () {
 	$("#idPostListButton").blur ();
-	myGitHubPubApp.getPostListHtml ("myGitHubPubApp.editBlogPost", function (htmltext) {
-		$("#idPostList").html (htmltext);
-		});
+	updatePostList ();
+	}
+function newPostButtonClick () {
+	myGitHubPubApp.newBlogPost ("Oh the buzzing")
+	}
+function updateIconValues () { 
+	function setIcon (id, val) {
+		if ($("#" + id).attr ("href") != val) {
+			$("#" + id).attr ("href", val);
+			}
+		}
+	var postStruct = myGitHubPubApp.getCurrentPost ();
+	setIcon ("idEyeIconAnchor", postStruct.urlHtml);
+	setIcon ("idGitHubIconAnchor", postStruct.urlGitHub);
 	}
 function everySecond () {
 	myGitHubPubApp.saveEditorStatus (getPostData ()); //save locally, not on the server
+	updateIconValues ();
 	}
 function startup () {
 	console.log ("startup");
 	myGitHubPubApp = new githubpubApp (appConsts, appPrefs);
-	myGitHubPubApp.everySecond = everySecond;
-	myGitHubPubApp.startEditor = function (postStruct) {
+	myGitHubPubApp.callbacks.everySecond = everySecond;
+	myGitHubPubApp.callbacks.startEditor = function (postStruct) {
 		console.log ("startEditor: postStruct == " + jsonStringify (postStruct));
 		$("#idTitleEditor").val (postStruct.title);
 		$("#idDescriptionEditor").val (postStruct.description);
 		$("#idBodyEditor").val (postStruct.text);
-		}
+		};
+	myGitHubPubApp.callbacks.postUpdated = function (postStruct) {
+		console.log ("myGitHubPubApp.callbacks.postUpdated: postStruct == " + jsonStringify (postStruct));
+		updatePostList ();
+		};
 	myGitHubPubApp.start (function () {
 		showHideEditor ();
+		updatePostList ();
 		initGoogleAnalytics (); 
 		hitCounter (); 
 		});

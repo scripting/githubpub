@@ -27,6 +27,11 @@ body {
 	line-height: 100%;
 	margin-bottom: 35px;
 	}
+.divDescription {
+	font-size: 20px;
+	margin-bottom: 35px;
+	font-style: italic;
+	}
 .divFooter {
 	margin-top: 100px;
 	font-size: 16px;

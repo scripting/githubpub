@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.48&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.50&quot;;   "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -69,10 +69,11 @@
 			<outline text="apiUrl: &quot;https://api.github.com/repos/&quot;,"></outline>
 			<outline text="indexFileName: &quot;index&quot;,"></outline>
 			<outline text="userAgent: myProductName + &quot; v&quot; + myVersion,"></outline>
-			<outline text="urlEditorApp: &quot;http://scripting.com/english/testing/&quot;, //9/16/18 by DW"></outline>
+			<outline text="urlEditorApp: &quot;http://scripting.com/english/testing2/&quot;, //9/16/18 by DW"></outline>
 			<outline text="templatePath: &quot;template/template.txt&quot;,"></outline>
 			<outline text="dataPath: &quot;data.json&quot;, //10/11/18 by DW"></outline>
 			<outline text="rssPath: &quot;rss.xml&quot;,  //10/11/18 by DW"></outline>
+			<outline text="maxCacheSecs: 180, //10/25/18 by DW -- remove cache element after this many secs"></outline>
 			<outline text="defaultNameCommitter: &quot;Bull Mancuso&quot;,"></outline>
 			<outline text="defaultEmailCommitter: &quot;bull@mancuso.com&quot;,"></outline>
 			<outline text="defaultFilesLocation: {">
@@ -88,8 +89,40 @@
 			<outline text="};"></outline>
 			</outline>
 		<outline text=""></outline>
+		<outline text="var stats = {">
+			<outline text="ctGitHubPings: -0,"></outline>
+			<outline text="whenLastGitHubPing: new Date (0),"></outline>
+			<outline text="ctEditorPings: 0,"></outline>
+			<outline text="whenLastEditorPing: new Date (0)"></outline>
+			<outline text="};"></outline>
+			</outline>
+		<outline text="const fnamestats = &quot;stats.json&quot;;"></outline>
+		<outline text="var flStatsDirty = false;"></outline>
+		<outline text=""></outline>
 		<outline text="const yamlDelimiterString = &quot;---\n&quot;;"></outline>
 		<outline text=""></outline>
+		<outline text="function readStats (callback) {">
+			<outline text="fs.readFile (fnamestats, function (err, data) {">
+				<outline text="if (!err) {">
+					<outline created="Tue, 11 Jun 2013 13:43:44 GMT" pgfnum="25734" text="var jstruct = JSON.parse (data.toString ());"></outline>
+					<outline text="for (var x in jstruct) {">
+						<outline text="stats [x] = jstruct [x];"></outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="if (callback !== undefined) {">
+					<outline text="callback ();"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function statsChanged () {">
+			<outline text="flStatsDirty = true;"></outline>
+			<outline text="}"></outline>
+			</outline>
 		<outline text="function getFileExtension (url) {">
 			<outline text="return (utils.stringLastField (url, &quot;.&quot;).toLowerCase ());"></outline>
 			<outline text="}"></outline>
@@ -250,7 +283,7 @@
 		<outline text="function cacheDeleteParent (username, repository, pathChild) {">
 			<outline text="if (pathChild !== undefined) {">
 				<outline text="var pathParent = utils.stringPopLastField (pathChild, &quot;/&quot;) + &quot;/&quot;;"></outline>
-				<outline text="console.log (&quot;cacheDeleteParent: username == &quot; + username + &quot;, repository == &quot; + repository + &quot;, pathParent == &quot; + pathParent);"></outline>
+				<outline isComment="true" text="console.log (&quot;cacheDeleteParent: username == &quot; + username + &quot;, repository == &quot; + repository + &quot;, pathParent == &quot; + pathParent);"></outline>
 				<outline text="cacheDelete (username, repository, pathParent);"></outline>
 				<outline text="}"></outline>
 				</outline>
@@ -263,6 +296,23 @@
 				<outline text="});"></outline>
 				</outline>
 			<outline text="return (ct);"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function timeoutCacheElements () { //delete cache elements that are too old">
+			<outline text="for (var username in cache) {">
+				<outline text="for (var repository in cache [username]) {">
+					<outline text="for (var path in cache [username] [repository]) {">
+						<outline text="if (utils.secondsSince (cache [username] [repository] [path].whenAdd) &gt;= config.maxCacheSecs) {">
+							<outline text="console.log (&quot;timeoutCacheElements, ageing out: &quot; + username + &quot;/&quot; + repository + &quot;/&quot; + path);"></outline>
+							<outline text="delete cache [username] [repository] [path];"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="}"></outline>
+				</outline>
 			<outline text="}"></outline>
 			</outline>
 		<outline text="function getFromGitHub (username, repository, path, callback) { //calls back with the JSON structure GitHub returns">
@@ -533,7 +583,7 @@
 						<outline text="}"></outline>
 						</outline>
 					<outline text="else {">
-						<outline text="console.log (&quot;saveToGitHub: response == &quot; + utils.jsonStringify (response));"></outline>
+						<outline isComment="true" text="console.log (&quot;saveToGitHub: response == &quot; + utils.jsonStringify (response));"></outline>
 						<outline text="var jstruct = {">
 							<outline text="urlGitHub: &quot;https://github.com/&quot; + options.username + &quot;/&quot; + options.repository + &quot;/blob/master/&quot; + options.path"></outline>
 							<outline text="};"></outline>
@@ -649,9 +699,6 @@
 					<outline text="for (var i = 0; i &lt; flatPostList.length; i++) {">
 						<outline text="var item = flatPostList [i];"></outline>
 						<outline text="if (item.urlHtml) {">
-							<outline text=""></outline>
-							<outline text="console.log (utils.jsonStringify (item));"></outline>
-							<outline text=""></outline>
 							<outline text="var obj = {">
 								<outline text="title: item.title,"></outline>
 								<outline text="text: item.description,"></outline>
@@ -960,7 +1007,7 @@
 					<outline text="}"></outline>
 					</outline>
 				<outline text="if (path !== undefined) { //something was modified, might be in the cache">
-					<outline text="console.log (&quot;\nhandleGitHubEvent: owner == &quot; + owner + &quot;, repo == &quot; + repo + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
+					<outline text="console.log (&quot;ping from GitHub: owner == &quot; + owner + &quot;, repo == &quot; + repo + &quot;, path == &quot; + path);"></outline>
 					<outline text="cacheDelete (owner, repo, path);"></outline>
 					<outline text=""></outline>
 					<outline text="//check if parent needs to be removed from cache too -- 10/19/18 by DW">
@@ -971,16 +1018,22 @@
 					<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;Thanks for the ping.&quot;);"></outline>
 					<outline text="}"></outline>
 					</outline>
+				<outline text="stats.ctGitHubPings++;"></outline>
+				<outline text="stats.whenLastGitHubPing = now;"></outline>
+				<outline text="statsChanged ();"></outline>
 				<outline text="}"></outline>
 				</outline>
 			<outline text="function handleEditorEvent (domain, path) {">
 				<outline text="var dstruct = config.domains [domain.toLowerCase ()]"></outline>
 				<outline text="if (dstruct !== undefined) {">
-					<outline isComment="true" text="console.log (&quot;\nhandleEditorEvent: domain == &quot; + domain + &quot;, path == &quot; + path + &quot;\n&quot;);"></outline>
+					<outline text="console.log (&quot;\nping from editor: domain == &quot; + domain + &quot;, path == &quot; + path);"></outline>
 					<outline text="cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);"></outline>
 					<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;Thanks for the ping.&quot;);"></outline>
 					<outline text="}"></outline>
 					</outline>
+				<outline text="stats.ctEditorPings++;"></outline>
+				<outline text="stats.whenLastEditorPing = now;"></outline>
+				<outline text="statsChanged ();"></outline>
 				<outline text="}"></outline>
 				</outline>
 			<outline text="function handleOauthCallback () {">
@@ -1001,7 +1054,7 @@
 					<outline isComment="true" text="headers: {Accept: &quot;application/json&quot;}"></outline>
 					<outline text="};"></outline>
 					</outline>
-				<outline text="console.log (&quot;handleOauthCallback: githubRequest === &quot; + utils.jsonStringify (githubRequest));"></outline>
+				<outline isComment="true" text="console.log (&quot;handleOauthCallback: githubRequest === &quot; + utils.jsonStringify (githubRequest));"></outline>
 				<outline text="request (githubRequest, function (err, response, body) {">
 					<outline text="if (err) {">
 						<outline text="console.log (err.message);"></outline>
@@ -1327,21 +1380,39 @@
 			<outline text="handleHttpRequest (theRequest);"></outline>
 			<outline text="}"></outline>
 			</outline>
+		<outline text="function everyFiveSeconds () {">
+			<outline text="timeoutCacheElements ();"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function everySecond () {">
+			<outline text="if (flStatsDirty) {">
+				<outline text="utils.sureFilePath (fnamestats, function () {">
+					<outline text="fs.writeFile (fnamestats, utils.jsonStringify (stats), function (err) {">
+						<outline text="});"></outline>
+						</outline>
+					<outline text="});"></outline>
+					</outline>
+				<outline text="flStatsDirty = false;"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
 		<outline text="function init (userConfig, flHandleHttpHere) {">
 			<outline isComment="true" text="Changes">
 				<outline text="9/28/18; 11:30:36 AM by DW">
 					<outline text="New optional param, flHandleHttpHere. If true, we set up the HTTP server, otherwise we just accept the config params. "></outline>
 					</outline>
 				</outline>
-			<outline text="if (flHandleHttpHere === undefined) {">
-				<outline text="flHandleHttpHere = true;"></outline>
-				<outline text="}"></outline>
-				</outline>
 			<outline text="console.log (&quot;\n&quot; + myProductName + &quot; v&quot; + myVersion + &quot;\n&quot;);"></outline>
 			<outline text="for (var x in userConfig) {">
 				<outline text="config [x] = userConfig [x];"></outline>
 				<outline text="}"></outline>
 				</outline>
+			<outline text="if (flHandleHttpHere === undefined) {">
+				<outline text="flHandleHttpHere = true;"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="readStats ();"></outline>
 			<outline text="if (flHandleHttpHere) {">
 				<outline text="davehttp.start (config, function (theRequest) {">
 					<outline text="handleHttpRequest (theRequest);"></outline>
@@ -1349,6 +1420,8 @@
 					</outline>
 				<outline text="}"></outline>
 				</outline>
+			<outline text="setInterval (everySecond, 1000); "></outline>
+			<outline text="setInterval (everyFiveSeconds, 5000); "></outline>
 			<outline text="}"></outline>
 			</outline>
 		</body>

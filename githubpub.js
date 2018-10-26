@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.48";   
+const myProductName = "githubpub", myVersion = "0.5.50";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -54,10 +54,11 @@ var config = {
 	apiUrl: "https://api.github.com/repos/",
 	indexFileName: "index",
 	userAgent: myProductName + " v" + myVersion,
-	urlEditorApp: "http://scripting.com/english/testing/", //9/16/18 by DW
+	urlEditorApp: "http://scripting.com/english/testing2/", //9/16/18 by DW
 	templatePath: "template/template.txt",
 	dataPath: "data.json", //10/11/18 by DW
 	rssPath: "rss.xml",  //10/11/18 by DW
+	maxCacheSecs: 180, //10/25/18 by DW -- remove cache element after this many secs
 	defaultNameCommitter: "Bull Mancuso",
 	defaultEmailCommitter: "bull@mancuso.com",
 	defaultFilesLocation: {
@@ -70,8 +71,33 @@ var config = {
 var cache = {
 	};
 
+var stats = {
+	ctGitHubPings: -0,
+	whenLastGitHubPing: new Date (0),
+	ctEditorPings: 0,
+	whenLastEditorPing: new Date (0)
+	};
+const fnamestats = "stats.json";
+var flStatsDirty = false;
+
 const yamlDelimiterString = "---\n";
 
+function readStats (callback) {
+	fs.readFile (fnamestats, function (err, data) {
+		if (!err) {
+			var jstruct = JSON.parse (data.toString ());
+			for (var x in jstruct) {
+				stats [x] = jstruct [x];
+				}
+			}
+		if (callback !== undefined) {
+			callback ();
+			}
+		});
+	}
+function statsChanged () {
+	flStatsDirty = true;
+	}
 function getFileExtension (url) {
 	return (utils.stringLastField (url, ".").toLowerCase ());
 	}
@@ -178,7 +204,6 @@ function cacheDelete (username, repository, path) {
 function cacheDeleteParent (username, repository, pathChild) {
 	if (pathChild !== undefined) {
 		var pathParent = utils.stringPopLastField (pathChild, "/") + "/";
-		console.log ("cacheDeleteParent: username == " + username + ", repository == " + repository + ", pathParent == " + pathParent);
 		cacheDelete (username, repository, pathParent);
 		}
 	}
@@ -188,6 +213,18 @@ function getCacheSize () {
 		ct++;
 		});
 	return (ct);
+	}
+function timeoutCacheElements () { //delete cache elements that are too old
+	for (var username in cache) {
+		for (var repository in cache [username]) {
+			for (var path in cache [username] [repository]) {
+				if (utils.secondsSince (cache [username] [repository] [path].whenAdd) >= config.maxCacheSecs) {
+					console.log ("timeoutCacheElements, ageing out: " + username + "/" + repository + "/" + path);
+					delete cache [username] [repository] [path];
+					}
+				}
+			}
+		}
 	}
 function getFromGitHub (username, repository, path, callback) { //calls back with the JSON structure GitHub returns
 	if (!utils.beginsWith (path, "/")) {
@@ -377,7 +414,6 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 				callback (err);
 				}
 			else {
-				console.log ("saveToGitHub: response == " + utils.jsonStringify (response));
 				var jstruct = {
 					urlGitHub: "https://github.com/" + options.username + "/" + options.repository + "/blob/master/" + options.path
 					};
@@ -465,9 +501,6 @@ function buildBlogRss (options, callback) {
 			for (var i = 0; i < flatPostList.length; i++) {
 				var item = flatPostList [i];
 				if (item.urlHtml) {
-					
-					console.log (utils.jsonStringify (item));
-					
 					var obj = {
 						title: item.title,
 						text: item.description,
@@ -682,7 +715,7 @@ function handleHttpRequest (theRequest) {
 			path = jstruct.commits [0].removed [0];
 			}
 		if (path !== undefined) { //something was modified, might be in the cache
-			console.log ("\nhandleGitHubEvent: owner == " + owner + ", repo == " + repo + ", path == " + path + "\n");
+			console.log ("ping from GitHub: owner == " + owner + ", repo == " + repo + ", path == " + path);
 			cacheDelete (owner, repo, path);
 			
 			//check if parent needs to be removed from cache too -- 10/19/18 by DW
@@ -691,13 +724,20 @@ function handleHttpRequest (theRequest) {
 			
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
+		stats.ctGitHubPings++;
+		stats.whenLastGitHubPing = now;
+		statsChanged ();
 		}
 	function handleEditorEvent (domain, path) {
 		var dstruct = config.domains [domain.toLowerCase ()]
 		if (dstruct !== undefined) {
+			console.log ("\nping from editor: domain == " + domain + ", path == " + path);
 			cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}
+		stats.ctEditorPings++;
+		stats.whenLastEditorPing = now;
+		statsChanged ();
 		}
 	function handleOauthCallback () {
 		var params = {
@@ -710,7 +750,6 @@ function handleHttpRequest (theRequest) {
 			method: "POST",
 			url: apiUrl
 			};
-		console.log ("handleOauthCallback: githubRequest === " + utils.jsonStringify (githubRequest));
 		request (githubRequest, function (err, response, body) {
 			if (err) {
 				console.log (err.message);
@@ -908,17 +947,32 @@ function handleExternalRequest (options, callback) { //9/28/18 by DW -- an exter
 		};
 	handleHttpRequest (theRequest);
 	}
-function init (userConfig, flHandleHttpHere) {
-	if (flHandleHttpHere === undefined) {
-		flHandleHttpHere = true;
+function everyFiveSeconds () {
+	timeoutCacheElements ();
+	}
+function everySecond () {
+	if (flStatsDirty) {
+		utils.sureFilePath (fnamestats, function () {
+			fs.writeFile (fnamestats, utils.jsonStringify (stats), function (err) {
+				});
+			});
+		flStatsDirty = false;
 		}
+	}
+function init (userConfig, flHandleHttpHere) {
 	console.log ("\n" + myProductName + " v" + myVersion + "\n");
 	for (var x in userConfig) {
 		config [x] = userConfig [x];
 		}
+	if (flHandleHttpHere === undefined) {
+		flHandleHttpHere = true;
+		}
+	readStats ();
 	if (flHandleHttpHere) {
 		davehttp.start (config, function (theRequest) {
 			handleHttpRequest (theRequest);
 			});
 		}
+	setInterval (everySecond, 1000); 
+	setInterval (everyFiveSeconds, 5000); 
 	}

@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.50&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.51&quot;;   "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -64,7 +64,7 @@
 			<outline text="flLogToConsole: true,"></outline>
 			<outline text="flPostEnabled: true,"></outline>
 			<outline text="flAllowAccessFromAnywhere: true,"></outline>
-			<outline text="flDebugMessagesFromGitHub: true,"></outline>
+			<outline text="flDebugMessagesFromGitHub: false,"></outline>
 			<outline text="flDebugObjectsFromGitHub: false,"></outline>
 			<outline text="apiUrl: &quot;https://api.github.com/repos/&quot;,"></outline>
 			<outline text="indexFileName: &quot;index&quot;,"></outline>
@@ -93,7 +93,9 @@
 			<outline text="ctGitHubPings: -0,"></outline>
 			<outline text="whenLastGitHubPing: new Date (0),"></outline>
 			<outline text="ctEditorPings: 0,"></outline>
-			<outline text="whenLastEditorPing: new Date (0)"></outline>
+			<outline text="whenLastEditorPing: new Date (0),"></outline>
+			<outline text="ctCacheAgeouts: 0,"></outline>
+			<outline text="whenLastCacheAgeout: new Date (0)"></outline>
 			<outline text="};"></outline>
 			</outline>
 		<outline text="const fnamestats = &quot;stats.json&quot;;"></outline>
@@ -150,6 +152,11 @@
 				<outline text="if (frontmatter.length &gt; 0) {">
 					<outline text="var jstruct = yaml.safeLoad (frontmatter);"></outline>
 					<outline text="jstruct.text = remainingtext;"></outline>
+					<outline text="if (jstruct.urlHtml !== undefined) { //10/26/18 by DW -- changing &quot;urlHtml&quot; to urlPublic">
+						<outline text="jstruct.urlPublic = jstruct.urlHtml;"></outline>
+						<outline text="delete jstruct.urlHtml;"></outline>
+						<outline text="}"></outline>
+						</outline>
 					<outline text="return (jstruct);"></outline>
 					<outline text="}"></outline>
 					</outline>
@@ -303,8 +310,11 @@
 				<outline text="for (var repository in cache [username]) {">
 					<outline text="for (var path in cache [username] [repository]) {">
 						<outline text="if (utils.secondsSince (cache [username] [repository] [path].whenAdd) &gt;= config.maxCacheSecs) {">
-							<outline text="console.log (&quot;timeoutCacheElements, ageing out: &quot; + username + &quot;/&quot; + repository + &quot;/&quot; + path);"></outline>
+							<outline isComment="true" text="console.log (&quot;timeoutCacheElements, ageing out: &quot; + username + &quot;/&quot; + repository + &quot;/&quot; + path);"></outline>
 							<outline text="delete cache [username] [repository] [path];"></outline>
+							<outline text="stats.ctCacheAgeouts++;"></outline>
+							<outline text="stats.whenLastCacheAgeout = new Date ();"></outline>
+							<outline text="statsChanged ();"></outline>
 							<outline text="}"></outline>
 							</outline>
 						<outline text="}"></outline>
@@ -590,7 +600,7 @@
 							</outline>
 						<outline text="if (options.domain !== undefined) {">
 							<outline text="jstruct.domain = options.lowerdomain; "></outline>
-							<outline text="jstruct.urlHtml = &quot;http://&quot; + options.lowerdomain + options.origpath;"></outline>
+							<outline text="jstruct.urlPublic = &quot;http://&quot; + options.lowerdomain + options.origpath;"></outline>
 							<outline text="}"></outline>
 							</outline>
 						<outline text="callback (undefined, jstruct);"></outline>
@@ -698,15 +708,15 @@
 					<outline text="var flatPostList = getFlatPostList (blogData), rssHistory = new Array ();"></outline>
 					<outline text="for (var i = 0; i &lt; flatPostList.length; i++) {">
 						<outline text="var item = flatPostList [i];"></outline>
-						<outline text="if (item.urlHtml) {">
+						<outline text="if (item.urlPublic) {">
 							<outline text="var obj = {">
 								<outline text="title: item.title,"></outline>
 								<outline text="text: item.description,"></outline>
 								<outline text="when: item.created,"></outline>
-								<outline text="link: item.urlHtml,"></outline>
+								<outline text="link: item.urlPublic,"></outline>
 								<outline text="guid: {">
 									<outline text="flPermalink: true,"></outline>
-									<outline text="value: item.urlHtml"></outline>
+									<outline text="value: item.urlPublic"></outline>
 									<outline text="}"></outline>
 									</outline>
 								<outline text="};"></outline>
@@ -723,7 +733,7 @@
 						<outline text="if (!err) {">
 							<outline isComment="true" text="console.log (&quot;buildBlogRss: jstruct == &quot; + utils.jsonStringify (jstruct));"></outline>
 							<outline text="var urlServer = &quot;http://&quot; + blogData.cloud.domain + &quot;:&quot; + blogData.cloud.port + blogData.cloud.path;"></outline>
-							<outline text="rss.cloudPing (urlServer, jstruct.urlHtml);"></outline>
+							<outline text="rss.cloudPing (urlServer, jstruct.urlPublic);"></outline>
 							<outline text="if (callback !== undefined) {">
 								<outline text="callback (undefined, jstruct);"></outline>
 								<outline text="}"></outline>
@@ -849,10 +859,10 @@
 							<outline text="add (&quot;&lt;ul class=\&quot;ulHomePageItems\&quot;&gt;&quot;); indentlevel++;"></outline>
 							<outline text="for (var i = 0; i &lt; flatPostList.length; i++) {">
 								<outline text="var item = flatPostList [i];"></outline>
-								<outline text="if (item.urlHtml) {">
+								<outline text="if (item.urlPublic) {">
 									<outline text="var whenstring = dateFormat (item.created, &quot;dddd mmmm d, yyyy; h:MM TT Z&quot;);"></outline>
 									<outline text="add (&quot;&lt;li&gt;&quot;); indentlevel++;"></outline>
-									<outline text="add (&quot;&lt;div class=\&quot;divItemTitle\&quot;&gt;&lt;a href=\&quot;&quot; + item.urlHtml + &quot;\&quot;&gt;&quot; + item.title + &quot;&lt;/a&gt;&lt;/div&gt;&quot;);"></outline>
+									<outline text="add (&quot;&lt;div class=\&quot;divItemTitle\&quot;&gt;&lt;a href=\&quot;&quot; + item.urlPublic + &quot;\&quot;&gt;&quot; + item.title + &quot;&lt;/a&gt;&lt;/div&gt;&quot;);"></outline>
 									<outline text="add (&quot;&lt;div class=\&quot;divItemDescription\&quot;&gt;&quot; + item.description + &quot;&lt;/div&gt;&quot;);"></outline>
 									<outline text="add (&quot;&lt;div class=\&quot;divItemWhenPosted\&quot;&gt;&quot; + whenstring + &quot;&lt;/div&gt;&quot;);"></outline>
 									<outline text="add (&quot;&lt;/li&gt;&quot;); indentlevel--;"></outline>
@@ -1007,7 +1017,7 @@
 					<outline text="}"></outline>
 					</outline>
 				<outline text="if (path !== undefined) { //something was modified, might be in the cache">
-					<outline text="console.log (&quot;ping from GitHub: owner == &quot; + owner + &quot;, repo == &quot; + repo + &quot;, path == &quot; + path);"></outline>
+					<outline isComment="true" text="console.log (&quot;ping from GitHub: owner == &quot; + owner + &quot;, repo == &quot; + repo + &quot;, path == &quot; + path);"></outline>
 					<outline text="cacheDelete (owner, repo, path);"></outline>
 					<outline text=""></outline>
 					<outline text="//check if parent needs to be removed from cache too -- 10/19/18 by DW">
@@ -1026,7 +1036,7 @@
 			<outline text="function handleEditorEvent (domain, path) {">
 				<outline text="var dstruct = config.domains [domain.toLowerCase ()]"></outline>
 				<outline text="if (dstruct !== undefined) {">
-					<outline text="console.log (&quot;\nping from editor: domain == &quot; + domain + &quot;, path == &quot; + path);"></outline>
+					<outline isComment="true" text="console.log (&quot;\nping from editor: domain == &quot; + domain + &quot;, path == &quot; + path);"></outline>
 					<outline text="cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);"></outline>
 					<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;Thanks for the ping.&quot;);"></outline>
 					<outline text="}"></outline>

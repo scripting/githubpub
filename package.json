@@ -2,7 +2,7 @@
 	"name": "githubpub", 
 	"description": "A web server that supports editing of blogs in GitHub repos, and serves content from those blogs.",
 	"author": "Dave Winer <dave@smallpicture.com>",
-	"version": "0.5.50",
+	"version": "0.5.51",
 	"scripts": {
 		"start": "node githubpub.js"
 		},

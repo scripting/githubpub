@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.50";   
+const myProductName = "githubpub", myVersion = "0.5.51";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -49,7 +49,7 @@ var config = {
 	flLogToConsole: true,
 	flPostEnabled: true,
 	flAllowAccessFromAnywhere: true,
-	flDebugMessagesFromGitHub: true,
+	flDebugMessagesFromGitHub: false,
 	flDebugObjectsFromGitHub: false,
 	apiUrl: "https://api.github.com/repos/",
 	indexFileName: "index",
@@ -75,7 +75,9 @@ var stats = {
 	ctGitHubPings: -0,
 	whenLastGitHubPing: new Date (0),
 	ctEditorPings: 0,
-	whenLastEditorPing: new Date (0)
+	whenLastEditorPing: new Date (0),
+	ctCacheAgeouts: 0,
+	whenLastCacheAgeout: new Date (0)
 	};
 const fnamestats = "stats.json";
 var flStatsDirty = false;
@@ -120,6 +122,10 @@ function deYamlIze (data) {
 		if (frontmatter.length > 0) {
 			var jstruct = yaml.safeLoad (frontmatter);
 			jstruct.text = remainingtext;
+			if (jstruct.urlHtml !== undefined) { //10/26/18 by DW -- changing "urlHtml" to urlPublic
+				jstruct.urlPublic = jstruct.urlHtml;
+				delete jstruct.urlHtml;
+				}
 			return (jstruct);
 			}
 		return ({text: filetext});
@@ -219,8 +225,10 @@ function timeoutCacheElements () { //delete cache elements that are too old
 		for (var repository in cache [username]) {
 			for (var path in cache [username] [repository]) {
 				if (utils.secondsSince (cache [username] [repository] [path].whenAdd) >= config.maxCacheSecs) {
-					console.log ("timeoutCacheElements, ageing out: " + username + "/" + repository + "/" + path);
 					delete cache [username] [repository] [path];
+					stats.ctCacheAgeouts++;
+					stats.whenLastCacheAgeout = new Date ();
+					statsChanged ();
 					}
 				}
 			}
@@ -419,7 +427,7 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 					};
 				if (options.domain !== undefined) {
 					jstruct.domain = options.lowerdomain; 
-					jstruct.urlHtml = "http://" + options.lowerdomain + options.origpath;
+					jstruct.urlPublic = "http://" + options.lowerdomain + options.origpath;
 					}
 				callback (undefined, jstruct);
 				}
@@ -500,15 +508,15 @@ function buildBlogRss (options, callback) {
 			var flatPostList = getFlatPostList (blogData), rssHistory = new Array ();
 			for (var i = 0; i < flatPostList.length; i++) {
 				var item = flatPostList [i];
-				if (item.urlHtml) {
+				if (item.urlPublic) {
 					var obj = {
 						title: item.title,
 						text: item.description,
 						when: item.created,
-						link: item.urlHtml,
+						link: item.urlPublic,
 						guid: {
 							flPermalink: true,
-							value: item.urlHtml
+							value: item.urlPublic
 							}
 						};
 					rssHistory.push (obj);
@@ -519,7 +527,7 @@ function buildBlogRss (options, callback) {
 			saveToGitHub (options, function (err, jstruct) {
 				if (!err) {
 					var urlServer = "http://" + blogData.cloud.domain + ":" + blogData.cloud.port + blogData.cloud.path;
-					rss.cloudPing (urlServer, jstruct.urlHtml);
+					rss.cloudPing (urlServer, jstruct.urlPublic);
 					if (callback !== undefined) {
 						callback (undefined, jstruct);
 						}
@@ -612,10 +620,10 @@ function handleHttpRequest (theRequest) {
 					add ("<ul class=\"ulHomePageItems\">"); indentlevel++;
 					for (var i = 0; i < flatPostList.length; i++) {
 						var item = flatPostList [i];
-						if (item.urlHtml) {
+						if (item.urlPublic) {
 							var whenstring = dateFormat (item.created, "dddd mmmm d, yyyy; h:MM TT Z");
 							add ("<li>"); indentlevel++;
-							add ("<div class=\"divItemTitle\"><a href=\"" + item.urlHtml + "\">" + item.title + "</a></div>");
+							add ("<div class=\"divItemTitle\"><a href=\"" + item.urlPublic + "\">" + item.title + "</a></div>");
 							add ("<div class=\"divItemDescription\">" + item.description + "</div>");
 							add ("<div class=\"divItemWhenPosted\">" + whenstring + "</div>");
 							add ("</li>"); indentlevel--;
@@ -715,7 +723,6 @@ function handleHttpRequest (theRequest) {
 			path = jstruct.commits [0].removed [0];
 			}
 		if (path !== undefined) { //something was modified, might be in the cache
-			console.log ("ping from GitHub: owner == " + owner + ", repo == " + repo + ", path == " + path);
 			cacheDelete (owner, repo, path);
 			
 			//check if parent needs to be removed from cache too -- 10/19/18 by DW
@@ -731,7 +738,6 @@ function handleHttpRequest (theRequest) {
 	function handleEditorEvent (domain, path) {
 		var dstruct = config.domains [domain.toLowerCase ()]
 		if (dstruct !== undefined) {
-			console.log ("\nping from editor: domain == " + domain + ", path == " + path);
 			cacheDelete (dstruct.username, dstruct.repo, dstruct.path + path);
 			theRequest.httpReturn (200, "text/plain", "Thanks for the ping.");
 			}

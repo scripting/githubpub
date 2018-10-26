@@ -5,23 +5,14 @@ var appConsts = {
 	myServerAddress: "http://english.scripting.com/",
 	myBlogDomain: "englishblog1.scripting.com", //an index into the server's domains object
 	
-	
-	defaultEditorButtons: ["bold", "italic", "anchor", "h3", "h4", "orderedlist", "unorderedlist", "quote"],
-	
 	blogDataPath: "data.json",
 	blogPostsPath: "posts/",
 	blogRssPath: "rss.xml",
 	
-	placeholders: {
-		title: "",
-		description: "",
-		body: ""
-		},
-	
-	version: "0.4.15"
+	version: "0.4.0"
 	};
 var appPrefs = {
-	lastInsertedHtmltext: undefined
+	lastPostTitle: undefined
 	}
 
 var whenLastPostChange = new Date (), whenLastSave = new Date (0);
@@ -65,12 +56,14 @@ function saveButtonClick () {
 function updatePostList () {
 	myGitHubPubApp.buildPostList ("idPostList")
 	}
-function postListButtonClick () {
-	$("#idPostListButton").blur ();
-	updatePostList ();
-	}
 function newPostButtonClick () {
-	myGitHubPubApp.newBlogPost ("Oh the buzzing")
+	askDialog ("Title for new post?", appPrefs.lastPostTitle, "You can leave it empty if you like.", function (title, flcancel) {
+		if (!flcancel) {
+			appPrefs.lastPostTitle = title; 
+			myGitHubPubApp.prefsChanged ();
+			myGitHubPubApp.newBlogPost (title)
+			}
+		});
 	}
 function updateIconValues () { 
 	function setIcon (id, val) {
@@ -79,7 +72,7 @@ function updateIconValues () {
 			}
 		}
 	var postStruct = myGitHubPubApp.getCurrentPost ();
-	setIcon ("idEyeIconAnchor", postStruct.urlHtml);
+	setIcon ("idEyeIconAnchor", postStruct.urlPublic);
 	setIcon ("idGitHubIconAnchor", postStruct.urlGitHub);
 	}
 function everySecond () {

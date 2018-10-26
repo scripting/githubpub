@@ -1,7 +1,13 @@
 function githubpubApp (consts, prefs) { //10/22/18 by DW
-	var appConsts = consts, userPrefs = prefs;
+	var userConsts = consts, userPrefs = prefs;
 	
-	var appPrefs = {
+	var appConsts = { 
+		blogDataPath: "data.json",
+		blogPostsPath: "posts/",
+		blogRssPath: "rss.xml",
+		version: "0.4.0"
+		};
+	var appPrefs = { //saved in localStorage (or filesystem on server, tbd)
 		accessToken: undefined,
 		userInfo: undefined,
 		commitMessage: "Update",
@@ -13,7 +19,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		userPrefs: undefined
 		};
 	
-	var blogData = {
+	var blogData = { //saved on server
 		title: "The best blog ever",
 		description: "The first blog hosted by English on GitHub.",
 		generator: appConsts.productnameForDisplay + " v" + appConsts.version,
@@ -63,10 +69,19 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		localStorage.gitHubData = jsonStringify (appPrefs);
 		}
 	function saveEditorStatus (editorData) {
-		appPrefs.postStruct.title = editorData.title;
-		appPrefs.postStruct.description = editorData.description;
-		appPrefs.postStruct.text = editorData.text;
-		savePrefsToLocalStorage ();
+		var flchanged = false;
+		function setval (name, val) {
+			if (appPrefs.postStruct [name] != val) {
+				appPrefs.postStruct [name] = val;
+				flchanged = true;
+				}
+			}
+		setval ("title", editorData.title);
+		setval ("description", editorData.description);
+		setval ("text", editorData.text);
+		if (flchanged) {
+			savePrefsToLocalStorage ();
+			}
 		}
 	
 	function userIsSignedOn () {
@@ -222,7 +237,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 				$("#" + id).attr ("href", val);
 				}
 			}
-		setIcon ("idEyeIconAnchor", appPrefs.postStruct.urlHtml);
+		setIcon ("idEyeIconAnchor", appPrefs.postStruct.urlPublic);
 		setIcon ("idGitHubIconAnchor", appPrefs.postStruct.urlGitHub);
 		}
 	function getRepoLoc (path, callback) {
@@ -353,7 +368,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			id: postStruct.id,
 			created: postStruct.created,
 			path: postStruct.path,
-			urlHtml: postStruct.urlHtml, //10/11/18 by DW
+			urlPublic: postStruct.urlPublic, //10/11/18 by DW
 			urlGitHub: postStruct.urlGitHub //10/11/18 by DW
 			};
 		
@@ -414,7 +429,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			console.log ("updateBlogPost: jstruct == " + jsonStringify (jstruct));
 			pingPostUpdate (); //9/25/18 by DW
 			postStruct.domain = jstruct.domain; //9/30/18 by DW
-			postStruct.urlHtml = jstruct.urlHtml; //10/6/18 by DW
+			postStruct.urlPublic = jstruct.urlPublic; //10/6/18 by DW
 			postStruct.urlGitHub = jstruct.urlGitHub; //10/6/18 by DW
 			console.log ("updateBlogPost: postStruct == " + jsonStringify (postStruct));
 			addPostToOutline (postStruct);
@@ -513,15 +528,15 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		var flatPostList = getPostList (), rssHistory = new Array ();
 		for (var i = 0; i < flatPostList.length; i++) {
 			var item = flatPostList [i];
-			if (item.urlHtml) {
+			if (item.urlPublic) {
 				var obj = {
 					title: item.title,
 					description: item.description,
 					when: item.created,
-					link: item.urlHtml,
+					link: item.urlPublic,
 					guid: {
 						flPermalink: true,
-						value: item.urlHtml
+						value: item.urlPublic
 						}
 					};
 				rssHistory.push (obj);
@@ -531,7 +546,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		updateGitHubFile (appConsts.blogRssPath, xmltext, function (jstruct) {
 			console.log ("buildBlogRss: jstruct == " + jsonStringify (jstruct));
 			var urlServer = "http://" + blogData.cloud.domain + ":" + blogData.cloud.port + blogData.cloud.path;
-			rssCloudPing (urlServer, jstruct.urlHtml);
+			rssCloudPing (urlServer, jstruct.urlPublic);
 			if (callback !== undefined) {
 				callback ();
 				}
@@ -589,7 +604,8 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		}
 	function buildPostList (idPostList, callback) {
 		var postList = getPostList ();
-		var unorderedList = $("<ul></ul>");
+		var unorderedList = $("#" + idPostList);
+		unorderedList.empty ();
 		for (var i = 0; i < postList.length; i++) {
 			let item = postList [i];
 			var listItem = $("<li></li>");
@@ -613,7 +629,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			listItem.append (anchor);
 			unorderedList.append (listItem);
 			}
-		$("#" + idPostList).html (unorderedList)
 		}
 	
 	function everyMinute () {
@@ -639,11 +654,24 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		me.callbacks.everySecond ();
 		}
 	
-	this.flStartupFail = false;
+	for (var x in userConsts) {
+		appConsts [x] = userConsts [x];
+		}
 	
 	this.userIsSignedOn = userIsSignedOn;
 	this.connectWithGitHub = connectWithGitHub;
 	this.disconnectFromGitHub = disconnectFromGitHub;
+	this.getBlogData = function () {
+		return (blogData);
+		};
+	this.setBlogDataElements = function (theElements) {
+		console.log ("setBlogDataElements: theElements == " + jsonStringify (theElements));
+		for (x in theElements) {
+			blogData [x] = theElements [x];
+			}
+		blogDataChanged ();
+		},
+	this.prefsChanged = prefsChanged;
 	this.getCurrentPost = function () {
 		return (appPrefs.postStruct);
 		};
@@ -660,6 +688,9 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		}
 	this.getPostListHtml = getPostListHtml;
 	this.buildPostList = buildPostList;
+	this.getGitHubUserInfo = function () {
+		return (appPrefs.userInfo);
+		};
 	this.callbacks = {
 		startEditor: function (postStruct) {
 			},
@@ -669,9 +700,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			}
 		};
 	
-	this.prefsChanged = function () {
-		prefsChanged ();
-		};
 	this.start = function (callback) {
 		function docallback (flConnected) {
 			if (callback !== undefined) {

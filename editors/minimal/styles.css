@@ -76,6 +76,13 @@ body {
 	cursor: pointer;
 	}
 
+.btnSignOn {
+	width: 200px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	}
+
 /* styles for phone */
 	@media only screen 
 	and (min-device-width : 320px) 

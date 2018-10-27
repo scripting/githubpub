@@ -24,25 +24,25 @@
     </ul>
 <li>10/26/18; 9:55:44 AM by DW</li>
 <ul>
-    
+    &nbsp;
     <li>wire up View Template command in main menu in englishhome</li>
     <ul>
-        
+        &nbsp;
         </ul>
-    
+    &nbsp;
     <li>big idea --</li>
     <ul>
         use GHP to document XML-RPC
         </ul>
-    
-    
-    
+    &nbsp;
+    &nbsp;
+    &nbsp;
     test insert html command in english editor
     "english" shouldn't be the name of the server
     look at includes in the editors
     add english editor to editors folder on ghp repo
     handle posts in JSON in addition to YAML
-    
+    &nbsp;
     <li>done</li>
     <ul>
         <li>fill out settings</li>
@@ -68,7 +68,7 @@
             </ul>
         <li>change github config to point to new location of english editor</li>
         <ul>
-            
+            &nbsp;
             </ul>
         </ul>
     </ul>
@@ -82,10 +82,10 @@
     <ul>
         good works
         </ul>
-    
-    
-    
-    
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
     look at includes in the editors
     test log off, log on
     "english" shouldn't be the name of the server
@@ -171,8 +171,8 @@
                 </ul>
             </ul>
         </ul>
-    
-    
+    &nbsp;
+    &nbsp;
     </ul>
 <li>10/8/18; 2:03:14 PM by DW</li>
 <ul>
@@ -194,9 +194,9 @@
         <li>the factoring job started there is not done</li>
         <ul>
             I understand why. When we punted on changing the way EH works to use domains instead of username/repo/path, it made it impossible to hide the relative path of the things it's editing. That was never configured on the server. domain.path is irrelevant, as it's currently implemented.
-            
+            &nbsp;
             interfaces that take domain in place of username/repo/path
-            
+            &nbsp;
             /get
             /save
             /getpost
@@ -303,7 +303,7 @@
             <ul>
                 posts/ and data.json
                 the blog/ part should be added by the server
-                
+                &nbsp;
                 </ul>
             </ul>
         </ul>

@@ -1,13 +1,13 @@
 <li>10/27/18; 10:32:32 AM by DW</li>
 <ul>
-    add this notes file to the GHP repo
-    write docs for config.json for GHP
-    send the accesstoken along with every call so the user can be ratelimited by GH, not GHP or the client.
+    <li>add this notes file to the GHP repo</li>
+    <li>write docs for config.json for GHP</li>
+    <li>send the accesstoken along with every call so the user can be ratelimited by GH, not GHP or the client.</li>
     <li>done</li>
     <ul>
         <li>create a separate app on github for the minimal editor</li>
         <ul>
-            this also has to be configured on GHP server, it has to know the URL of the editor, so it can redirect properly based on which editor is involved. 
+            <li>this also has to be configured on GHP server, it has to know the URL of the editor, so it can redirect properly based on which editor is involved. </li>
             </ul>
         <li>review interface out of githubpubApp, some routines aren't needed.</li>
         <ul>
@@ -15,8 +15,8 @@
             <ul>
                 <li>repoget and reposave</li>
                 <ul>
-                    read and write from locations defined by username/repository/path
-                    low-level routines, not part of blogging
+                    <li>read and write from locations defined by username/repository/path</li>
+                    <li>low-level routines, not part of blogging</li>
                     </ul>
                 </ul>
             </ul>
@@ -24,51 +24,51 @@
     </ul>
 <li>10/26/18; 9:55:44 AM by DW</li>
 <ul>
-    &nbsp;
+    <li>&nbsp;</li>
     <li>wire up View Template command in main menu in englishhome</li>
     <ul>
-        &nbsp;
+        <li>&nbsp;</li>
         </ul>
-    &nbsp;
+    <li>&nbsp;</li>
     <li>big idea --</li>
     <ul>
-        use GHP to document XML-RPC
+        <li>use GHP to document XML-RPC</li>
         </ul>
-    &nbsp;
-    &nbsp;
-    &nbsp;
-    test insert html command in english editor
-    "english" shouldn't be the name of the server
-    look at includes in the editors
-    add english editor to editors folder on ghp repo
-    handle posts in JSON in addition to YAML
-    &nbsp;
+    <li>&nbsp;</li>
+    <li>&nbsp;</li>
+    <li>&nbsp;</li>
+    <li>test insert html command in english editor</li>
+    <li>"english" shouldn't be the name of the server</li>
+    <li>look at includes in the editors</li>
+    <li>add english editor to editors folder on ghp repo</li>
+    <li>handle posts in JSON in addition to YAML</li>
+    <li>&nbsp;</li>
     <li>done</li>
     <ul>
         <li>fill out settings</li>
         <ul>
-            blog title
-            description
-            lastPostTitle
-            language
+            <li>blog title</li>
+            <li>description</li>
+            <li>lastPostTitle</li>
+            <li>language</li>
             </ul>
-        need a way for user app to set blogData elements
+        <li>need a way for user app to set blogData elements</li>
         <li>internal consts and app consts</li>
         <ul>
-            right now they're mixed in together
+            <li>right now they're mixed in together</li>
             </ul>
-        urlHtml was a bad name -- replace with urlPublic
+        <li>urlHtml was a bad name -- replace with urlPublic</li>
         <li>englishHome delete major pieces of commented code</li>
         <ul>
-            the result of the factoring. 
+            <li>the result of the factoring. </li>
             </ul>
         <li>test log off, log on</li>
         <ul>
-            both apps -- minimal and english
+            <li>both apps -- minimal and english</li>
             </ul>
         <li>change github config to point to new location of english editor</li>
         <ul>
-            &nbsp;
+            <li>&nbsp;</li>
             </ul>
         </ul>
     </ul>
@@ -76,23 +76,23 @@
 <ul>
     <li>next up -- pull out all the unused code from english editor</li>
     <ul>
-        saved something fun! :-)
+        <li>saved something fun! :-)</li>
         </ul>
     <li>refactor the medium editor and include it</li>
     <ul>
-        good works
+        <li>good works</li>
         </ul>
-    &nbsp;
-    &nbsp;
-    &nbsp;
-    &nbsp;
-    look at includes in the editors
-    test log off, log on
-    "english" shouldn't be the name of the server
-    urlHtml was a bad name -- replace with urlPublic
+    <li>&nbsp;</li>
+    <li>&nbsp;</li>
+    <li>&nbsp;</li>
+    <li>&nbsp;</li>
+    <li>look at includes in the editors</li>
+    <li>test log off, log on</li>
+    <li>"english" shouldn't be the name of the server</li>
+    <li>urlHtml was a bad name -- replace with urlPublic</li>
     <li>ghp cache elements expire after a certain period</li>
     <ul>
-        let's say 3 minutes by default
+        <li>let's say 3 minutes by default</li>
         </ul>
     </ul>
 <li>10/24/18; 9:59:08 AM by DW</li>
@@ -101,89 +101,89 @@
     <ul>
         <li>internal consts and app consts</li>
         <ul>
-            right now they're mixed in together
+            <li>right now they're mixed in together</li>
             </ul>
         <li>save user prefs</li>
         <ul>
-            the code is in there, it might work but hasnt been tested
+            <li>the code is in there, it might work but hasnt been tested</li>
             </ul>
         </ul>
     <li>Working on the api glue and Hello World for GHP</li>
     <ul>
-        review code, esp includes
-        new post button
-        file list
-        icons linking to github and html rendering
+        <li>review code, esp includes</li>
+        <li>new post button</li>
+        <li>file list</li>
+        <li>icons linking to github and html rendering</li>
         </ul>
     </ul>
 <li>10/21/18; 11:14:22 AM by DW</li>
 <ul>
-    handle posts in JSON in addition to YAML
+    <li>handle posts in JSON in addition to YAML</li>
     <li>second editor</li>
     <ul>
-        use same editor as GH uses
+        <li>use same editor as GH uses</li>
         </ul>
     <li>document config</li>
     <ul>
-        add new elements to it?
-        add elements in config to pagetable?
+        <li>add new elements to it?</li>
+        <li>add elements in config to pagetable?</li>
         </ul>
     </ul>
 <li>10/20/18; 12:00:59 PM by DW</li>
 <ul>
-    changed icons on home page so the href attribute is set, so when you hover over the 
-    documented templates
-    new command to view the template
+    <li>changed icons on home page so the href attribute is set, so when you hover over the </li>
+    <li>documented templates</li>
+    <li>new command to view the template</li>
     </ul>
 <li>10/16/18; 10:08:24 AM by DW</li>
 <ul>
     <li>Back to work. This stuff is done..</li>
     <ul>
-        send committer params along with calls to buildrss
-        Render blog home page
+        <li>send committer params along with calls to buildrss</li>
+        <li>Render blog home page</li>
         </ul>
     </ul>
 <li>10/12/18; 10:15:53 AM by DW</li>
 <ul>
-    send committer params along with calls to buildrss
-    Render blog home page
-    Insert HTML command in menu
-    Move icons into menu
-    Find good place for SAVED
+    <li>send committer params along with calls to buildrss</li>
+    <li>Render blog home page</li>
+    <li>Insert HTML command in menu</li>
+    <li>Move icons into menu</li>
+    <li>Find good place for SAVED</li>
     <li>Docs</li>
     <ul>
-        Template 
-        setting up a server
-        API
+        <li>Template </li>
+        <li>setting up a server</li>
+        <li>API</li>
         </ul>
-    urlEditorApp in config -- is this actually being used or is the one on github overriding it?
+    <li>urlEditorApp in config -- is this actually being used or is the one on github overriding it?</li>
     <li>server stuff</li>
     <ul>
-        empty out config in englishServer
-        move most of the items into config in githubpub
-        move some of them into config.json
+        <li>empty out config in englishServer</li>
+        <li>move most of the items into config in githubpub</li>
+        <li>move some of them into config.json</li>
         <li>getting this error sometimes</li>
         <ul>
             <li>saveToGitHub: response == {</li>
             <ul>
-                "statusCode": 409,
-                "body": "{\"message\":\"is at c9e17f82b72165f8f2ae57c6587e3eb0ad2fb934 but expected 113749995a25d6f45b77894c64d7008023234c91\",\"documentation_url\":\"https://developer.github.com/v3/repos/contents/#update-a-file\"}",
+                <li>"statusCode": 409,</li>
+                <li>"body": "{\"message\":\"is at c9e17f82b72165f8f2ae57c6587e3eb0ad2fb934 but expected 113749995a25d6f45b77894c64d7008023234c91\",\"documentation_url\":\"https://developer.github.com/v3/repos/contents/#update-a-file\"}",</li>
                 </ul>
             </ul>
         </ul>
-    &nbsp;
-    &nbsp;
+    <li>&nbsp;</li>
+    <li>&nbsp;</li>
     </ul>
 <li>10/8/18; 2:03:14 PM by DW</li>
 <ul>
     <li>Next up -- </li>
     <ul>
-        document the api for english server with sample code
-        settings linked into the system menu
+        <li>document the api for english server with sample code</li>
+        <li>settings linked into the system menu</li>
         <li>clean up command keys in main menu</li>
         <ul>
-            they overwrite the command names
-            this is a style sheets item
+            <li>they overwrite the command names</li>
+            <li>this is a style sheets item</li>
             </ul>
         </ul>
     </ul>
@@ -193,30 +193,30 @@
     <ul>
         <li>the factoring job started there is not done</li>
         <ul>
-            I understand why. When we punted on changing the way EH works to use domains instead of username/repo/path, it made it impossible to hide the relative path of the things it's editing. That was never configured on the server. domain.path is irrelevant, as it's currently implemented.
-            &nbsp;
-            interfaces that take domain in place of username/repo/path
-            &nbsp;
-            /get
-            /save
-            /getpost
-            /savepost
+            <li>I understand why. When we punted on changing the way EH works to use domains instead of username/repo/path, it made it impossible to hide the relative path of the things it's editing. That was never configured on the server. domain.path is irrelevant, as it's currently implemented.</li>
+            <li>&nbsp;</li>
+            <li>interfaces that take domain in place of username/repo/path</li>
+            <li>&nbsp;</li>
+            <li>/get</li>
+            <li>/save</li>
+            <li>/getpost</li>
+            <li>/savepost</li>
             </ul>
         </ul>
     <li>templates should be merged with githubpup repository</li>
     <ul>
-        right now they're only being saved to the english blog
+        <li>right now they're only being saved to the english blog</li>
         </ul>
     <li>merge githubpub with english server</li>
     <ul>
-        mostly done
+        <li>mostly done</li>
         <li>I still want to make GHP work without english server</li>
         <ul>
             <li>It has to </li>
             <ul>
-                read config.json
-                init davehttp
-                replace it on rockaway
+                <li>read config.json</li>
+                <li>init davehttp</li>
+                <li>replace it on rockaway</li>
                 </ul>
             </ul>
         </ul>
@@ -225,112 +225,112 @@
 <ul>
     <li>paste-with-style into medium-editor</li>
     <ul>
-        okay we have the code in testPasteHTML () in englishHome. 
-        however we strip the html before saving
-        so we need to address that somehow
-        probably shouldn't be doing it
+        <li>okay we have the code in testPasteHTML () in englishHome. </li>
+        <li>however we strip the html before saving</li>
+        <li>so we need to address that somehow</li>
+        <li>probably shouldn't be doing it</li>
         </ul>
     </ul>
 <li>10/2/18; 10:27:52 AM by DW</li>
 <ul>
     <li>RSS feed next up</li>
     <ul>
-        Then home page 
-        Day archive pages
+        <li>Then home page </li>
+        <li>Day archive pages</li>
         </ul>
     <li>Think about comments</li>
     <ul>
-        I have an idea for this
-        You have to have your own repo for it to work
+        <li>I have an idea for this</li>
+        <li>You have to have your own repo for it to work</li>
         </ul>
     <li>Okay good work session, next up...</li>
     <ul>
-        Use the same CSS file for both the editor and the rendering
-        That pretty much guarantees WYSIWYG. ;-)
+        <li>Use the same CSS file for both the editor and the rendering</li>
+        <li>That pretty much guarantees WYSIWYG. ;-)</li>
         </ul>
     <li>big idea -- convert englishserver to use xml-rpc interface</li>
     <ul>
-        or add an xml-rpc interface and use it fron englishhome
+        <li>or add an xml-rpc interface and use it fron englishhome</li>
         </ul>
     <li>here's how the REST calls for GitHub server work now</li>
     <ul>
-        get/save -- work with absolute paths
-        getblogdata/saveblogdata -- use the path
+        <li>get/save -- work with absolute paths</li>
+        <li>getblogdata/saveblogdata -- use the path</li>
         </ul>
     </ul>
 <li>10/1/18; 10:56:40 AM by DW</li>
 <ul>
     <li>nodeEditorSuite.gitHub.upload has a problem</li>
     <ul>
-        we call the save function on english server
-        we changed what it returns. ooops, this code depends on the original functionality.
-        I didn't see that coming ;-)
+        <li>we call the save function on english server</li>
+        <li>we changed what it returns. ooops, this code depends on the original functionality.</li>
+        <li>I didn't see that coming ;-)</li>
         </ul>
     <li>UI work continues</li>
     <ul>
-        On a new post the Description placeholder is empty
+        <li>On a new post the Description placeholder is empty</li>
         <li>What about auto-save</li>
         <ul>
-            Clearly if present should be a preference
-            Default on?
+            <li>Clearly if present should be a preference</li>
+            <li>Default on?</li>
             </ul>
-        CSS needs updating. H4 is wrong font/shape.
+        <li>CSS needs updating. H4 is wrong font/shape.</li>
         <li>The H2 and H4 items in the popup are broken.</li>
         <ul>
-            Probably has to do with the version of medium-editor we're using
+            <li>Probably has to do with the version of medium-editor we're using</li>
             </ul>
         <li>Change the look of the editor to be more like the pages</li>
         <ul>
-            I don't like the huge text. 
+            <li>I don't like the huge text. </li>
             </ul>
         <li>Done</li>
         <ul>
-            get rid of the file list on the left
-            steal the look from myword.io
-            add description element for the sub-text
+            <li>get rid of the file list on the left</li>
+            <li>steal the look from myword.io</li>
+            <li>add description element for the sub-text</li>
             </ul>
         </ul>
     <li>Upheaval --</li>
     <ul>
         <li>the paths we use should have the "blog/" prefix removed.</li>
         <ul>
-            there's no need for the editor to have this, because it's not part of the url
-            it should be hidden by the server, it's part of the configuration, it should be easily changed.
+            <li>there's no need for the editor to have this, because it's not part of the url</li>
+            <li>it should be hidden by the server, it's part of the configuration, it should be easily changed.</li>
             </ul>
         <li>notes</li>
         <ul>
             <li>appConsts.blogDataPath and appConsts.blogPostsPath should change to </li>
             <ul>
-                posts/ and data.json
-                the blog/ part should be added by the server
-                &nbsp;
+                <li>posts/ and data.json</li>
+                <li>the blog/ part should be added by the server</li>
+                <li>&nbsp;</li>
                 </ul>
             </ul>
         </ul>
     <li>Allow customization through the repository</li>
     <ul>
-        store code there??
+        <li>store code there??</li>
         </ul>
     </ul>
 <li>9/30/18; 11:52:28 AM by DW</li>
 <ul>
     <li>Let's work on UI</li>
     <ul>
-        Leave the server alone for a while. Whew. Too much rock and roll.
-        Try getting the file list into a dialog, let's see what it looks like with more horizonal room.
+        <li>Leave the server alone for a while. Whew. Too much rock and roll.</li>
+        <li>Try getting the file list into a dialog, let's see what it looks like with more horizonal room.</li>
         </ul>
     <li>Cleanup</li>
     <ul>
-        Move englishblog1.scripting.com to point to rockaway.scripting.com. Tell pagepark to route it to english server (port 1402).
+        <li>Move englishblog1.scripting.com to point to rockaway.scripting.com. Tell pagepark to route it to english server (port 1402).</li>
         </ul>
     </ul>
 <li>9/29/18; 9:39:58 AM by DW</li>
 <ul>
     <li>More factoring</li>
     <ul>
-        move github api urls to config struct
-        deYamlize can be factored
-        extracting the content can also be factored
+        <li>move github api urls to config struct</li>
+        <li>deYamlize can be factored</li>
+        <li>extracting the content can also be factored</li>
         </ul>
     </ul>
 <li>9/28/18; 2:38:20 PM by DW</li>
@@ -339,16 +339,16 @@
     <ul>
         <li>There are two routines to get the contents of a file from GitHub, one in githubpub and the other in englishserver</li>
         <ul>
-            use the one in githubpub
-            small difference in how it's called
+            <li>use the one in githubpub</li>
+            <li>small difference in how it's called</li>
             </ul>
         </ul>
     <li>Things to look at next after integration of english server and githubpub</li>
     <ul>
-        there are two caches, only need one
+        <li>there are two caches, only need one</li>
         <li>there seems to be an error handling webhook notifications from github</li>
         <ul>
-            handleRequest: tryError.message == Unexpected token u in JSON at position 0
+            <li>handleRequest: tryError.message == Unexpected token u in JSON at position 0</li>
             </ul>
         </ul>
     </ul>
@@ -358,19 +358,19 @@
     <ul>
         <li>eye icon takes you to the rendering</li>
         <ul>
-            the englishHome server has to know the URL of the site its saving to?
-            or the githubpub functionality has to be integrated into englishHome?
-            thinking needed...
+            <li>the englishHome server has to know the URL of the site its saving to?</li>
+            <li>or the githubpub functionality has to be integrated into englishHome?</li>
+            <li>thinking needed...</li>
             </ul>
-        good fallback when there is no template in the repository.
+        <li>good fallback when there is no template in the repository.</li>
         <li>provisioning new site</li>
         <ul>
-            favicon.ico
+            <li>favicon.ico</li>
             <li>template</li>
             <ul>
-                temlate.txt
-                code.js
-                styles.css
+                <li>temlate.txt</li>
+                <li>code.js</li>
+                <li>styles.css</li>
                 </ul>
             </ul>
         </ul>
@@ -379,43 +379,43 @@
 <ul>
     <li>githubpub</li>
     <ul>
-        get template from the repo
-        deploy on server
-        cache + webook support
+        <li>get template from the repo</li>
+        <li>deploy on server</li>
+        <li>cache + webook support</li>
         </ul>
     </ul>
 <li>9/21/18; 10:38:47 AM by DW</li>
 <ul>
     <li>next up</li>
     <ul>
-        finish the title editor
+        <li>finish the title editor</li>
         <li>store posts in markdown, with atts encoded</li>
         <ul>
-            do it at the lowest level in the editor, so we can still use the json structure internally
+            <li>do it at the lowest level in the editor, so we can still use the json structure internally</li>
             </ul>
-        server app
-        staging new posts, should be quicker
-        error reporting, esp rate limit erros
+        <li>server app</li>
+        <li>staging new posts, should be quicker</li>
+        <li>error reporting, esp rate limit erros</li>
         </ul>
     </ul>
 <li>9/18/18; 10:59:25 AM by DW</li>
 <ul>
     <li>next up --</li>
     <ul>
-        show titles in the tree, not text
-        open the file in the editor if you click on it in the tree
+        <li>show titles in the tree, not text</li>
+        <li>open the file in the editor if you click on it in the tree</li>
         </ul>
-    when create new post or at login, activate the text editor
+    <li>when create new post or at login, activate the text editor</li>
     <li>new instance of githubpub locally </li>
     <ul>
-        renders the blog repo in html
+        <li>renders the blog repo in html</li>
         </ul>
     <li>store the posts in json</li>
     <ul>
-        the text is just one of the elements
-        still keep a top-level list of posts in the blogdata struct
+        <li>the text is just one of the elements</li>
+        <li>still keep a top-level list of posts in the blogdata struct</li>
         </ul>
-    merge appPrefs and blogdata
+    <li>merge appPrefs and blogdata</li>
     </ul>
 <li>9/17/18; 12:46:06 PM by DW</li>
 <ul>
@@ -423,12 +423,12 @@
     <ul>
         <li>get githubpub running locally</li>
         <ul>
-            next up -- pngs aren't being served correctly
+            <li>next up -- pngs aren't being served correctly</li>
             </ul>
-        look at how GitHub handles websites
-        add metadata at the head of the file using one of the formats others are using (see SN thread).
-        allow for opening existing posts
-        autosave
-        eye icon implemented
+        <li>look at how GitHub handles websites</li>
+        <li>add metadata at the head of the file using one of the formats others are using (see SN thread).</li>
+        <li>allow for opening existing posts</li>
+        <li>autosave</li>
+        <li>eye icon implemented</li>
         </ul>
     </ul>

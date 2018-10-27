@@ -1,880 +1,440 @@
 <html>
-
 	<body>
-
 		<ul>
-
 			<li>10/27/18; 10:32:32 AM by DW</li>
-
 			<ul>
-
 				add this notes file to the GHP repo
-
 				write docs for config.json for GHP
-
 				send the accesstoken along with every call so the user can be ratelimited by GH, not GHP or the client.
-
 				<li>done</li>
-
 				<ul>
-
 					<li>create a separate app on github for the minimal editor</li>
-
 					<ul>
-
 						this also has to be configured on GHP server, it has to know the URL of the editor, so it can redirect properly based on which editor is involved. 
-
 						</ul>
-
 					<li>review interface out of githubpubApp, some routines aren't needed.</li>
-
 					<ul>
-
 						<li>some need to be added</li>
-
 						<ul>
-
 							<li>repoget and reposave</li>
-
 							<ul>
-
 								read and write from locations defined by username/repository/path
-
 								low-level routines, not part of blogging
-
 								</ul>
-
 							</ul>
-
 						</ul>
-
 					</ul>
-
 				</ul>
-
 			<li>10/26/18; 9:55:44 AM by DW</li>
-
 			<ul>
-
 				
-
 				<li>wire up View Template command in main menu in englishhome</li>
-
 				<ul>
-
 					
-
 					</ul>
-
 				
-
 				<li>big idea --</li>
-
 				<ul>
-
 					use GHP to document XML-RPC
-
 					</ul>
-
 				
-
 				
-
 				
-
 				test insert html command in english editor
-
 				"english" shouldn't be the name of the server
-
 				look at includes in the editors
-
 				add english editor to editors folder on ghp repo
-
 				handle posts in JSON in addition to YAML
-
 				
-
 				<li>done</li>
-
 				<ul>
-
 					<li>fill out settings</li>
-
 					<ul>
-
 						blog title
-
 						description
-
 						lastPostTitle
-
 						language
-
 						</ul>
-
 					need a way for user app to set blogData elements
-
 					<li>internal consts and app consts</li>
-
 					<ul>
-
 						right now they're mixed in together
-
 						</ul>
-
 					urlHtml was a bad name -- replace with urlPublic
-
 					<li>englishHome delete major pieces of commented code</li>
-
 					<ul>
-
 						the result of the factoring. 
-
 						</ul>
-
 					<li>test log off, log on</li>
-
 					<ul>
-
 						both apps -- minimal and english
-
 						</ul>
-
 					<li>change github config to point to new location of english editor</li>
-
 					<ul>
-
 						
-
 						</ul>
-
 					</ul>
-
 				</ul>
-
 			<li>10/25/18; 10:25:29 AM by DW</li>
-
 			<ul>
-
 				<li>next up -- pull out all the unused code from english editor</li>
-
 				<ul>
-
 					saved something fun! :-)
-
 					</ul>
-
 				<li>refactor the medium editor and include it</li>
-
 				<ul>
-
 					good works
-
 					</ul>
-
 				
-
 				
-
 				
-
 				
-
 				look at includes in the editors
-
 				test log off, log on
-
 				"english" shouldn't be the name of the server
-
 				urlHtml was a bad name -- replace with urlPublic
-
 				<li>ghp cache elements expire after a certain period</li>
-
 				<ul>
-
 					let's say 3 minutes by default
-
 					</ul>
-
 				</ul>
-
 			<li>10/24/18; 9:59:08 AM by DW</li>
-
 			<ul>
-
 				<li>Next up</li>
-
 				<ul>
-
 					<li>internal consts and app consts</li>
-
 					<ul>
-
 						right now they're mixed in together
-
 						</ul>
-
 					<li>save user prefs</li>
-
 					<ul>
-
 						the code is in there, it might work but hasnt been tested
-
 						</ul>
-
 					</ul>
-
 				<li>Working on the api glue and Hello World for GHP</li>
-
 				<ul>
-
 					review code, esp includes
-
 					new post button
-
 					file list
-
 					icons linking to github and html rendering
-
 					</ul>
-
 				</ul>
-
 			<li>10/21/18; 11:14:22 AM by DW</li>
-
 			<ul>
-
 				handle posts in JSON in addition to YAML
-
 				<li>second editor</li>
-
 				<ul>
-
 					use same editor as GH uses
-
 					</ul>
-
 				<li>document config</li>
-
 				<ul>
-
 					add new elements to it?
-
 					add elements in config to pagetable?
-
 					</ul>
-
 				</ul>
-
 			<li>10/20/18; 12:00:59 PM by DW</li>
-
 			<ul>
-
 				changed icons on home page so the href attribute is set, so when you hover over the 
-
 				documented templates
-
 				new command to view the template
-
 				</ul>
-
 			<li>10/16/18; 10:08:24 AM by DW</li>
-
 			<ul>
-
 				<li>Back to work. This stuff is done..</li>
-
 				<ul>
-
 					send committer params along with calls to buildrss
-
 					Render blog home page
-
 					</ul>
-
 				</ul>
-
 			<li>10/12/18; 10:15:53 AM by DW</li>
-
 			<ul>
-
 				send committer params along with calls to buildrss
-
 				Render blog home page
-
 				Insert HTML command in menu
-
 				Move icons into menu
-
 				Find good place for SAVED
-
 				<li>Docs</li>
-
 				<ul>
-
 					Template 
-
 					setting up a server
-
 					API
-
 					</ul>
-
 				urlEditorApp in config -- is this actually being used or is the one on github overriding it?
-
 				<li>server stuff</li>
-
 				<ul>
-
 					empty out config in englishServer
-
 					move most of the items into config in githubpub
-
 					move some of them into config.json
-
 					<li>getting this error sometimes</li>
-
 					<ul>
-
 						<li>saveToGitHub: response == {</li>
-
 						<ul>
-
 							"statusCode": 409,
-
 							"body": "{\"message\":\"is at c9e17f82b72165f8f2ae57c6587e3eb0ad2fb934 but expected 113749995a25d6f45b77894c64d7008023234c91\",\"documentation_url\":\"https://developer.github.com/v3/repos/contents/#update-a-file\"}",
-
 							</ul>
-
 						</ul>
-
 					</ul>
-
 				
-
 				
-
 				</ul>
-
 			<li>10/8/18; 2:03:14 PM by DW</li>
-
 			<ul>
-
 				<li>Next up -- </li>
-
 				<ul>
-
 					document the api for english server with sample code
-
 					settings linked into the system menu
-
 					<li>clean up command keys in main menu</li>
-
 					<ul>
-
 						they overwrite the command names
-
 						this is a style sheets item
-
 						</ul>
-
 					</ul>
-
 				</ul>
-
 			<li>10/5/18; 10:47:57 AM by DW</li>
-
 			<ul>
-
 				<li>we still have "blog/" in the setup for englishHome</li>
-
 				<ul>
-
 					<li>the factoring job started there is not done</li>
-
 					<ul>
-
 						I understand why. When we punted on changing the way EH works to use domains instead of username/repo/path, it made it impossible to hide the relative path of the things it's editing. That was never configured on the server. domain.path is irrelevant, as it's currently implemented.
-
 						
-
 						interfaces that take domain in place of username/repo/path
-
 						
-
 						/get
-
 						/save
-
 						/getpost
-
 						/savepost
-
 						</ul>
-
 					</ul>
-
 				<li>templates should be merged with githubpup repository</li>
-
 				<ul>
-
 					right now they're only being saved to the english blog
-
 					</ul>
-
 				<li>merge githubpub with english server</li>
-
 				<ul>
-
 					mostly done
-
 					<li>I still want to make GHP work without english server</li>
-
 					<ul>
-
 						<li>It has to </li>
-
 						<ul>
-
 							read config.json
-
 							init davehttp
-
 							replace it on rockaway
-
 							</ul>
-
 						</ul>
-
 					</ul>
-
 				</ul>
-
 			<li>10/4/18; 10:50:14 AM by DW</li>
-
 			<ul>
-
 				<li>paste-with-style into medium-editor</li>
-
 				<ul>
-
 					okay we have the code in testPasteHTML () in englishHome. 
-
 					however we strip the html before saving
-
 					so we need to address that somehow
-
 					probably shouldn't be doing it
-
 					</ul>
-
 				</ul>
-
 			<li>10/2/18; 10:27:52 AM by DW</li>
-
 			<ul>
-
 				<li>RSS feed next up</li>
-
 				<ul>
-
 					Then home page 
-
 					Day archive pages
-
 					</ul>
-
 				<li>Think about comments</li>
-
 				<ul>
-
 					I have an idea for this
-
 					You have to have your own repo for it to work
-
 					</ul>
-
 				<li>Okay good work session, next up...</li>
-
 				<ul>
-
 					Use the same CSS file for both the editor and the rendering
-
 					That pretty much guarantees WYSIWYG. ;-)
-
 					</ul>
-
 				<li>big idea -- convert englishserver to use xml-rpc interface</li>
-
 				<ul>
-
 					or add an xml-rpc interface and use it fron englishhome
-
 					</ul>
-
 				<li>here's how the REST calls for GitHub server work now</li>
-
 				<ul>
-
 					get/save -- work with absolute paths
-
 					getblogdata/saveblogdata -- use the path
-
 					</ul>
-
 				</ul>
-
 			<li>10/1/18; 10:56:40 AM by DW</li>
-
 			<ul>
-
 				<li>nodeEditorSuite.gitHub.upload has a problem</li>
-
 				<ul>
-
 					we call the save function on english server
-
 					we changed what it returns. ooops, this code depends on the original functionality.
-
 					I didn't see that coming ;-)
-
 					</ul>
-
 				<li>UI work continues</li>
-
 				<ul>
-
 					On a new post the Description placeholder is empty
-
 					<li>What about auto-save</li>
-
 					<ul>
-
 						Clearly if present should be a preference
-
 						Default on?
-
 						</ul>
-
 					CSS needs updating. H4 is wrong font/shape.
-
 					<li>The H2 and H4 items in the popup are broken.</li>
-
 					<ul>
-
 						Probably has to do with the version of medium-editor we're using
-
 						</ul>
-
 					<li>Change the look of the editor to be more like the pages</li>
-
 					<ul>
-
 						I don't like the huge text. 
-
 						</ul>
-
 					<li>Done</li>
-
 					<ul>
-
 						get rid of the file list on the left
-
 						steal the look from myword.io
-
 						add description element for the sub-text
-
 						</ul>
-
 					</ul>
-
 				<li>Upheaval --</li>
-
 				<ul>
-
 					<li>the paths we use should have the "blog/" prefix removed.</li>
-
 					<ul>
-
 						there's no need for the editor to have this, because it's not part of the url
-
 						it should be hidden by the server, it's part of the configuration, it should be easily changed.
-
 						</ul>
-
 					<li>notes</li>
-
 					<ul>
-
 						<li>appConsts.blogDataPath and appConsts.blogPostsPath should change to </li>
-
 						<ul>
-
 							posts/ and data.json
-
 							the blog/ part should be added by the server
-
 							
-
 							</ul>
-
 						</ul>
-
 					</ul>
-
 				<li>Allow customization through the repository</li>
-
 				<ul>
-
 					store code there??
-
 					</ul>
-
 				</ul>
-
 			<li>9/30/18; 11:52:28 AM by DW</li>
-
 			<ul>
-
 				<li>Let's work on UI</li>
-
 				<ul>
-
 					Leave the server alone for a while. Whew. Too much rock and roll.
-
 					Try getting the file list into a dialog, let's see what it looks like with more horizonal room.
-
 					</ul>
-
 				<li>Cleanup</li>
-
 				<ul>
-
 					Move englishblog1.scripting.com to point to rockaway.scripting.com. Tell pagepark to route it to english server (port 1402).
-
 					</ul>
-
 				</ul>
-
 			<li>9/29/18; 9:39:58 AM by DW</li>
-
 			<ul>
-
 				<li>More factoring</li>
-
 				<ul>
-
 					move github api urls to config struct
-
 					deYamlize can be factored
-
 					extracting the content can also be factored
-
 					</ul>
-
 				</ul>
-
 			<li>9/28/18; 2:38:20 PM by DW</li>
-
 			<ul>
-
 				<li>More factoring</li>
-
 				<ul>
-
 					<li>There are two routines to get the contents of a file from GitHub, one in githubpub and the other in englishserver</li>
-
 					<ul>
-
 						use the one in githubpub
-
 						small difference in how it's called
-
 						</ul>
-
 					</ul>
-
 				<li>Things to look at next after integration of english server and githubpub</li>
-
 				<ul>
-
 					there are two caches, only need one
-
 					<li>there seems to be an error handling webhook notifications from github</li>
-
 					<ul>
-
 						handleRequest: tryError.message == Unexpected token u in JSON at position 0
-
 						</ul>
-
 					</ul>
-
 				</ul>
-
 			<li>9/24/18; 3:45:22 PM by DW</li>
-
 			<ul>
-
 				<li>todo</li>
-
 				<ul>
-
 					<li>eye icon takes you to the rendering</li>
-
 					<ul>
-
 						the englishHome server has to know the URL of the site its saving to?
-
 						or the githubpub functionality has to be integrated into englishHome?
-
 						thinking needed...
-
 						</ul>
-
 					good fallback when there is no template in the repository.
-
 					<li>provisioning new site</li>
-
 					<ul>
-
 						favicon.ico
-
 						<li>template</li>
-
 						<ul>
-
 							temlate.txt
-
 							code.js
-
 							styles.css
-
 							</ul>
-
 						</ul>
-
 					</ul>
-
 				</ul>
-
 			<li>9/23/18; 11:32:35 AM by DW</li>
-
 			<ul>
-
 				<li>githubpub</li>
-
 				<ul>
-
 					get template from the repo
-
 					deploy on server
-
 					cache + webook support
-
 					</ul>
-
 				</ul>
-
 			<li>9/21/18; 10:38:47 AM by DW</li>
-
 			<ul>
-
 				<li>next up</li>
-
 				<ul>
-
 					finish the title editor
-
 					<li>store posts in markdown, with atts encoded</li>
-
 					<ul>
-
 						do it at the lowest level in the editor, so we can still use the json structure internally
-
 						</ul>
-
 					server app
-
 					staging new posts, should be quicker
-
 					error reporting, esp rate limit erros
-
 					</ul>
-
 				</ul>
-
 			<li>9/18/18; 10:59:25 AM by DW</li>
-
 			<ul>
-
 				<li>next up --</li>
-
 				<ul>
-
 					show titles in the tree, not text
-
 					open the file in the editor if you click on it in the tree
-
 					</ul>
-
 				when create new post or at login, activate the text editor
-
 				<li>new instance of githubpub locally </li>
-
 				<ul>
-
 					renders the blog repo in html
-
 					</ul>
-
 				<li>store the posts in json</li>
-
 				<ul>
-
 					the text is just one of the elements
-
 					still keep a top-level list of posts in the blogdata struct
-
 					</ul>
-
 				merge appPrefs and blogdata
-
 				</ul>
-
 			<li>9/17/18; 12:46:06 PM by DW</li>
-
 			<ul>
-
 				<li>Next things to do --</li>
-
 				<ul>
-
 					<li>get githubpub running locally</li>
-
 					<ul>
-
 						next up -- pngs aren't being served correctly
-
 						</ul>
-
 					look at how GitHub handles websites
-
 					add metadata at the head of the file using one of the formats others are using (see SN thread).
-
 					allow for opening existing posts
-
 					autosave
-
 					eye icon implemented
-
 					</ul>
-
 				</ul>
-
 			</ul>
-
 		</body>
-
 	</html>
-

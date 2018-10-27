@@ -654,7 +654,6 @@
 				</outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text=""></outline>
 		<outline text="function getBlogData (host, callback) {">
 			<outline text="getUserObject (host, config.dataPath, function (err, jstruct) {">
 				<outline text="if (err) {">
@@ -672,7 +671,6 @@
 				</outline>
 			<outline text="}"></outline>
 			</outline>
-		<outline text=""></outline>
 		<outline text="function buildBlogRss (options, callback) {">
 			<outline text="var host = options.domain;"></outline>
 			<outline text="options.path = config.rssPath;"></outline>
@@ -1285,7 +1283,7 @@
 				<outline text="case &quot;/reposave&quot;:">
 					<outline text="var options = {">
 						<outline text="username: theRequest.params.username,"></outline>
-						<outline text="repository: theRequest.params.repo,"></outline>
+						<outline text="repository: theRequest.params.repository,"></outline>
 						<outline text="path: theRequest.params.path,"></outline>
 						<outline text="accessToken: accessToken,"></outline>
 						<outline text="data: theRequest.params.text,"></outline>

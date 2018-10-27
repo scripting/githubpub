@@ -203,6 +203,31 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 	function findDomain (name) {
 		return (appPrefs.domains [name]);
 		}
+	
+	function repoGet (username, repository, path, options, callback) {
+		var params = {
+			username: username,
+			repository: repository,
+			path: path
+			};
+		serverCall ("repoget", params, callback);
+		}
+	function repoSave (username, repository, path, data, options, callback) {
+		var whenstart = new Date ();
+		var params = {
+			username: username,
+			repository: repository,
+			accessToken: appPrefs.accessToken,
+			text: data,
+			path: path,
+			msg: appPrefs.commitMessage,
+			name: appPrefs.userInfo.name,
+			email: appPrefs.userInfo.email
+			};
+		serverCall ("reposave", params, callback);
+		}
+	
+	
 	function getGitHubFileContent (path, callback) {
 		if (beginsWith (path, "/")) {
 			path = utils.stringDelete (path, 1, 1);
@@ -504,7 +529,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		}
 	function viewPostsBrowser (idOutlineViewer, clickCallback) { //feature turned off -- 10/1/18 by DW
 		}
-	function openPostOnGitHub (postStruct) {
+	function openPostOnGitHub () {
 		window.open (appPrefs.postStruct.urlGitHub);
 		}
 	function buildBlogRss (callback) {
@@ -688,6 +713,10 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		}
 	this.getPostListHtml = getPostListHtml;
 	this.buildPostList = buildPostList;
+	this.viewTemplateOnGitHub = viewTemplateOnGitHub;
+	this.openPostOnGitHub = openPostOnGitHub;
+	this.repoGet = repoGet;
+	this.repoSave = repoSave;
 	this.getGitHubUserInfo = function () {
 		return (appPrefs.userInfo);
 		};

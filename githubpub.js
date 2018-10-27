@@ -462,7 +462,6 @@ function getFlatPostList (blogData) {
 		return (theList);
 		}
 	}
-
 function getBlogData (host, callback) {
 	getUserObject (host, config.dataPath, function (err, jstruct) {
 		if (err) {
@@ -476,7 +475,6 @@ function getBlogData (host, callback) {
 			}
 		});
 	}
-
 function buildBlogRss (options, callback) {
 	var host = options.domain;
 	options.path = config.rssPath;
@@ -885,7 +883,7 @@ function handleHttpRequest (theRequest) {
 		case "/reposave":
 			var options = {
 				username: theRequest.params.username,
-				repository: theRequest.params.repo,
+				repository: theRequest.params.repository,
 				path: theRequest.params.path,
 				accessToken: accessToken,
 				data: theRequest.params.text,

@@ -1,4 +1,4 @@
-<p><b>10/27/18; 10:32:32 AM by DW</b></p>
+### 10/27/18; 10:32:32 AM by DW
 <blockquote>
     <li>add this notes file to the GHP repo</li>
     <li>write docs for config.json for GHP</li>
@@ -22,7 +22,7 @@
             </blockquote>
         </blockquote>
     </blockquote>
-<p><b>10/26/18; 9:55:44 AM by DW</b></p>
+### 10/26/18; 9:55:44 AM by DW
 <blockquote>
     <li>&nbsp;</li>
     <li>wire up View Template command in main menu in englishhome</li>
@@ -72,7 +72,7 @@
             </blockquote>
         </blockquote>
     </blockquote>
-<p><b>10/25/18; 10:25:29 AM by DW</b></p>
+### 10/25/18; 10:25:29 AM by DW
 <blockquote>
     <li>next up -- pull out all the unused code from english editor</li>
     <blockquote>
@@ -95,7 +95,7 @@
         <li>let's say 3 minutes by default</li>
         </blockquote>
     </blockquote>
-<p><b>10/24/18; 9:59:08 AM by DW</b></p>
+### 10/24/18; 9:59:08 AM by DW
 <blockquote>
     <li>Next up</li>
     <blockquote>
@@ -116,7 +116,7 @@
         <li>icons linking to github and html rendering</li>
         </blockquote>
     </blockquote>
-<p><b>10/21/18; 11:14:22 AM by DW</b></p>
+### 10/21/18; 11:14:22 AM by DW
 <blockquote>
     <li>handle posts in JSON in addition to YAML</li>
     <li>second editor</li>
@@ -129,13 +129,13 @@
         <li>add elements in config to pagetable?</li>
         </blockquote>
     </blockquote>
-<p><b>10/20/18; 12:00:59 PM by DW</b></p>
+### 10/20/18; 12:00:59 PM by DW
 <blockquote>
     <li>changed icons on home page so the href attribute is set, so when you hover over the </li>
     <li>documented templates</li>
     <li>new command to view the template</li>
     </blockquote>
-<p><b>10/16/18; 10:08:24 AM by DW</b></p>
+### 10/16/18; 10:08:24 AM by DW
 <blockquote>
     <li>Back to work. This stuff is done..</li>
     <blockquote>
@@ -143,7 +143,7 @@
         <li>Render blog home page</li>
         </blockquote>
     </blockquote>
-<p><b>10/12/18; 10:15:53 AM by DW</b></p>
+### 10/12/18; 10:15:53 AM by DW
 <blockquote>
     <li>send committer params along with calls to buildrss</li>
     <li>Render blog home page</li>
@@ -174,7 +174,7 @@
     <li>&nbsp;</li>
     <li>&nbsp;</li>
     </blockquote>
-<p><b>10/8/18; 2:03:14 PM by DW</b></p>
+### 10/8/18; 2:03:14 PM by DW
 <blockquote>
     <li>Next up -- </li>
     <blockquote>
@@ -187,7 +187,7 @@
             </blockquote>
         </blockquote>
     </blockquote>
-<p><b>10/5/18; 10:47:57 AM by DW</b></p>
+### 10/5/18; 10:47:57 AM by DW
 <blockquote>
     <li>we still have "blog/" in the setup for englishHome</li>
     <blockquote>
@@ -221,7 +221,7 @@
             </blockquote>
         </blockquote>
     </blockquote>
-<p><b>10/4/18; 10:50:14 AM by DW</b></p>
+### 10/4/18; 10:50:14 AM by DW
 <blockquote>
     <li>paste-with-style into medium-editor</li>
     <blockquote>
@@ -231,7 +231,7 @@
         <li>probably shouldn't be doing it</li>
         </blockquote>
     </blockquote>
-<p><b>10/2/18; 10:27:52 AM by DW</b></p>
+### 10/2/18; 10:27:52 AM by DW
 <blockquote>
     <li>RSS feed next up</li>
     <blockquote>
@@ -258,7 +258,7 @@
         <li>getblogdata/saveblogdata -- use the path</li>
         </blockquote>
     </blockquote>
-<p><b>10/1/18; 10:56:40 AM by DW</b></p>
+### 10/1/18; 10:56:40 AM by DW
 <blockquote>
     <li>nodeEditorSuite.gitHub.upload has a problem</li>
     <blockquote>
@@ -312,7 +312,7 @@
         <li>store code there??</li>
         </blockquote>
     </blockquote>
-<p><b>9/30/18; 11:52:28 AM by DW</b></p>
+### 9/30/18; 11:52:28 AM by DW
 <blockquote>
     <li>Let's work on UI</li>
     <blockquote>
@@ -324,7 +324,7 @@
         <li>Move englishblog1.scripting.com to point to rockaway.scripting.com. Tell pagepark to route it to english server (port 1402).</li>
         </blockquote>
     </blockquote>
-<p><b>9/29/18; 9:39:58 AM by DW</b></p>
+### 9/29/18; 9:39:58 AM by DW
 <blockquote>
     <li>More factoring</li>
     <blockquote>
@@ -333,7 +333,7 @@
         <li>extracting the content can also be factored</li>
         </blockquote>
     </blockquote>
-<p><b>9/28/18; 2:38:20 PM by DW</b></p>
+### 9/28/18; 2:38:20 PM by DW
 <blockquote>
     <li>More factoring</li>
     <blockquote>
@@ -352,7 +352,7 @@
             </blockquote>
         </blockquote>
     </blockquote>
-<p><b>9/24/18; 3:45:22 PM by DW</b></p>
+### 9/24/18; 3:45:22 PM by DW
 <blockquote>
     <li>todo</li>
     <blockquote>
@@ -375,7 +375,7 @@
             </blockquote>
         </blockquote>
     </blockquote>
-<p><b>9/23/18; 11:32:35 AM by DW</b></p>
+### 9/23/18; 11:32:35 AM by DW
 <blockquote>
     <li>githubpub</li>
     <blockquote>
@@ -384,7 +384,7 @@
         <li>cache + webook support</li>
         </blockquote>
     </blockquote>
-<p><b>9/21/18; 10:38:47 AM by DW</b></p>
+### 9/21/18; 10:38:47 AM by DW
 <blockquote>
     <li>next up</li>
     <blockquote>
@@ -398,7 +398,7 @@
         <li>error reporting, esp rate limit erros</li>
         </blockquote>
     </blockquote>
-<p><b>9/18/18; 10:59:25 AM by DW</b></p>
+### 9/18/18; 10:59:25 AM by DW
 <blockquote>
     <li>next up --</li>
     <blockquote>
@@ -417,7 +417,7 @@
         </blockquote>
     <li>merge appPrefs and blogdata</li>
     </blockquote>
-<p><b>9/17/18; 12:46:06 PM by DW</b></p>
+### 9/17/18; 12:46:06 PM by DW
 <blockquote>
     <li>Next things to do --</li>
     <blockquote>

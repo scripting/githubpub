@@ -1,3 +1,4 @@
+<style>li {font-weight: bold;}</style>
 <li>10/27/18; 10:32:32 AM by DW</li>
 <ul>
     <li>add this notes file to the GHP repo</li>

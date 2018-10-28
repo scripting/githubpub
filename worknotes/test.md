@@ -28,25 +28,16 @@
 #### 10/26/18; 9:55:44 AM by DW
 
 <blockquote>
-    <li>&nbsp;</li>
     <li>wire up View Template command in main menu in englishhome</li>
-    <blockquote>
-        <li>&nbsp;</li>
-        </blockquote>
-    <li>&nbsp;</li>
     <li>big idea --</li>
     <blockquote>
         <li>use GHP to document XML-RPC</li>
         </blockquote>
-    <li>&nbsp;</li>
-    <li>&nbsp;</li>
-    <li>&nbsp;</li>
     <li>test insert html command in english editor</li>
     <li>"english" shouldn't be the name of the server</li>
     <li>look at includes in the editors</li>
     <li>add english editor to editors folder on ghp repo</li>
     <li>handle posts in JSON in addition to YAML</li>
-    <li>&nbsp;</li>
     <li>done</li>
     <blockquote>
         <li>fill out settings</li>
@@ -88,10 +79,6 @@
     <blockquote>
         <li>good works</li>
         </blockquote>
-    <li>&nbsp;</li>
-    <li>&nbsp;</li>
-    <li>&nbsp;</li>
-    <li>&nbsp;</li>
     <li>look at includes in the editors</li>
     <li>test log off, log on</li>
     <li>"english" shouldn't be the name of the server</li>

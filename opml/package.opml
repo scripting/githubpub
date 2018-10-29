@@ -15,7 +15,7 @@
 			<outline text="&quot;name&quot;: &quot;githubpub&quot;, "></outline>
 			<outline text="&quot;description&quot;: &quot;A web server that supports editing of blogs in GitHub repos, and serves content from those blogs.&quot;,"></outline>
 			<outline text="&quot;author&quot;: &quot;Dave Winer &lt;dave@smallpicture.com&gt;&quot;,"></outline>
-			<outline text="&quot;version&quot;: &quot;0.5.51&quot;,"></outline>
+			<outline text="&quot;version&quot;: &quot;0.5.55&quot;,"></outline>
 			<outline text="&quot;scripts&quot;: {">
 				<outline text="&quot;start&quot;: &quot;node githubpub.js&quot;"></outline>
 				<outline text="},"></outline>

@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.51&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.55&quot;;   "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -69,7 +69,7 @@
 			<outline text="apiUrl: &quot;https://api.github.com/repos/&quot;,"></outline>
 			<outline text="indexFileName: &quot;index&quot;,"></outline>
 			<outline text="userAgent: myProductName + &quot; v&quot; + myVersion,"></outline>
-			<outline text="urlEditorApp: &quot;http://scripting.com/english/testing2/&quot;, //9/16/18 by DW"></outline>
+			<outline isComment="true" text="urlEditorApp: &quot;http://scripting.com/english/testing2/&quot;, //9/16/18 by DW"></outline>
 			<outline text="templatePath: &quot;template/template.txt&quot;,"></outline>
 			<outline text="dataPath: &quot;data.json&quot;, //10/11/18 by DW"></outline>
 			<outline text="rssPath: &quot;rss.xml&quot;,  //10/11/18 by DW"></outline>
@@ -326,6 +326,13 @@
 			<outline text="}"></outline>
 			</outline>
 		<outline text="function getFromGitHub (username, repository, path, callback) { //calls back with the JSON structure GitHub returns">
+			<outline text="function getRandomClient () { //actually always returns the first one">
+				<outline text="for (var x in config.clients) {">
+					<outline text="return (config.clients [x])"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="}"></outline>
+				</outline>
 			<outline text="if (!utils.beginsWith (path, &quot;/&quot;)) {">
 				<outline text="path = &quot;/&quot; + path;"></outline>
 				<outline text="}"></outline>
@@ -339,8 +346,9 @@
 			<outline text="else {">
 				<outline text="var whenstart = new Date ();"></outline>
 				<outline text="var url = config.apiUrl + username + &quot;/&quot; + repository + &quot;/contents/&quot; + path;"></outline>
-				<outline text="if ((config.clientId !== undefined) &amp;&amp; (config.clientSecret !== undefined)) {">
-					<outline text="url += &quot;?client_id=&quot; + config.clientId + &quot;&amp;client_secret=&quot; + config.clientSecret;"></outline>
+				<outline text="var client = getRandomClient (); //10/27/18 by DW"></outline>
+				<outline text="if (client !== undefined) {">
+					<outline text="url += &quot;?client_id=&quot; + client.id + &quot;&amp;client_secret=&quot; + client.secret;"></outline>
 					<outline text="}"></outline>
 					</outline>
 				<outline text="httpRequest (url, function (err, response, jsontext) {">
@@ -594,16 +602,25 @@
 						</outline>
 					<outline text="else {">
 						<outline isComment="true" text="console.log (&quot;saveToGitHub: response == &quot; + utils.jsonStringify (response));"></outline>
-						<outline text="var jstruct = {">
-							<outline text="urlGitHub: &quot;https://github.com/&quot; + options.username + &quot;/&quot; + options.repository + &quot;/blob/master/&quot; + options.path"></outline>
-							<outline text="};"></outline>
-							</outline>
-						<outline text="if (options.domain !== undefined) {">
-							<outline text="jstruct.domain = options.lowerdomain; "></outline>
-							<outline text="jstruct.urlPublic = &quot;http://&quot; + options.lowerdomain + options.origpath;"></outline>
+						<outline text="if (response.statusCode == 401) { //10/27/18 by DW">
+							<outline text="let err = JSON.parse (response.body);"></outline>
+							<outline text="console.log (&quot;saveToGitHub: err == &quot; + utils.jsonStringify (err));"></outline>
+							<outline text="callback (err); //could be &quot;bad credentials&quot;"></outline>
 							<outline text="}"></outline>
 							</outline>
-						<outline text="callback (undefined, jstruct);"></outline>
+						<outline text="else {">
+							<outline text="var jstruct = {">
+								<outline text="urlGitHub: &quot;https://github.com/&quot; + options.username + &quot;/&quot; + options.repository + &quot;/blob/master/&quot; + options.path"></outline>
+								<outline text="};"></outline>
+								</outline>
+							<outline text="if (options.domain !== undefined) {">
+								<outline text="jstruct.domain = options.lowerdomain; "></outline>
+								<outline text="jstruct.urlPublic = &quot;http://&quot; + options.lowerdomain + options.origpath;"></outline>
+								<outline text="}"></outline>
+								</outline>
+							<outline text="callback (undefined, jstruct);"></outline>
+							<outline text="}"></outline>
+							</outline>
 						<outline text="}"></outline>
 						</outline>
 					<outline text="});"></outline>
@@ -1045,16 +1062,21 @@
 				<outline text="}"></outline>
 				</outline>
 			<outline text="function handleOauthCallback () {">
+				<outline text="if (theRequest.params.client === undefined) {">
+					<outline text="var s = &quot;handleOauthCallback: no client param specified.&quot;;"></outline>
+					<outline text="console.log (s);"></outline>
+					<outline text="theRequest.httpReturn (500, &quot;text/plain&quot;, s);"></outline>
+					<outline text="return;"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="var client = config.clients [theRequest.params.client];"></outline>
 				<outline text="var params = {">
-					<outline text="client_id: config.clientId,"></outline>
-					<outline text="client_secret: config.clientSecret,"></outline>
+					<outline text="client_id: client.id,"></outline>
+					<outline text="client_secret: client.secret,"></outline>
 					<outline text="code: theRequest.params.code"></outline>
 					<outline text="};"></outline>
 					</outline>
 				<outline text="var apiUrl = &quot;https://github.com/login/oauth/access_token?&quot; + utils.buildParamList (params);"></outline>
-				<outline isComment="true" text="apiUrl += &quot;?client_id=&quot; + config.clientId;"></outline>
-				<outline isComment="true" text="apiUrl += &quot;&amp;client_secret=&quot; + config.clientSecret;"></outline>
-				<outline isComment="true" text="apiUrl += &quot;&amp;code=&quot; + theRequest.params.code;"></outline>
 				<outline text="var githubRequest = {">
 					<outline text="method: &quot;POST&quot;,"></outline>
 					<outline text="url: apiUrl"></outline>
@@ -1073,10 +1095,13 @@
 						<outline isComment="true" text="console.log (body);"></outline>
 						<outline text="var postbody = qs.parse (body);"></outline>
 						<outline text="var httpResponse = theRequest.sysResponse;"></outline>
-						<outline text="var urlRedirect = config.urlEditorApp + &quot;?access_token=&quot; + postbody.access_token;"></outline>
+						<outline text="var urlRedirect = client.urlEditorApp + &quot;?access_token=&quot; + postbody.access_token;"></outline>
+						<outline text=""></outline>
+						<outline text="console.log (&quot;\nhandleOauthCallback: urlRedirect = &quot; + urlRedirect + &quot;\n&quot;);"></outline>
+						<outline text=""></outline>
 						<outline text="httpResponse.writeHead (302, {&quot;location&quot;: urlRedirect});"></outline>
 						<outline text="httpResponse.end (&quot;Redirect to this URL: &quot; + urlRedirect);"></outline>
-						<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;We got the callback bubba.&quot;);"></outline>
+						<outline isComment="true" text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;We got the callback bubba.&quot;);"></outline>
 						<outline text="}"></outline>
 						</outline>
 					<outline text="});"></outline>
@@ -1090,36 +1115,6 @@
 					</outline>
 				<outline text="case &quot;/oauthcallback&quot;:">
 					<outline text="handleOauthCallback ();"></outline>
-					<outline isComment="true" text="var apiUrl = &quot;https://github.com/login/oauth/access_token&quot;;"></outline>
-					<outline isComment="true" text="apiUrl += &quot;?client_id=&quot; + config.clientId;"></outline>
-					<outline isComment="true" text="apiUrl += &quot;&amp;client_secret=&quot; + config.clientSecret;"></outline>
-					<outline isComment="true" text="apiUrl += &quot;&amp;code=&quot; + theRequest.params.code;g"></outline>
-					<outline isComment="true" text="var githubRequest = {">
-						<outline text="method: &quot;POST&quot;,"></outline>
-						<outline text="url: apiUrl"></outline>
-						<outline isComment="true" text="followRedirect: true, "></outline>
-						<outline isComment="true" text="headers: {Accept: &quot;application/json&quot;}"></outline>
-						<outline text="};"></outline>
-						</outline>
-					<outline isComment="true" text="console.log (&quot;/oauthcallback: githubRequest == &quot; + utils.jsonStringify (githubRequest));"></outline>
-					<outline isComment="true" text="request (githubRequest, function (err, response, body) {">
-						<outline text="if (err) {">
-							<outline text="console.log (err.message);"></outline>
-							<outline text="theRequest.httpReturn (500, &quot;text/plain&quot;, err.message);"></outline>
-							<outline text="}"></outline>
-							</outline>
-						<outline text="else {">
-							<outline isComment="true" text="console.log (body);"></outline>
-							<outline text="var postbody = qs.parse (body);"></outline>
-							<outline text="var httpResponse = theRequest.sysResponse;"></outline>
-							<outline text="var urlRedirect = config.urlEnglishApp + &quot;?access_token=&quot; + postbody.access_token;"></outline>
-							<outline text="httpResponse.writeHead (302, {&quot;location&quot;: urlRedirect});"></outline>
-							<outline text="httpResponse.end (&quot;Redirect to this URL: &quot; + urlRedirect);"></outline>
-							<outline text="theRequest.httpReturn (200, &quot;text/plain&quot;, &quot;We got the callback bubba.&quot;);"></outline>
-							<outline text="}"></outline>
-							</outline>
-						<outline text="});"></outline>
-						</outline>
 					<outline text="break;"></outline>
 					</outline>
 				<outline text="case &quot;/eventfromgithub&quot;: //webhook call">
@@ -1287,7 +1282,8 @@
 						<outline text="path: theRequest.params.path,"></outline>
 						<outline text="accessToken: accessToken,"></outline>
 						<outline text="data: theRequest.params.text,"></outline>
-						<outline text="type: &quot;text/plain&quot;,"></outline>
+						<outline text="type: urlToMime (theRequest.params.path),"></outline>
+						<outline isComment="true" text="type: &quot;text/plain&quot;,"></outline>
 						<outline text="committer: {">
 							<outline text="name: theRequest.params.name,"></outline>
 							<outline text="email: theRequest.params.email"></outline>

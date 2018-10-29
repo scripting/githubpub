@@ -1,6 +1,6 @@
 var appConsts = {
-	productnameForDisplay: "English",
-	idGitHubClient: "475311614ae9d26e29e9",
+	productnameForDisplay: "Minimal",
+	idGitHubClient: "3650ede2e57488ce7c0a",
 	
 	myServerAddress: "http://english.scripting.com/",
 	myBlogDomain: "englishblog1.scripting.com", //an index into the server's domains object
@@ -95,7 +95,9 @@ function startup () {
 		};
 	myGitHubPubApp.start (function () {
 		showHideEditor ();
-		updatePostList ();
+		if (myGitHubPubApp.userIsSignedOn ()) {
+			updatePostList ();
+			}
 		initGoogleAnalytics (); 
 		hitCounter (); 
 		});

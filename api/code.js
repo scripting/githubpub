@@ -5,7 +5,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		blogDataPath: "data.json",
 		blogPostsPath: "posts/",
 		blogRssPath: "rss.xml",
-		version: "0.4.0"
+		version: "0.4.1"
 		};
 	var appPrefs = { //saved in localStorage (or filesystem on server, tbd)
 		accessToken: undefined,
@@ -112,8 +112,9 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			}
 		}
 	function connectWithGitHub () {
-		window.open ("https://github.com/login/oauth/authorize?client_id=" + appConsts.idGitHubClient + "&scope=repo&redirect_url=" + encodeURIComponent (window.location.href));
-		
+		var url = "https://github.com/login/oauth/authorize?client_id=" + appConsts.idGitHubClient + "&scope=repo&redirect_url=" + encodeURIComponent (window.location.href);
+		console.log ("connectWithGitHub: url == " + url);
+		window.open (url);
 		}
 	function toggleGitHubConnection () {
 		if (userIsSignedOn ()) {
@@ -203,7 +204,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 	function findDomain (name) {
 		return (appPrefs.domains [name]);
 		}
-	
 	function repoGet (username, repository, path, options, callback) {
 		var params = {
 			username: username,
@@ -226,8 +226,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			};
 		serverCall ("reposave", params, callback);
 		}
-	
-	
 	function getGitHubFileContent (path, callback) {
 		if (beginsWith (path, "/")) {
 			path = utils.stringDelete (path, 1, 1);
@@ -288,7 +286,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			window.open (appPrefs.urlTemplate);
 			}
 		}
-	
 	function getPostList () {
 		var theList = [];
 		for (var i = 0; i < blogData.posts.subs.length; i++) {
@@ -711,7 +708,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 	this.getPostList = function (callback) {
 		callback (getPostList ());
 		}
-	this.getPostListHtml = getPostListHtml;
 	this.buildPostList = buildPostList;
 	this.viewTemplateOnGitHub = viewTemplateOnGitHub;
 	this.openPostOnGitHub = openPostOnGitHub;

@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.51";   
+const myProductName = "githubpub", myVersion = "0.5.55";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -54,7 +54,6 @@ var config = {
 	apiUrl: "https://api.github.com/repos/",
 	indexFileName: "index",
 	userAgent: myProductName + " v" + myVersion,
-	urlEditorApp: "http://scripting.com/english/testing2/", //9/16/18 by DW
 	templatePath: "template/template.txt",
 	dataPath: "data.json", //10/11/18 by DW
 	rssPath: "rss.xml",  //10/11/18 by DW
@@ -235,6 +234,11 @@ function timeoutCacheElements () { //delete cache elements that are too old
 		}
 	}
 function getFromGitHub (username, repository, path, callback) { //calls back with the JSON structure GitHub returns
+	function getRandomClient () { //actually always returns the first one
+		for (var x in config.clients) {
+			return (config.clients [x])
+			}
+		}
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
@@ -245,8 +249,9 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 	else {
 		var whenstart = new Date ();
 		var url = config.apiUrl + username + "/" + repository + "/contents/" + path;
-		if ((config.clientId !== undefined) && (config.clientSecret !== undefined)) {
-			url += "?client_id=" + config.clientId + "&client_secret=" + config.clientSecret;
+		var client = getRandomClient (); //10/27/18 by DW
+		if (client !== undefined) {
+			url += "?client_id=" + client.id + "&client_secret=" + client.secret;
 			}
 		httpRequest (url, function (err, response, jsontext) {
 			if (err) {
@@ -422,14 +427,21 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 				callback (err);
 				}
 			else {
-				var jstruct = {
-					urlGitHub: "https://github.com/" + options.username + "/" + options.repository + "/blob/master/" + options.path
-					};
-				if (options.domain !== undefined) {
-					jstruct.domain = options.lowerdomain; 
-					jstruct.urlPublic = "http://" + options.lowerdomain + options.origpath;
+				if (response.statusCode == 401) { //10/27/18 by DW
+					let err = JSON.parse (response.body);
+					console.log ("saveToGitHub: err == " + utils.jsonStringify (err));
+					callback (err); //could be "bad credentials"
 					}
-				callback (undefined, jstruct);
+				else {
+					var jstruct = {
+						urlGitHub: "https://github.com/" + options.username + "/" + options.repository + "/blob/master/" + options.path
+						};
+					if (options.domain !== undefined) {
+						jstruct.domain = options.lowerdomain; 
+						jstruct.urlPublic = "http://" + options.lowerdomain + options.origpath;
+						}
+					callback (undefined, jstruct);
+					}
 				}
 			});
 		});
@@ -744,9 +756,16 @@ function handleHttpRequest (theRequest) {
 		statsChanged ();
 		}
 	function handleOauthCallback () {
+		if (theRequest.params.client === undefined) {
+			var s = "handleOauthCallback: no client param specified.";
+			console.log (s);
+			theRequest.httpReturn (500, "text/plain", s);
+			return;
+			}
+		var client = config.clients [theRequest.params.client];
 		var params = {
-			client_id: config.clientId,
-			client_secret: config.clientSecret,
+			client_id: client.id,
+			client_secret: client.secret,
 			code: theRequest.params.code
 			};
 		var apiUrl = "https://github.com/login/oauth/access_token?" + utils.buildParamList (params);
@@ -762,10 +781,12 @@ function handleHttpRequest (theRequest) {
 			else {
 				var postbody = qs.parse (body);
 				var httpResponse = theRequest.sysResponse;
-				var urlRedirect = config.urlEditorApp + "?access_token=" + postbody.access_token;
+				var urlRedirect = client.urlEditorApp + "?access_token=" + postbody.access_token;
+				
+				console.log ("\nhandleOauthCallback: urlRedirect = " + urlRedirect + "\n");
+				
 				httpResponse.writeHead (302, {"location": urlRedirect});
 				httpResponse.end ("Redirect to this URL: " + urlRedirect);
-				theRequest.httpReturn (200, "text/plain", "We got the callback bubba.");
 				}
 			});
 		}
@@ -887,7 +908,7 @@ function handleHttpRequest (theRequest) {
 				path: theRequest.params.path,
 				accessToken: accessToken,
 				data: theRequest.params.text,
-				type: "text/plain",
+				type: urlToMime (theRequest.params.path),
 				committer: {
 					name: theRequest.params.name,
 					email: theRequest.params.email

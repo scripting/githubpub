@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.57";   
+const myProductName = "githubpub", myVersion = "0.5.58";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -501,15 +501,12 @@ function getBlogData (host, options, callback) {
 	}
 function buildBlogRss (options, callback) {
 	var host = options.domain;
-	options.path = config.rssPath;
-	getUserObject (host, config.dataPath, options, function (err, jstruct) {
+	getBlogData (host, options, function (err, blogData) {
 		if (err) {
 			console.log ("buildBlogRss: err.message == " + err.message);
 			callback (err);
 			}
 		else {
-			var jsontext = getContent (jstruct);
-			var blogData = JSON.parse (jsontext);
 			var headElements = {
 				title: blogData.title,
 				link: "http://" + host + "/",
@@ -519,7 +516,6 @@ function buildBlogRss (options, callback) {
 				docs: "http://cyber.law.harvard.edu/rss/rss.html",
 				maxFeedItems: blogData.maxFeedItems,
 				appDomain: host,
-				
 				flRssCloudEnabled:  true,
 				rssCloudDomain:  blogData.cloud.domain,
 				rssCloudPort:  blogData.cloud.port,

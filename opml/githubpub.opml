@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.57&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.58&quot;;   "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -710,8 +710,80 @@
 			</outline>
 		<outline text="function buildBlogRss (options, callback) {">
 			<outline text="var host = options.domain;"></outline>
-			<outline text="options.path = config.rssPath;"></outline>
-			<outline text="getUserObject (host, config.dataPath, options, function (err, jstruct) {">
+			<outline text="getBlogData (host, options, function (err, blogData) {">
+				<outline text="if (err) {">
+					<outline text="console.log (&quot;buildBlogRss: err.message == &quot; + err.message);"></outline>
+					<outline text="callback (err);"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="else {">
+					<outline text="var headElements = {">
+						<outline text="title: blogData.title,"></outline>
+						<outline text="link: &quot;http://&quot; + host + &quot;/&quot;,"></outline>
+						<outline text="description: blogData.description,"></outline>
+						<outline text="language: blogData.language,"></outline>
+						<outline text="generator: myProductName + &quot; v&quot; + myVersion,"></outline>
+						<outline text="docs: &quot;http://cyber.law.harvard.edu/rss/rss.html&quot;,"></outline>
+						<outline isComment="true" text="twitterScreenName: localStorage.twScreenName,"></outline>
+						<outline text="maxFeedItems: blogData.maxFeedItems,"></outline>
+						<outline text="appDomain: host,"></outline>
+						<outline text="flRssCloudEnabled:  true,"></outline>
+						<outline text="rssCloudDomain:  blogData.cloud.domain,"></outline>
+						<outline text="rssCloudPort:  blogData.cloud.port,"></outline>
+						<outline text="rssCloudPath: blogData.cloud.path,"></outline>
+						<outline text="rssCloudRegisterProcedure:  &quot;&quot;,"></outline>
+						<outline text="rssCloudProtocol:  blogData.cloud.protocol"></outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="var flatPostList = getFlatPostList (blogData), rssHistory = new Array ();"></outline>
+					<outline text="for (var i = 0; i &lt; flatPostList.length; i++) {">
+						<outline text="var item = flatPostList [i];"></outline>
+						<outline text="if (item.urlPublic) {">
+							<outline text="var obj = {">
+								<outline text="title: item.title,"></outline>
+								<outline text="text: item.description,"></outline>
+								<outline text="when: item.created,"></outline>
+								<outline text="link: item.urlPublic,"></outline>
+								<outline text="guid: {">
+									<outline text="flPermalink: true,"></outline>
+									<outline text="value: item.urlPublic"></outline>
+									<outline text="}"></outline>
+									</outline>
+								<outline text="};"></outline>
+								</outline>
+							<outline text="rssHistory.push (obj);"></outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="}"></outline>
+						</outline>
+					<outline text="var xmltext = rss.buildRssFeed (headElements, rssHistory);"></outline>
+					<outline isComment="true" text="console.log (&quot;buildBlogRss: xmltext == &quot; + xmltext);"></outline>
+					<outline isComment="true" text="options.path = config.rssPath;"></outline>
+					<outline text="options.data = xmltext;"></outline>
+					<outline text="saveToGitHub (options, function (err, jstruct) {">
+						<outline text="if (!err) {">
+							<outline isComment="true" text="console.log (&quot;buildBlogRss: jstruct == &quot; + utils.jsonStringify (jstruct));"></outline>
+							<outline text="var urlServer = &quot;http://&quot; + blogData.cloud.domain + &quot;:&quot; + blogData.cloud.port + blogData.cloud.path;"></outline>
+							<outline text="rss.cloudPing (urlServer, jstruct.urlPublic);"></outline>
+							<outline text="if (callback !== undefined) {">
+								<outline text="callback (undefined, jstruct);"></outline>
+								<outline text="}"></outline>
+								</outline>
+							<outline text="}"></outline>
+							</outline>
+						<outline text="});"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline isComment="true" text=""></outline>
+			<outline isComment="true" text=""></outline>
+			<outline isComment="true" text=""></outline>
+			<outline isComment="true" text=""></outline>
+			<outline isComment="true" text="var host = options.domain;"></outline>
+			<outline isComment="true" text="options.path = config.rssPath;"></outline>
+			<outline isComment="true" text="getUserObject (host, config.dataPath, options, function (err, jstruct) {">
 				<outline text="if (err) {">
 					<outline text="console.log (&quot;buildBlogRss: err.message == &quot; + err.message);"></outline>
 					<outline text="callback (err);"></outline>

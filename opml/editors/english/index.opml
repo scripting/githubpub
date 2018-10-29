@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<opml version="2.0">
+	<head>
+		<title>index.html</title>
+		<dateModified>&lt;%dateModified%></dateModified>
+		<expansionState></expansionState>
+		<vertScrollState>1</vertScrollState>
+		<windowTop>300</windowTop>
+		<windowLeft>700</windowLeft>
+		<windowBottom>900</windowBottom>
+		<windowRight>1500</windowRight>
+		</head>
+	<body text="index.html">
+		<outline text="&lt;html&gt;">
+			<outline text="&lt;head&gt;">
+				<outline text="&lt;title&gt;English editor for GitHub&lt;/title&gt;"></outline>
+				<outline text="&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;"></outline>
+				<outline text="&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;"></outline>
+				<outline text="&lt;%basicIncludes2%&gt;"></outline>
+				<outline text="&lt;link rel=&quot;stylesheet&quot; href=&quot;//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css&quot;&gt;"></outline>
+				<outline text="&lt;script src=&quot;http://fargo.io/code/markdownConverter.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline isComment="true" text="&lt;link href=&quot;https://fonts.googleapis.com/css?family=Ubuntu:400,400i,500,700,700i&quot; rel=&quot;stylesheet&quot;&gt;"></outline>
+				<outline isComment="true" text="&lt;link href='//fonts.googleapis.com/css?family=Open+Sans:400,800' rel='stylesheet' type='text/css'&gt;"></outline>
+				<outline isComment="true" text="&lt;link href='//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic' rel='stylesheet' type='text/css'&gt;"></outline>
+				<outline text=""></outline>
+				<outline isComment="true" text="&lt;script src=&quot;http://scripting.com/code/mediumEditor/js/medium-editor.min.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline isComment="true" text="&lt;link rel=&quot;stylesheet&quot; href=&quot;http://scripting.com/code/mediumEditor/css/medium-editor.min.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; charset=&quot;utf-8&quot;&gt;"></outline>
+				<outline text=""></outline>
+				<outline text="&lt;script src=&quot;http://cdn.jsdelivr.net/medium-editor/latest/js/medium-editor.min.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline text="&lt;link rel=&quot;stylesheet&quot; href=&quot;http://cdn.jsdelivr.net/medium-editor/latest/css/medium-editor.min.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot; charset=&quot;utf-8&quot;&gt;"></outline>
+				<outline text=""></outline>
+				<outline text="&lt;link rel=&quot;stylesheet&quot; href=&quot;http://fargo.io/code/editors/mediumeditor/dist/css/themes/default.css&quot;&gt; "></outline>
+				<outline text="&lt;script src=&quot;http://fargo.io/code/editors/mediumEditorMarkdown/me-markdown.standalone.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline text=""></outline>
+				<outline text="&lt;script src=&quot;http://fargo.io/code/shared/emojify.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline created="Thu, 08 May 2014 14:04:18 GMT" pgfnum="41269" text="&lt;script src=&quot;http://fargo.io/code/browsers/outlinebrowser.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline text="&lt;link href=&quot;http://fargo.io/code/browsers/outlinebrowser.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;"></outline>
+				<outline text=""></outline>
+				<outline text="&lt;script src=&quot;http://fargo.io/code/shared/buildrss.js&quot;&gt;&lt;/script&gt; "></outline>
+				<outline text=""></outline>
+				<outline created="Thu, 08 May 2014 14:04:18 GMT" pgfnum="41269" text="&lt;script src=&quot;http://scripting.com/code/githubpub/api/code.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline text=""></outline>
+				<outline text="&lt;script src=&quot;code.js&quot;&gt;&lt;/script&gt;"></outline>
+				<outline text="&lt;link href=&quot;styles.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;"></outline>
+				<outline text="&lt;/head&gt;"></outline>
+				</outline>
+			<outline text="&lt;body&gt;">
+				<outline created="Thu, 28 Mar 2013 21:39:05 GMT" pgfnum="21615" text="&lt;div class=&quot;divMenubar&quot; id=&quot;idMenubar&quot;&gt;">
+					<outline text="&lt;div class=&quot;topbar-wrapper&quot; style=&quot;z-index: 5;&quot;&gt;">
+						<outline text="&lt;div class=&quot;navbar navbar-fixed-top&quot; data-dropdown=&quot;dropdown&quot;&gt;">
+							<outline text="&lt;div class=&quot;divVersionNumber&quot;&gt;">
+								<outline text="&lt;span id=&quot;idPublishStatus&quot;&gt;&lt;/span&gt;&lt;span id=&quot;idSavedStatus&quot;&gt;&lt;/span&gt;&amp;nbsp;&lt;span id=&quot;idVersionNumber&quot;&gt;&lt;/span&gt;"></outline>
+								<outline text="&lt;/div&gt;"></outline>
+								</outline>
+							<outline text="&lt;div class=&quot;navbar-inner&quot;&gt;">
+								<outline text="&lt;div class=&quot;container&quot;&gt;">
+									<outline text="&lt;a class=&quot;brand&quot; href=&quot;&quot;&gt;&lt;span id=&quot;idMenuProductName&quot;&gt;&lt;/span&gt;&lt;/a&gt;"></outline>
+									<outline text="&lt;ul class=&quot;nav&quot; id=&quot;idMainMenuList&quot;&gt;">
+										<outline text="&lt;li class=&quot;dropdown&quot; id=&quot;idMainMenu&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;Main&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;newBlogPostCommand ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-N&lt;/span&gt;New...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;openFileDialog ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-O&lt;/span&gt;Open...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;openPostOnGitHub ();&quot;&gt;View post on GitHub...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;viewTemplateOnGitHub ();&quot;&gt;View template on GitHub...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;insertHtmlCommand ();&quot;&gt;Insert HTML...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text=""></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;openPostOnGitHub ();&quot;&gt;Oh the buzzing of the bees...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;closeOutlineCommand ();&quot;&gt;Close&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;viewOpmlCommand ();&quot;&gt;View OPML...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;importOpmlCommand ();&quot;&gt;Import OPML...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;titleDescriptionDialog ();&quot;&gt;Set title &amp; description...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;runCursorScript ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-/&lt;/span&gt;Run Selection&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;editOpmlHeaders ();&quot;&gt;Edit OPML head...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;getPublicLinkCommand ();&quot;&gt;Get public link...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;subscribeToInstantOutlineCommand ();&quot;&gt;Subscribe to outline...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text=""></outline>
+												<outline isComment="true" text=""></outline>
+												<outline isComment="true" text=""></outline>
+												<outline isComment="true" text=""></outline>
+												<outline isComment="true" text=""></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;opToggleComment ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-\&lt;/span&gt;Toggle Comment&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;changeTitleCommand ();&quot;&gt;Change title...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;changeDescriptionCommand ();&quot;&gt;Change description...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;togglePrivacyCommand ();&quot;&gt;Make &lt;span id=&quot;idPrivateOrPublic&quot;&gt;&lt;/span&gt;...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;makeThisTheLiveblogCommand ();&quot;&gt;Make the liveblog...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;publishThisPageCommand ();&quot;&gt;Publish page...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;publishAllPagesCommand ();&quot;&gt;Publish all pages...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;editGlossary ();&quot;&gt;Edit glossary...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;nameOutlineCommand ();&quot;&gt;Name outline...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;importOpmlCommand ();&quot;&gt;Import OPML...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;viewOpmlCommand ();&quot;&gt;View OPML...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;viewFeedCommand ();&quot;&gt;View RSS...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;archiveCursorCommand ();&quot;&gt;Archive cursor...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline created="Sun, 28 Jul 2013 18:38:02 GMT" isComment="true" pgfnum="28370" text="&lt;li&gt;&lt;a onclick=&quot;toggleArrowPad ();&quot;&gt;&lt;span id=&quot;idArrowPadCommandString&quot;&gt;&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;getPublicOutlineAddress ();&quot;&gt;Get public link...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline text="&lt;li class=&quot;dropdown&quot; id=&quot;idOutlinerMenu&quot; style=&quot;display: none;&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;Outliner&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opExpand ();&quot;&gt;Expand&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opExpandAllLevels ();&quot;&gt;Expand All Subs&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opExpandEverything ();&quot;&gt;Expand Everything&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opCollapse ();&quot;&gt;Collapse&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opCollapseEverything ();&quot;&gt;Collapse Everything&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li id=&quot;idHoistMenuItem&quot;&gt;&lt;a onclick=&quot;hoistCommand ();&quot;&gt;Hoist&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li id=&quot;idDehoistMenuItem&quot;&gt;&lt;a onclick=&quot;dehoistCommand ();&quot;&gt;Dehoist&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opDeleteLine ();&quot;&gt;Delete Line&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;dropdown-submenu&quot;&gt;">
+													<outline text="&lt;a href=&quot;#&quot; tabindex=&quot;-1&quot;&gt;Build...&lt;/a&gt;">
+														<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+															<outline text="&lt;li&gt;&lt;a href=&quot;#&quot; tabindex=&quot;-1&quot; onclick=&quot;buildListicle ()&quot;&gt;Listicle&lt;/a&gt;&lt;/li&gt;"></outline>
+															<outline text="&lt;li&gt;&lt;a href=&quot;#&quot; tabindex=&quot;-1&quot; onclick=&quot;buildStatusCenter ()&quot;&gt;Status Center&lt;/a&gt;&lt;/li&gt;"></outline>
+															</outline>
+														<outline text="&lt;/ul&gt;"></outline>
+														</outline>
+													<outline text="&lt;/li&gt;"></outline>
+													</outline>
+												<outline text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opFindCommand ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-F&lt;/span&gt;Find...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opFindAgainCommand ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-G&lt;/span&gt;Find again&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text=""></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;opReorg (up, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-U&lt;/span&gt;Move Up&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;opReorg (down, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-D&lt;/span&gt;Move Down&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;opReorg (left, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-L&lt;/span&gt;Move Left&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;opReorg (right, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-R&lt;/span&gt;Move Right&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text=""></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;opPromote ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-[&lt;/span&gt;Promote&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;opDemote ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-]&lt;/span&gt;Demote&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline created="Sun, 28 Jul 2013 18:38:02 GMT" pgfnum="28370" text="&lt;li&gt;&lt;a onclick=&quot;toggleRenderMode ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-`&lt;/span&gt;&lt;span id=&quot;idRenderModeCommandString&quot;&gt;&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline text="&lt;li class=&quot;dropdown&quot; id=&quot;idReorgMenu&quot; style=&quot;display: none;&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;Reorg&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opReorg (up, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-U&lt;/span&gt;Move Up&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opReorg (down, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-D&lt;/span&gt;Move Down&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opReorg (left, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-L&lt;/span&gt;Move Left&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opReorg (right, 1);&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-R&lt;/span&gt;Move Right&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline created="Mon, 12 May 2014 23:20:46 GMT" pgfnum="41579" text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline created="Sun, 28 Jul 2013 18:38:02 GMT" pgfnum="28370" text="&lt;li&gt;&lt;a onclick=&quot;toggleArrowPad ();&quot;&gt;&lt;span id=&quot;idArrowPadCommandString&quot;&gt;&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline created="Sun, 28 Jul 2013 18:38:02 GMT" pgfnum="28370" text="&lt;li&gt;&lt;a onclick=&quot;opToggleComment ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-\&lt;/span&gt;Comment&lt;/a&gt;&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline created="Sat, 07 Sep 2013 16:56:40 GMT" pgfnum="29953" text=""></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opPromote ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-[&lt;/span&gt;Promote&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;opDemote ();&quot;&gt;&lt;span class=&quot;menuKeystroke&quot;&gt;Cmd-]&lt;/span&gt;Demote&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline text="&lt;li class=&quot;dropdown&quot; id=&quot;idDocsMenu&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;Docs&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline isComment="true" text="&lt;li&gt;&lt;a href=&quot;http://this.how/littleoutliner/&quot; target=&quot;_blank&quot;&gt;What is Little Outliner?&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a href=&quot;http://outlinerhowto.opml.org/&quot; target=&quot;_blank&quot;&gt;Outliner Howto&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a href=&quot;http://lo.1999.io/2016/07/07/0005.html&quot; target=&quot;_blank&quot;&gt;Questions?&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;dropdown-submenu&quot;&gt;">
+													<outline text="&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Previous versions&lt;/a&gt;"></outline>
+													<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+														<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;http://littleoutliner.com/v1/&quot; target=&quot;_blank&quot;&gt;Little Outliner v1&lt;/a&gt;&lt;/li&gt;"></outline>
+														<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;http://littleoutliner.com/archive/1.7.2/&quot; target=&quot;_blank&quot;&gt;Little Outliner v1.7.2&lt;/a&gt;&lt;/li&gt;"></outline>
+														<outline text="&lt;/ul&gt;"></outline>
+														</outline>
+													<outline text="&lt;/li&gt;"></outline>
+													</outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a href=&quot;http://littleoutliner.com/v1/&quot; target=&quot;_blank&quot;&gt;Little Outliner v1&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a href=&quot;http://littleoutliner.com/archive/1.7.2/&quot; target=&quot;_blank&quot;&gt;Little Outliner v1.7.2&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a a href=&quot;#&quot; onclick=&quot;showCribsheet ();&quot;&gt;Cribsheet&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a href=&quot;http://scripting.com/2018/05/06/170728.html&quot; target=&quot;_blank&quot;&gt;Instant Outliner&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a href=&quot;http://lo.1999.io/&quot; target=&quot;_blank&quot;&gt;Little Outliner blog&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;dropdown-submenu&quot;&gt;">
+													<outline text="&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;More options&lt;/a&gt;"></outline>
+													<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;"></outline>
+													<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+													<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+													<outline text="&lt;li class=&quot;dropdown-submenu&quot;&gt;">
+														<outline text="&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;More options&lt;/a&gt;"></outline>
+														<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;"></outline>
+														<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+														<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+														<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+														<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+														<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+														<outline text="&lt;/ul&gt;"></outline>
+														<outline text="&lt;/li&gt;"></outline>
+														</outline>
+													<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+													<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+													<outline text="&lt;li&gt;&lt;a tabindex=&quot;-1&quot; href=&quot;#&quot;&gt;Second level link&lt;/a&gt;&lt;/li&gt;"></outline>
+													<outline text="&lt;/ul&gt;"></outline>
+													<outline text="&lt;/li&gt;"></outline>
+													</outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline isComment="true" text="&lt;li class=&quot;dropdown&quot; id=&quot;idMessageOfTheDayMenu&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot; onclick=&quot;motdClick ()&quot;&gt;&lt;i class=&quot;fa&quot; id=&quot;idMotdIcon&quot;&gt;&lt;/i&gt;&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu ulMotdDropdownMenu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;div class=&quot;divMessageOfTheDayText&quot; id=&quot;idMessageOfTheDayText&quot;&gt;&lt;/li&gt; "></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline isComment="true" text="&lt;li class=&quot;dropdown&quot; id=&quot;idScriptsMenu&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;Scripts&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;runCurrentOutline ();&quot;&gt;Run&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline text="&lt;li class=&quot;dropdown&quot; id=&quot;idHistoryMenu&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;History&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot; id=&quot;idHistoryMenuList&quot;&gt;">
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline isComment="true" text="&lt;li class=&quot;dropdown&quot; id=&quot;idMiscMenu&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;Misc&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://liveblog.smallpict.com/2015/02/19/bloggingHowto.html&quot; target=&quot;_blank&quot;&gt;Basic howto&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://fargo.io/docs/outlinerHowto.html&quot; target=&quot;_blank&quot;&gt;Outliner howto&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://scripting.com/2014/03/19/howToAskForHelpWithSoftware.html&quot; target=&quot;_blank&quot;&gt;How to get help&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;https://groups.google.com/forum/?fromgroups#!forum/liveblog-support&quot; target=&quot;_blank&quot;&gt;Support mail list&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;openCommentDialog ();&quot;&gt;Comment dialog...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;checkForTwitterReplies (true);&quot;&gt;Check for replies...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;bookmarkletDialog ();&quot;&gt;Bookmarklet...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline isComment="true" text="&lt;li class=&quot;dropdown&quot; id=&quot;idDaveMenu&quot;&gt; ">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;Dave&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://scripting.com/&quot; target=&quot;_blank&quot;&gt;Scripting News&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://littlecardeditor.com/&quot; target=&quot;_blank&quot;&gt;Little Card Editor&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://thesaurus.land/&quot; target=&quot;_blank&quot;&gt;Thesaurus Land&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://little.porkchop.io/&quot; target=&quot;_blank&quot;&gt;Little Pork Chop&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://littleoutliner.com/&quot; target=&quot;_blank&quot;&gt;Little Outliner&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a href=&quot;http://fargo.io/&quot; target=&quot;_blank&quot;&gt;Fargo&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline text="&lt;/ul&gt;"></outline>
+										</outline>
+									<outline text="&lt;ul class=&quot;nav pull-right&quot;&gt;">
+										<outline text="&lt;li class=&quot;dropdown&quot;&gt;">
+											<outline text="&lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot;&gt;&lt;span id=&quot;idTwitterIcon&quot;&gt;&lt;/span&gt;&lt;span id=&quot;idGitHubUserName&quot;&gt;&lt;/span&gt;&amp;nbsp;&lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;&lt;/a&gt;"></outline>
+											<outline text="&lt;ul class=&quot;dropdown-menu&quot;&gt;">
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;aboutDialog ();&quot;&gt;About &lt;span id=&quot;idMenuAboutProductName&quot;&gt;&lt;/span&gt;...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;settingsCommand ();&quot;&gt;Settings...&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li class=&quot;divider&quot;&gt;&lt;/li&gt;"></outline>
+												<outline isComment="true" text="&lt;li&gt;&lt;a onclick=&quot;fbToggleConnectCommand ();&quot; id=&quot;idFacebookConnectMenuItem&quot;&gt;&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;li&gt;&lt;a onclick=&quot;toggleGitHubConnection ();&quot; id=&quot;idGitHubConnectMenuItem&quot;&gt;&lt;/a&gt;&lt;/li&gt;"></outline>
+												<outline text="&lt;/ul&gt;"></outline>
+												</outline>
+											<outline text="&lt;/li&gt;"></outline>
+											</outline>
+										<outline text="&lt;/ul&gt;"></outline>
+										</outline>
+									<outline text="&lt;/div&gt;"></outline>
+									</outline>
+								<outline text="&lt;/div&gt;"></outline>
+								</outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;/div&gt;"></outline>
+						</outline>
+					<outline created="Thu, 28 Mar 2013 21:39:17 GMT" pgfnum="21616" text="&lt;/div&gt;"></outline>
+					</outline>
+				<outline text="&lt;div class=&quot;divOpenFileDialog&quot;&gt;">
+					<outline text="&lt;div id=&quot;idOpenFileDialog&quot; class=&quot;modal hide fade&quot; tabindex=&quot;-1&quot; role=&quot;dialog&quot; aria-hidden=&quot;true&quot; style=&quot;left: 50%; width: 570px;&quot;&gt;">
+						<outline text="&lt;div class=&quot;modal-header&quot;&gt;">
+							<outline text="&lt;a href=&quot;#&quot; class=&quot;close&quot; data-dismiss=&quot;modal&quot;&gt;&amp;times;&lt;/a&gt;"></outline>
+							<outline text="&lt;h3 id=&quot;idOpenFileDialogPrompt&quot; style=&quot;font-size: 18px; margin-top: 0; margin-bottom: 0;&quot;&gt;Choose a blog post...&lt;/h3&gt;"></outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;modal-body&quot;&gt;">
+							<outline text="&lt;div class=&quot;divOpenFileDialogList&quot; id=&quot;idOpenFileDialogList&quot;&gt;">
+								<outline text="&lt;/div&gt;"></outline>
+								</outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;modal-footer&quot;&gt;">
+							<outline text="&lt;a href=&quot;#&quot; class=&quot;btn&quot; onclick=&quot;closeOpenFileDialog ();&quot;&gt;Cancel&lt;/a&gt;"></outline>
+							<outline isComment="true" text="&lt;a href=&quot;#&quot; class=&quot;btn btn-primary&quot; onclick=&quot;openFileDialogOK ();&quot;&gt;OK&lt;/a&gt;"></outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;/div&gt;"></outline>
+						</outline>
+					<outline text="&lt;/div&gt;"></outline>
+					</outline>
+				<outline isComment="true" text="&lt;div class=&quot;divProgramTitle&quot;&gt;&lt;i&gt;English&lt;/i&gt; editor for GitHub&lt;/div&gt;"></outline>
+				<outline created="Sun, 03 Feb 2013 14:56:13 GMT" pgfnum="18179" text="&lt;div class=&quot;divPrefsDialog&quot; comment=&quot;This is the Settings dialog.&quot;&gt;">
+					<outline text="&lt;div id=&quot;idPrefsDialog&quot; class=&quot;modal hide fade&quot; tabindex=&quot;-1&quot; role=&quot;dialog&quot; aria-labelledby=&quot;windowTitleLabel&quot; aria-hidden=&quot;true&quot;&gt;">
+						<outline isComment="true" text="&lt;div class=&quot;modal-header&quot;&gt;">
+							<outline text="&lt;a href=&quot;#&quot; class=&quot;close&quot; data-dismiss=&quot;modal&quot;&gt;&amp;times;&lt;/a&gt;"></outline>
+							<outline text="&lt;h3&gt;Preferences&lt;/h3&gt;"></outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;modal-body&quot;&gt;">
+							<outline text="&lt;div class=&quot;divDialogElements&quot;&gt;">
+								<outline created="Mon, 31 Dec 2012 16:55:33 GMT" pgfnum="16518" text="&lt;%prefs.includeOutline (&quot;http://scripting.com/english/testing2/settings.opml&quot;)%&gt;"></outline>
+								<outline text="&lt;/div&gt;"></outline>
+								</outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;modal-footer&quot;&gt;">
+							<outline text="&lt;a href=&quot;#&quot; class=&quot;btn&quot; onclick=&quot;prefsCloseDialog ();&quot;&gt;Cancel&lt;/a&gt;"></outline>
+							<outline text="&lt;a href=&quot;#&quot; class=&quot;btn btn-primary&quot; onclick=&quot;prefsOkClicked ();&quot;&gt;OK&lt;/a&gt;"></outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;/div&gt;"></outline>
+						</outline>
+					<outline created="Sun, 03 Feb 2013 14:56:23 GMT" pgfnum="18180" text="&lt;/div&gt;"></outline>
+					</outline>
+				<outline text="&lt;div class=&quot;divPageBody&quot;&gt;">
+					<outline text="&lt;div class=&quot;divBodyEditorContainer&quot; id=&quot;idEditorContainer&quot;&gt;">
+						<outline text="&lt;div class=&quot;divStatus&quot;&gt;">
+							<outline text="&lt;span id=&quot;idSaveStatus&quot; style=&quot;float: right&quot;&gt;&lt;/span&gt;"></outline>
+							<outline text="&amp;nbsp;"></outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;divEditor divTitleEditor&quot; id=&quot;idTitleEditor&quot;&gt;">
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;divEditor divDescriptionEditor&quot; id=&quot;idDescriptionEditor&quot;&gt;">
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;divEditor divBodyEditor&quot; id=&quot;idBodyEditor&quot;&gt;">
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;divStuffBelowEditor&quot;&gt;">
+							<outline text="&lt;div class=&quot;divPostButton&quot;&gt;">
+								<outline created="Tue, 06 May 2014 16:58:36 GMT" pgfnum="41161" text="&lt;button id=&quot;idPostButton&quot;  class=&quot;btn btnPost&quot; type=&quot;button&quot; onclick=&quot;postButtonClick ();&quot;&gt; ">
+									<outline text="&lt;i class=&quot;fa fa-check&quot;&gt;&lt;/i&gt; Save"></outline>
+									<outline text="&lt;/button&gt;"></outline>
+									</outline>
+								<outline text="&lt;/div&gt;"></outline>
+								</outline>
+							<outline text="&lt;div class=&quot;divIcons&quot;&gt;">
+								<outline text="&lt;a id=&quot;idEyeIconAnchor&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fa fa-eye&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
+								<outline text="&lt;a id=&quot;idGitHubIconAnchor&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fa fa-github&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
+								<outline text="&lt;a href=&quot;http://this.how/english/&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fa fa-info-circle&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
+								<outline isComment="true" text=""></outline>
+								<outline isComment="true" text="&lt;i class=&quot;fa fa-eye&quot; onclick=&quot;clickEye ()&quot;&gt;&lt;/i"></outline>
+								<outline isComment="true" text="&lt;i class=&quot;fab fa-github&quot; onclick=&quot;clickGitHubIcon ()&quot;&gt;&lt;/i&gt;"></outline>
+								<outline isComment="true" text="&lt;i class=&quot;fa fa-cog&quot; onclick=&quot;clickSettings ()&quot;&gt;&lt;/i&gt;"></outline>
+								<outline text="&lt;/div&gt;"></outline>
+								</outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text="&lt;div class=&quot;divPreviewContainer&quot; id=&quot;idPreviewContainer&quot;&gt;">
+							<outline text="&lt;div class=&quot;divPreview&quot; id=&quot;idPreview&quot;&gt;">
+								<outline text="&lt;/div&gt;"></outline>
+								</outline>
+							<outline text="&lt;/div&gt;"></outline>
+							</outline>
+						<outline text=""></outline>
+						<outline isComment="true" text="&lt;table class=&quot;tableForEditor&quot;&gt;">
+							<outline text="&lt;tr&gt;">
+								<outline isComment="true" text="&lt;td&gt;">
+									<outline text="&lt;div class=&quot;divOutlineContainer&quot;&gt;">
+										<outline text="&lt;div class=&quot;divOutlineTitle&quot; id=&quot;idOutlineTitle&quot;&gt;">
+											<outline text="&lt;/div&gt;"></outline>
+											</outline>
+										<outline text="&lt;div class=&quot;divOutlineDisplayer&quot; id=&quot;idOutlineDisplayer&quot;&gt;">
+											<outline text="&lt;/div&gt;"></outline>
+											</outline>
+										<outline text="&lt;/div&gt;"></outline>
+										</outline>
+									<outline text="&lt;/td&gt;"></outline>
+									</outline>
+								<outline text="&lt;td&gt;">
+									<outline text="&lt;div class=&quot;divTitleArea&quot;&gt;">
+										<outline created="Tue, 06 May 2014 16:58:36 GMT" isComment="true" pgfnum="41161" text="&lt;button id=&quot;idEditTitleButton&quot;  class=&quot;btn&quot; type=&quot;button&quot; onclick=&quot;editTitleButtonClick ();&quot;&gt; ">
+											<outline text="&lt;i class=&quot;fa fa-edit&quot;&gt;&lt;/i&gt; Edit"></outline>
+											<outline text="&lt;/button&gt;"></outline>
+											</outline>
+										<outline text="&lt;span class=&quot;spTitleViewer&quot; id=&quot;idTitleViewer&quot;&gt;">
+											<outline text="&lt;/span&gt;"></outline>
+											</outline>
+										<outline text="&lt;a onclick=&quot;editTitleButtonClick ();&quot;&gt;&lt;i class=&quot;fa fa-edit&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
+										<outline isComment="true" text="&lt;div class=&quot;divTitleEditor&quot;&gt;">
+											<outline text="&lt;input id=&quot;idTitleEditor&quot; type=&quot;text&quot; placeholder=&quot;Enter the title of the post here.&quot;&gt;"></outline>
+											<outline text="&lt;/div&gt;"></outline>
+											</outline>
+										<outline text="&lt;/div&gt;"></outline>
+										</outline>
+									<outline text="&lt;div class=&quot;divBodyEditor&quot; id=&quot;idBodyEditor&quot;&gt;">
+										<outline text="&lt;/div&gt;"></outline>
+										</outline>
+									<outline text="&lt;div class=&quot;divPostButton&quot;&gt;">
+										<outline created="Tue, 06 May 2014 16:58:36 GMT" pgfnum="41161" text="&lt;button id=&quot;idPostButton&quot;  class=&quot;btn btnPost&quot; type=&quot;button&quot; onclick=&quot;postButtonClick ();&quot;&gt; ">
+											<outline text="&lt;i class=&quot;fa fa-check&quot;&gt;&lt;/i&gt; Post"></outline>
+											<outline text="&lt;/button&gt;"></outline>
+											</outline>
+										<outline text="&lt;/div&gt;"></outline>
+										</outline>
+									<outline text="&lt;div class=&quot;divIcons&quot;&gt;">
+										<outline text="&lt;i class=&quot;fa fa-cog&quot; onclick=&quot;clickSettings ()&quot;&gt;&lt;/i&gt;"></outline>
+										<outline text="&lt;i class=&quot;fa fa-eye&quot; onclick=&quot;clickEye ()&quot;&gt;&lt;/i&gt;"></outline>
+										<outline text="&lt;i class=&quot;fab fa-github&quot; onclick=&quot;clickGitHubIcon ()&quot;&gt;&lt;/i&gt;"></outline>
+										<outline text="&lt;i class=&quot;fa fa-info-circle&quot; onclick=&quot;clickInfo ()&quot;&gt;&lt;/i&gt;"></outline>
+										<outline text="&lt;/div&gt;"></outline>
+										</outline>
+									<outline text="&lt;div class=&quot;divPreviewContainer&quot; id=&quot;idPreviewContainer&quot;&gt;">
+										<outline text="&lt;div class=&quot;divPreview&quot; id=&quot;idPreview&quot;&gt;">
+											<outline text="&lt;/div&gt;"></outline>
+											</outline>
+										<outline text="&lt;/div&gt;"></outline>
+										</outline>
+									<outline text="&lt;/td&gt;"></outline>
+									</outline>
+								<outline text="&lt;/tr&gt;"></outline>
+								</outline>
+							<outline text="&lt;/table&gt;"></outline>
+							</outline>
+						<outline text="&lt;/div&gt;"></outline>
+						</outline>
+					<outline text="&lt;div class=&quot;divSignOnContainer&quot; id=&quot;idSignOnContainer&quot;&gt;">
+						<outline text="&lt;center&gt;">
+							<outline text="&lt;p&gt;Welcome to the &lt;a href=&quot;http://tbd.tbd/&quot;&gt;English editor&lt;/a&gt; for GitHub-based blogs.&lt;/p&gt;"></outline>
+							<outline created="Tue, 06 May 2014 16:58:36 GMT" pgfnum="41161" text="&lt;button id=&quot;idSignOnButton&quot;  class=&quot;btn btnSignOn&quot; type=&quot;button&quot; onclick=&quot;connectButtonClick ();&quot;&gt;">
+								<outline text="Connect with GitHub"></outline>
+								<outline text="&lt;/button&gt;"></outline>
+								</outline>
+							<outline text="&lt;/center&gt;"></outline>
+							</outline>
+						<outline text="&lt;/div&gt;"></outline>
+						</outline>
+					<outline text="&lt;/div&gt;"></outline>
+					</outline>
+				<outline text="&lt;script&gt;">
+					<outline text="$(document).ready (function () {">
+						<outline created="Wed, 30 Oct 2013 15:20:06 GMT" pgfnum="30656" text="startup ();"></outline>
+						<outline text="});"></outline>
+						</outline>
+					<outline text="&lt;/script&gt;"></outline>
+					</outline>
+				<outline text="&lt;/body&gt;"></outline>
+				</outline>
+			<outline text="&lt;/html&gt;"></outline>
+			</outline>
+		</body>
+	</opml>

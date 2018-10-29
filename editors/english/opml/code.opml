@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<opml version="2.0">
+	<head>
+		<title>code.js</title>
+		<dateModified>&lt;%dateModified%></dateModified>
+		<expansionState></expansionState>
+		<vertScrollState>1</vertScrollState>
+		<windowTop>300</windowTop>
+		<windowLeft>700</windowLeft>
+		<windowBottom>900</windowBottom>
+		<windowRight>1500</windowRight>
+		</head>
+	<body text="code.js">
+		<outline text="var appConsts = {">
+			<outline text="productnameForDisplay: &quot;English&quot;,"></outline>
+			<outline text="idGitHubClient: &quot;475311614ae9d26e29e9&quot;,"></outline>
+			<outline text=""></outline>
+			<outline text="myServerAddress: &quot;http://english.scripting.com/&quot;,"></outline>
+			<outline text="myBlogDomain: &quot;englishblog1.scripting.com&quot;, //an index into the server's domains object"></outline>
+			<outline text=""></outline>
+			<outline isComment="true" text="myServerAddress: &quot;http://127.0.0.1:1402/&quot;,"></outline>
+			<outline isComment="true" text="myBlogDomain: &quot;localhost&quot;, "></outline>
+			<outline text=""></outline>
+			<outline text="defaultEditorButtons: [&quot;bold&quot;, &quot;italic&quot;, &quot;anchor&quot;, &quot;h3&quot;, &quot;h4&quot;, &quot;orderedlist&quot;, &quot;unorderedlist&quot;, &quot;quote&quot;],"></outline>
+			<outline text=""></outline>
+			<outline text="blogDataPath: &quot;data.json&quot;,"></outline>
+			<outline text="blogPostsPath: &quot;posts/&quot;,"></outline>
+			<outline text="blogRssPath: &quot;rss.xml&quot;,"></outline>
+			<outline text=""></outline>
+			<outline text="placeholders: {">
+				<outline text="title: &quot;&quot;,"></outline>
+				<outline text="description: &quot;&quot;,"></outline>
+				<outline text="body: &quot;&quot;"></outline>
+				<outline text="},"></outline>
+				</outline>
+			<outline text=""></outline>
+			<outline text="version: &quot;0.4.18&quot;"></outline>
+			<outline text="};"></outline>
+			</outline>
+		<outline text="var appPrefs = {">
+			<outline text="flAutoSave: true,"></outline>
+			<outline text="lastPostTitle: &quot;&quot;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text="var myGitHubPubApp = undefined;"></outline>
+		<outline text=""></outline>
+		<outline isComment="true" text="var flPrefsChanged = false;"></outline>
+		<outline text="var whenLastPostChange = new Date (), flPostChanged = false, whenLastAutoSave = new Date ();"></outline>
+		<outline text="var editorTitle, editorDescription, editorBody;"></outline>
+		<outline text="var editorValues = {">
+			<outline text="title: undefined,"></outline>
+			<outline text="description: undefined,"></outline>
+			<outline text="text: undefined"></outline>
+			<outline text="};"></outline>
+			</outline>
+		<outline text="var flEditorValuesChanged = false;"></outline>
+		<outline text=""></outline>
+		<outline text=""></outline>
+		<outline text="function testRepoGetSave () { //testing repoget and reposave -- 10/26/18 by DW">
+			<outline text="var username = &quot;scripting&quot;;"></outline>
+			<outline text="var repo = &quot;test1&quot;;"></outline>
+			<outline text="var path = &quot;demodoc.md&quot;;"></outline>
+			<outline text="myGitHubPubApp.repoGet (username, repo, path, undefined, function (err, data) {">
+				<outline text="myGitHubPubApp.repoSave (username, repo, path, data.toUpperCase (), undefined, function (err, data) {">
+					<outline text="console.log (data);"></outline>
+					<outline text="});"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function updateSaveStatus () {">
+			<outline text="var s = &quot;SAVED&quot;;"></outline>
+			<outline text="if (flEditorValuesChanged) {">
+				<outline text="s = &quot;&lt;div style=\&quot;color: silver\&quot;&gt;NOT &quot; + s + &quot;&lt;/div&gt;&quot;;"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="else {">
+				<outline text="s = &quot;&lt;div style=\&quot;color: black\&quot;&gt;&quot; + s + &quot;&lt;/div&gt;&quot;;"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="if ($(&quot;#idSaveStatus&quot;).html () != s) {">
+				<outline text="$(&quot;#idSaveStatus&quot;).html (s);"></outline>
+				<outline text="$(&quot;#idSaveStatus&quot;).css (&quot;display&quot;, &quot;block&quot;);"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function applyPrefs () {">
+			<outline text="prefsChanged ();"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function markdownProcess (s) {">
+			<outline text="var md = new Markdown.Converter ();"></outline>
+			<outline text="return (md.makeHtml (s));"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function testPasteHTML () {">
+			<outline text="var options = {">
+				<outline text="forcePlainText: false,"></outline>
+				<outline text="cleanPastedHTML: false,"></outline>
+				<outline text="};"></outline>
+				</outline>
+			<outline text="editorBody.pasteHTML (&quot;&lt;iframe width=\&quot;420\&quot; height=\&quot;315\&quot; src=\&quot;https://www.youtube.com/embed/nlaoR5m4L80\&quot; frameborder=\&quot;0\&quot; allowfullscreen&gt;&lt;/iframe&gt;&quot;, options);"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function updatePreviewVisibility () {">
+			<outline text="var flVisible = $(&quot;#idPreviewContainer&quot;).css (&quot;display&quot;) == &quot;block&quot;;"></outline>
+			<outline text="if (flVisible !== appPrefs.flMarkdownPreview) {">
+				<outline text="var val = (appPrefs.flMarkdownPreview) ? &quot;block&quot; : &quot;none&quot;;"></outline>
+				<outline text="$(&quot;#idPreviewContainer&quot;).css (&quot;display&quot;, val);"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function updateIconValues () { //10/20/18 by DW">
+			<outline text="var postStruct = myGitHubPubApp.getCurrentPost ();"></outline>
+			<outline text="function setIcon (id, val) {">
+				<outline text="if ($(&quot;#&quot; + id).attr (&quot;href&quot;) != val) {">
+					<outline text="$(&quot;#&quot; + id).attr (&quot;href&quot;, val);"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="setIcon (&quot;idEyeIconAnchor&quot;, postStruct.urlPublic);"></outline>
+			<outline text="setIcon (&quot;idGitHubIconAnchor&quot;, postStruct.urlGitHub);"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function updatePostButton () {">
+			<outline text="var flVisible = $(&quot;#idPostButton&quot;).css (&quot;display&quot;) == &quot;inline-block&quot;;"></outline>
+			<outline text="if (flVisible == appPrefs.flAutoSave) {">
+				<outline text="var val = (appPrefs.flAutoSave) ? &quot;none&quot; : &quot;inline-block&quot;;"></outline>
+				<outline text="$(&quot;#idPostButton&quot;).css (&quot;display&quot;, val);"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function enableInsertHtmlCommand () {">
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function insertHtmlCommand () {">
+			<outline text="var prompt = &quot;Enter the HTML text you want to insert:&quot;;"></outline>
+			<outline text="var placeholder = &quot;Tags and text and other stuff that goes in web pages.&quot;;"></outline>
+			<outline text="var replaceTable = {">
+				<outline text="&quot;&lt;script&quot;: &quot;&amp;lt;script&quot;,"></outline>
+				<outline text="&quot;&lt;/script&quot;: &quot;&amp;lt;/script&quot;"></outline>
+				<outline text="};"></outline>
+				</outline>
+			<outline text="var pasteOptions = {">
+				<outline text="forcePlainText: false,"></outline>
+				<outline text="cleanPastedHTML: false,"></outline>
+				<outline text="};"></outline>
+				</outline>
+			<outline created="Tue, 08 Jan 2013 01:26:19 GMT" pgfnum="16860" text="askDialog (prompt, appPrefs.lastInsertedHtmltext, placeholder, function (htmltext, flcancel) {">
+				<outline text="if (!flcancel) {">
+					<outline text="htmltext = multipleReplaceAll (htmltext, replaceTable, false);"></outline>
+					<outline text="$(&quot;#idBodyEditor&quot;).focus ();"></outline>
+					<outline text="editorBody.pasteHTML (htmltext, pasteOptions);"></outline>
+					<outline text="appPrefs.lastInsertedHtmltext = htmltext; "></outline>
+					<outline text="prefsChanged ();"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function newBlogPostCommand () {">
+			<outline created="Tue, 08 Jan 2013 01:26:19 GMT" pgfnum="16860" text="askDialog (&quot;Title for new post?&quot;, appPrefs.lastPostTitle, &quot;Enter title for post here.&quot;, function (title, flcancel) {">
+				<outline text="if (!flcancel) {">
+					<outline text="appPrefs.lastPostTitle = title; "></outline>
+					<outline text="myGitHubPubApp.prefsChanged ();"></outline>
+					<outline text="myGitHubPubApp.newBlogPost (title)"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function buildHistoryMenu () {">
+			<outline text="myGitHubPubApp.buildPostList (&quot;idHistoryMenuList&quot;)"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function showHideEditor () {">
+			<outline text="var flSignedOn = myGitHubPubApp.userIsSignedOn ();"></outline>
+			<outline text="function makeVisible (id, flVisible) {">
+				<outline text="var val = (flVisible) ? &quot;block&quot; : &quot;none&quot;;"></outline>
+				<outline text="if ($(&quot;#&quot; + id).css (&quot;display&quot;) != val) { //avoid flashing in debugger">
+					<outline text="$(&quot;#&quot; + id).css (&quot;display&quot;, val);"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="makeVisible (&quot;idSignOnContainer&quot;, !flSignedOn);"></outline>
+			<outline text="makeVisible (&quot;idEditorContainer&quot;, flSignedOn);"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function connectButtonClick () {">
+			<outline text="myGitHubPubApp.connectWithGitHub ();"></outline>
+			<outline text="showHideEditor ();"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function toggleGitHubConnection () {">
+			<outline text="if (myGitHubPubApp.userIsSignedOn ()) {">
+				<outline text="confirmDialog (&quot;Sign off GitHub?&quot;, function () {">
+					<outline text="myGitHubPubApp.disconnectFromGitHub ();"></outline>
+					<outline text="showHideEditor ();"></outline>
+					<outline text="});"></outline>
+					</outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="else {">
+				<outline text="myGitHubPubApp.connectWithGitHub ();"></outline>
+				<outline text="showHideEditor ();"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function updateGitHubMenuItem () {">
+			<outline text="var menustring = (myGitHubPubApp.userIsSignedOn ()) ? &quot;Sign off GitHub...&quot; : &quot;Sign on GitHub...&quot;;"></outline>
+			<outline text="if ($(&quot;#idGitHubConnectMenuItem&quot;).text () != menustring) {">
+				<outline text="$(&quot;#idGitHubConnectMenuItem&quot;).text (menustring);"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function updateGitHubUserName () {">
+			<outline text="if (myGitHubPubApp.userIsSignedOn ()) {">
+				<outline text="$(&quot;#idGitHubUserName&quot;).html (&quot;&lt;i class=\&quot;fa fa-github\&quot;&gt;&lt;/i&gt;&amp;nbsp;&quot; + myGitHubPubApp.getGitHubUserInfo ().login);"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function settingsCommand () {">
+			<outline text="var blogData = myGitHubPubApp.getBlogData ();"></outline>
+			<outline text="appPrefs.title = blogData.title;"></outline>
+			<outline text="appPrefs.description = blogData.description;"></outline>
+			<outline text="appPrefs.language = blogData.language;"></outline>
+			<outline text="prefsDialogShow (function () {">
+				<outline text="myGitHubPubApp.setBlogDataElements ({">
+					<outline text="title: appPrefs.title,"></outline>
+					<outline text="description: appPrefs.description,"></outline>
+					<outline text="language: appPrefs.language"></outline>
+					<outline text="});"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function viewTemplateOnGitHub () {">
+			<outline text="myGitHubPubApp.viewTemplateOnGitHub ();"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function openPostOnGitHub () {">
+			<outline text="myGitHubPubApp.openPostOnGitHub ();"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function editorValuesChanged () {">
+			<outline text="flEditorValuesChanged = true;"></outline>
+			<outline text="whenLastPostChange = new Date ();"></outline>
+			<outline text="updateSaveStatus ();"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function setEditorValue (name, val) {">
+			<outline text="if (editorValues [name] != val) {">
+				<outline text="editorValues [name] = val; "></outline>
+				<outline text="editorValuesChanged ();"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function startEditor (postStruct) {">
+			<outline text="editorValues.title = postStruct.title;"></outline>
+			<outline text="editorValues.description = postStruct.description;"></outline>
+			<outline text="editorValues.text = postStruct.text;"></outline>
+			<outline text=""></outline>
+			<outline text="$(&quot;#idTitleEditor&quot;).html (postStruct.title);"></outline>
+			<outline text="editorTitle = new MediumEditor (&quot;.divTitleEditor&quot;, {">
+				<outline text="placeholder: {">
+					<outline text="text: appConsts.placeholders.title"></outline>
+					<outline text="},"></outline>
+					</outline>
+				<outline text="toolbar: {">
+					<outline text="buttons: appConsts.defaultEditorButtons,"></outline>
+					<outline text="},"></outline>
+					</outline>
+				<outline text="buttonLabels: &quot;fontawesome&quot;,"></outline>
+				<outline text="imageDragging: false, "></outline>
+				<outline text="disableReturn: true,"></outline>
+				<outline text="extensions: {">
+					<outline text="markdown: new MeMarkdown (function (md) {">
+						<outline text="setEditorValue (&quot;title&quot;, stripMarkup (md));"></outline>
+						<outline text="})"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text=""></outline>
+			<outline text="$(&quot;#idDescriptionEditor&quot;).html (postStruct.description);"></outline>
+			<outline text="editorDescription = new MediumEditor (&quot;.divDescriptionEditor&quot;, {">
+				<outline text="placeholder: {">
+					<outline text="text: appConsts.placeholders.description"></outline>
+					<outline text="},"></outline>
+					</outline>
+				<outline text="toolbar: {">
+					<outline text="buttons: appConsts.defaultEditorButtons,"></outline>
+					<outline text="},"></outline>
+					</outline>
+				<outline text="buttonLabels: &quot;fontawesome&quot;,"></outline>
+				<outline text="imageDragging: false, "></outline>
+				<outline text="disableReturn: true,"></outline>
+				<outline text="extensions: {">
+					<outline text="markdown: new MeMarkdown (function (md) {">
+						<outline text="setEditorValue (&quot;description&quot;, stripMarkup (md));"></outline>
+						<outline text="})"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text=""></outline>
+			<outline text="$(&quot;#idBodyEditor&quot;).html (markdownProcess (postStruct.text));"></outline>
+			<outline text="editorBody = new MediumEditor (&quot;.divBodyEditor&quot;, {">
+				<outline text="placeholder: {">
+					<outline text="text: appConsts.placeholders.body"></outline>
+					<outline text="},"></outline>
+					</outline>
+				<outline text="toolbar: {">
+					<outline text="buttons: appConsts.defaultEditorButtons,"></outline>
+					<outline text="},"></outline>
+					</outline>
+				<outline text="buttonLabels: &quot;fontawesome&quot;,"></outline>
+				<outline text="imageDragging: false, "></outline>
+				<outline text="autoLink: true,"></outline>
+				<outline text="extensions: {">
+					<outline text="markdown: new MeMarkdown (function (md) {">
+						<outline text="setEditorValue (&quot;text&quot;, md);"></outline>
+						<outline text="$(&quot;#idPreview&quot;).text (md);"></outline>
+						<outline text="})"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text=""></outline>
+			<outline text="updateIconValues (); //10/20/18 by DW"></outline>
+			<outline text=""></outline>
+			<outline isComment="true" text="$(&quot;#idBodyEditor&quot;).keyup (function (event) {">
+				<outline text="});"></outline>
+				</outline>
+			<outline isComment="true" text="$(&quot;#idPostButton&quot;).on (&quot;mousedown&quot;, function (event) {">
+				<outline text="event.preventDefault ();"></outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline created="Thu, 28 Mar 2013 21:12:24 GMT" pgfnum="21611" text="function initMenus () {">
+			<outline text="var cmdKeyPrefix = getCmdKeyPrefix (); //10/6/14 by DW"></outline>
+			<outline text="$(&quot;#idMenuProductName&quot;).text (appConsts.productnameForDisplay);"></outline>
+			<outline isComment="true" text="if (appPrefs.userInfo !== undefined) {">
+				<outline text="$(&quot;#idGitHubUserName&quot;).text (appPrefs.userInfo.login);"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="updateGitHubMenuItem ();"></outline>
+			<outline text="$(&quot;#idVersionNumber&quot;).text (&quot;v&quot; + appConsts.version);"></outline>
+			<outline created="Tue, 05 Feb 2013 01:08:38 GMT" isComment="true" pgfnum="18247" text="document.getElementById (&quot;idMenuProductName&quot;).innerHTML = appConsts.productnameForDisplay; "></outline>
+			<outline text="$(&quot;#idMenubar .dropdown-menu li&quot;).each (function () {">
+				<outline text="var li = $(this);"></outline>
+				<outline text="var liContent = li.html ();"></outline>
+				<outline text="liContent = liContent.replace (&quot;Cmd-&quot;, cmdKeyPrefix);"></outline>
+				<outline text="li.html (liContent);"></outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline created="Thu, 13 Jun 2013 23:08:07 GMT" isComment="true" pgfnum="26123" text="twUpdateTwitterMenuItem (&quot;idTwitterConnectMenuItem&quot;);"></outline>
+			<outline isComment="true" text="twUpdateTwitterUsername (&quot;idTwitterUsername&quot;);"></outline>
+			<outline created="Thu, 28 Mar 2013 21:12:30 GMT" pgfnum="21612" text="}"></outline>
+			</outline>
+		<outline isComment="true" text="function everyFiveSeconds () {">
+			<outline text="if (flRssFeedChanged) {">
+				<outline text="flRssFeedChanged = false;"></outline>
+				<outline isComment="true" text="buildBlogRss ();"></outline>
+				<outline text="buildRssOnServer ();"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function everySecond () {">
+			<outline text="if (flEditorValuesChanged) {">
+				<outline text="myGitHubPubApp.saveEditorStatus (editorValues); //save locally, not on the server"></outline>
+				<outline text="if (appPrefs.flAutoSave) { ">
+					<outline created="Sat, 02 Mar 2013 21:32:32 GMT" pgfnum="19557" text="if (secondsSince (whenLastPostChange) &gt;= 1) {">
+						<outline text="flEditorValuesChanged = false;"></outline>
+						<outline text="myGitHubPubApp.savePost (editorValues, function () {">
+							<outline isComment="true" text="console.log (&quot;myGitHubPubApp.savePost returned&quot;);"></outline>
+							<outline created="Sat, 02 Mar 2013 21:32:50 GMT" pgfnum="19559" text="whenLastAutoSave = new Date ();"></outline>
+							<outline text="updateSaveStatus ();"></outline>
+							<outline text="});"></outline>
+							</outline>
+						<outline created="Sat, 02 Mar 2013 21:32:40 GMT" pgfnum="19558" text="}"></outline>
+						</outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="updatePreviewVisibility ();"></outline>
+			<outline text="updatePostButton ();"></outline>
+			<outline text="updateIconValues ();"></outline>
+			<outline text="updateGitHubMenuItem ();"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline isComment="true" text="function everyMinute () {">
+			<outline text="console.log (&quot;\neveryMinute: &quot; + new Date ().toLocaleTimeString ());"></outline>
+			<outline isComment="true" text="updateGitHubFile (&quot;clock.md&quot;, new Date ().toLocaleTimeString (), function (jstruct) {">
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text="function startup () {">
+			<outline text="console.log (&quot;startup&quot;);"></outline>
+			<outline text="myGitHubPubApp = new githubpubApp (appConsts, appPrefs);"></outline>
+			<outline text="initMenus ();"></outline>
+			<outline text="myGitHubPubApp.callbacks.everySecond = everySecond;"></outline>
+			<outline text="myGitHubPubApp.callbacks.startEditor = startEditor;"></outline>
+			<outline text="myGitHubPubApp.callbacks.postUpdated = function (postStruct) {">
+				<outline text="console.log (&quot;myGitHubPubApp.callbacks.postUpdated: postStruct == &quot; + postStruct.title);"></outline>
+				<outline text="buildHistoryMenu ();"></outline>
+				<outline text="};"></outline>
+				</outline>
+			<outline text="myGitHubPubApp.start (function () {">
+				<outline text="showHideEditor ();"></outline>
+				<outline text="if (myGitHubPubApp.userIsSignedOn ()) {">
+					<outline text="updateGitHubUserName ();"></outline>
+					<outline text="buildHistoryMenu ();"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="initGoogleAnalytics (); "></outline>
+				<outline text="hitCounter (); "></outline>
+				<outline text="});"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
+		</body>
+	</opml>

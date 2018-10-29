@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<opml version="2.0">
+	<head>
+		<title>styles.css</title>
+		<dateModified>&lt;%dateModified%></dateModified>
+		<expansionState></expansionState>
+		<vertScrollState>1</vertScrollState>
+		<windowTop>300</windowTop>
+		<windowLeft>700</windowLeft>
+		<windowBottom>900</windowBottom>
+		<windowRight>1500</windowRight>
+		</head>
+	<body text="styles.css">
+		<outline text="@import url('https://fonts.googleapis.com/css?family=Oswald:400,700');"></outline>
+		<outline isComment="true" text="@import url('https://fonts.googleapis.com/css?family=Ubuntu:400,400i,700,700i&amp;subset=latin-ext');"></outline>
+		<outline text=""></outline>
+		<outline text=":root {">
+			<outline text="--normal-font-size: 18px; "></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=""></outline>
+		<outline text="body {">
+			<outline text="font-family: &quot;Ubuntu&quot;;"></outline>
+			<outline text="font-size: var(--normal-font-size);"></outline>
+			<outline text="background-color: whitesmoke;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divPageBody {">
+			<outline text="padding-top: 60px;"></outline>
+			<outline text="width: 65%;"></outline>
+			<outline text="margin-left: auto;"></outline>
+			<outline text="margin-right: auto;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".divBodyEditorContainer {">
+			<outline text="margin-top: 15px;"></outline>
+			<outline text="display: none;"></outline>
+			<outline isComment="true" text="padding-left: 6px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divEditor {">
+			<outline text="border: 1px solid rgba(192, 192, 192, .7);"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divBodyEditor {">
+			<outline text="margin-top: 10px;"></outline>
+			<outline text="padding-left: 6px;"></outline>
+			<outline text="padding-right: 6px;"></outline>
+			<outline text="line-height: 140%;"></outline>
+			<outline text="min-height: 300px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divBodyEditor p, li {">
+			<outline text="margin-bottom: 10px;"></outline>
+			<outline text="line-height: 150%;"></outline>
+			<outline isComment="true" text="margin-top: .4em;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline isComment="true" text=".divBodyEditor p {">
+			<outline isComment="true" text="margin-top: 15px;"></outline>
+			<outline isComment="true" text="margin-bottom: 0px;"></outline>
+			<outline text="line-height: 150%;"></outline>
+			<outline isComment="true" text="margin-top: 3px;"></outline>
+			<outline isComment="true" text="margin-bottom: 17px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divBodyEditor h3 {">
+			<outline isComment="true" text="margin-top: 20px;"></outline>
+			<outline isComment="true" text="margin-bottom: 0px;"></outline>
+			<outline isComment="true" text="font-size: 1.7em;"></outline>
+			<outline isComment="true" text="margin-top: 0;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divBodyEditor h4 {">
+			<outline text="font-size: var(--normal-font-size);"></outline>
+			<outline isComment="true" text="margin-top: 20px;"></outline>
+			<outline isComment="true" text="margin-bottom: 0px;"></outline>
+			<outline isComment="true" text="font-size: 1.3em;"></outline>
+			<outline isComment="true" text="margin-top: 0;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divBodyEditor blockquote p {">
+			<outline text="line-height: 140%;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divTitleEditor {">
+			<outline text="font-family: &quot;Oswald&quot;;"></outline>
+			<outline text="font-size: 48px;"></outline>
+			<outline text="letter-spacing: -3px;"></outline>
+			<outline text="font-weight: bold;"></outline>
+			<outline text="min-height: 1em;"></outline>
+			<outline text="padding-top: .3em;"></outline>
+			<outline text="padding-bottom: .3em;"></outline>
+			<outline text="padding-left: 6px;"></outline>
+			<outline text="padding-right: 6px;"></outline>
+			<outline text="line-height: 100%;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divTitleEditor p {">
+			<outline text="-webkit-margin-before: 0;"></outline>
+			<outline text="-webkit-margin-after: 0;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divDescriptionEditor {">
+			<outline text="font-size: 22px;"></outline>
+			<outline isComment="true" text="letter-spacing: -2px;"></outline>
+			<outline text="font-style: italic;"></outline>
+			<outline text="min-height: 1em;"></outline>
+			<outline text="margin-top: 10px;"></outline>
+			<outline text="padding-top: .3em;"></outline>
+			<outline text="padding-bottom: .3em;"></outline>
+			<outline text="padding-left: 6px;"></outline>
+			<outline text="padding-right: 6px;"></outline>
+			<outline text="line-height: 130%;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline isComment="true" text=".medium-editor-placeholder:after {">
+			<outline text="font-style: normal;"></outline>
+			<outline text="font-size: 1em;"></outline>
+			<outline text="top: .3em;"></outline>
+			<outline isComment="true" text="font-size: .5em;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=":focus, :visited:focus {">
+			<outline text="border-color: rgba(82, 168, 236, 0.8);"></outline>
+			<outline text="outline: 0;"></outline>
+			<outline text="outline: thin dotted \9;"></outline>
+			<outline text="box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);"></outline>
+			<outline text="background-color: white;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".btnSignOn {">
+			<outline text="width: 200px;"></outline>
+			<outline text="margin-left: auto;"></outline>
+			<outline text="margin-right: auto;"></outline>
+			<outline text="margin-top: 10px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divSignOnContainer {">
+			<outline text="margin-top: 100px;"></outline>
+			<outline text="display: none;"></outline>
+			<outline text="line-height: 170%;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=""></outline>
+		<outline text=".divPreviewContainer {">
+			<outline text="margin-top: 20px;"></outline>
+			<outline text="display: none;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divPreviewContainer pre {">
+			<outline text="background-color: white;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divPreview {">
+			<outline text="font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace;"></outline>
+			<outline text="font-size: 13px;"></outline>
+			<outline text="line-height: 20px;"></outline>
+			<outline text="border: 1px solid silver;"></outline>
+			<outline text="background-color: white;"></outline>
+			<outline text="padding: 10px;"></outline>
+			<outline isComment="true" text="word-break: break-all;"></outline>
+			<outline text="word-wrap: break-word;"></outline>
+			<outline text="white-space: pre-wrap;"></outline>
+			<outline text="min-height: 400px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=""></outline>
+		<outline text=".divVersionNumber {">
+			<outline text="font-size: 12px;"></outline>
+			<outline text="float: right;"></outline>
+			<outline text="padding: 19px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divProgramTitle {">
+			<outline text="display: none;"></outline>
+			<outline isComment="true" text="font-weight: bold;"></outline>
+			<outline isComment="true" text="padding-left: 20px;"></outline>
+			<outline isComment="true" text="padding-top: 5px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".divOutlineContainer {">
+			<outline text="float: left;"></outline>
+			<outline text="vertical-align: top;"></outline>
+			<outline text="width: 150px;"></outline>
+			<outline text="margin-right: -3px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divRenderedOutline a {">
+			<outline text="color: black;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divItemHeader {">
+			<outline text="display: none;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divRenderedOutline .divOutlineText {">
+			<outline isComment="true" text="font-size: 18px;"></outline>
+			<outline text="line-height: 110%;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divOutlineDisplayer {">
+			<outline text="border: 1px solid silver;"></outline>
+			<outline isComment="true" text="padding: 2px;"></outline>
+			<outline text="overflow: auto;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divRenderedOutline {">
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".ulOutlineList {">
+			<outline text="margin-left: 10px;"></outline>
+			<outline text="margin-right: 5px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".ulLevel3 {">
+			<outline text="margin-left: 5px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".aOpenGitHubDoc {">
+			<outline text="cursor: pointer;"></outline>
+			<outline text="color: black;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".aPostBeingEdited {">
+			<outline text="font-weight: bold !important;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divOutlineCursor {">
+			<outline isComment="true" text="background-color: #bcd2e6;"></outline>
+			<outline text="padding-top: 3px;"></outline>
+			<outline text="padding-bottom: 3px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".tableForEditor {">
+			<outline text="border-spacing: 5; "></outline>
+			<outline text="border-collapse: separate;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".tableForEditor td {">
+			<outline text="vertical-align: top;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divTitleEditor input {">
+			<outline text="font-family: &quot;Ubuntu&quot;;"></outline>
+			<outline text="font-size: 16px; "></outline>
+			<outline isComment="true" text="padding: 3px; "></outline>
+			<outline text="height: auto; "></outline>
+			<outline isComment="true" text="width: 562px;"></outline>
+			<outline text="width: 450px;"></outline>
+			<outline text="margin-bottom: 3px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divTitleArea button {">
+			<outline text="float: right;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divTitleArea {">
+			<outline text="margin-bottom: 5px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".spTitleViewer {">
+			<outline text="font-size: 18px;"></outline>
+			<outline text="font-weight: bold;"></outline>
+			<outline text="margin-left: 5px;"></outline>
+			<outline text="vertical-align: text-top;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divTitleArea a {">
+			<outline isComment="true" text="float: right;"></outline>
+			<outline text="color: black;"></outline>
+			<outline text="cursor: pointer;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".divOpenFileDialog .modal-body {">
+			<outline text="padding-top: 10px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".ulFileDialog {">
+			<outline text="list-style-type: none;"></outline>
+			<outline text="margin-bottom: 1.5em;"></outline>
+			<outline text="margin-left: 50px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".ulFileDialog li {">
+			<outline text="font-size: 16px;"></outline>
+			<outline text="line-height: 150%;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divOpenFileItem {">
+			<outline text="display: table-cell;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divOpenFileItem i {">
+			<outline text="margin-right: 8px;"></outline>
+			<outline text="color: silver;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".divStuffBelowEditor {">
+			<outline text="margin-top: 20px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divIcons {">
+			<outline text="margin-top: 0px;"></outline>
+			<outline text="font-size: 25px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divIcons i {">
+			<outline text="margin-left: 5px;"></outline>
+			<outline text="color: gray;"></outline>
+			<outline text="cursor: pointer;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".divPostButton {">
+			<outline text="margin-top: 0px;"></outline>
+			<outline text="float: right;"></outline>
+			<outline isComment="true" text="display: none;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".btnPost {">
+			<outline text="width: 95px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".divStatus {">
+			<outline text="margin-bottom: 1px;"></outline>
+			<outline text="font-size: 15px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".divMenubar .nav li {">
+			<outline text="font-size: 15px;"></outline>
+			<outline text="margin-bottom: 0px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".dropdown-menu {">
+			<outline text="min-width: 200px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".dropdown-menu li {">
+			<outline text="line-height: 120%;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=".dropdown-menu &gt; li &gt; a {">
+			<outline text="padding-top: 2px;"></outline>
+			<outline text="padding-bottom: 2px;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=".ulPostList {">
+			<outline text="list-style-type: none;"></outline>
+			<outline text="}"></outline>
+			</outline>
+		<outline text=""></outline>
+		<outline text=""></outline>
+		</body>
+	</opml>

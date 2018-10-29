@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<opml version="2.0">
+	<head>
+		<title>settings.opml</title>
+		<dateModified>&lt;%dateModified%></dateModified>
+		<expansionState></expansionState>
+		<vertScrollState>1</vertScrollState>
+		<windowTop>300</windowTop>
+		<windowLeft>700</windowLeft>
+		<windowBottom>900</windowBottom>
+		<windowRight>1500</windowRight>
+		</head>
+	<body created="Sat, 07 Jun 2014 12:47:47 GMT" pgfnum="41808" text="settings.opml">
+		<outline created="Sun, 08 Jun 2014 15:10:42 GMT" pgfnum="42033" text="Location">
+			<outline text="&lt;%prefs.stringPref (&quot;Repo&quot;, &quot;repo&quot;, &quot;The name of the repository you are editing in.&quot;)%&gt;"></outline>
+			<outline text="&lt;%prefs.stringPref (&quot;Path&quot;, &quot;pathOfFile&quot;, &quot;Path of the file you are editing.&quot;)%&gt;"></outline>
+			</outline>
+		<outline text="Blog">
+			<outline text="&lt;%prefs.stringPref (&quot;Title&quot;, &quot;title&quot;, &quot;The title of the blog.&quot;)%&gt;"></outline>
+			<outline text="&lt;%prefs.textAreaPref (&quot;Description&quot;, &quot;description&quot;, &quot;The description for the blog.&quot;, rows:3)%&gt;"></outline>
+			<outline text="&lt;%prefs.stringPref (&quot;Language&quot;, &quot;language&quot;, &quot;Code for the native language of the blog.&quot;)%&gt;"></outline>
+			</outline>
+		<outline text="Misc">
+			<outline text="&lt;%prefs.checkboxPref (&quot;Auto Save.&quot;, &quot;flAutoSave&quot;)%&gt;"></outline>
+			<outline text="&lt;%prefs.checkboxPref (&quot;Show Markdown preview.&quot;, &quot;flMarkdownPreview&quot;)%&gt;"></outline>
+			<outline text="&lt;%prefs.stringPref (&quot;Message&quot;, &quot;commitMessage&quot;, &quot;The message to send to GitHub when you save.&quot;)%&gt;"></outline>
+			</outline>
+		</body>
+	</opml>

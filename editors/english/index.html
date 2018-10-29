@@ -1,0 +1,260 @@
+<html>
+	<head>
+		<title>English editor for GitHub</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="http://fargo.io/code/jquery-1.9.1.min.js"></script>
+<link href="http://fargo.io/code/bootstrap.css" rel="stylesheet">
+<script src="http://fargo.io/code/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="http://scripting.com/code/fontawesome/css/all.css">
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500i,700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Rancho" rel="stylesheet">
+
+<script src="http://fargo.io/code/node/shared/utils.js"></script>
+<script src="http://fargo.io/code/node/shared/alertdialog.js"></script>
+<script src="http://fargo.io/code/node/shared/confirmdialog.js"></script>
+<script src="http://fargo.io/code/node/shared/askdialog.js"></script>
+<script src="http://fargo.io/code/strftime.js"></script>
+<script src="http://fargo.io/code/shared/ga.js"></script>
+<script src="http://fargo.io/code/shared/app.js"></script>
+
+<script src="http://fargo.io/code/shared/menus.js"></script>
+<link href="http://fargo.io/code/shared/menus.css" rel="stylesheet" type="text/css">
+
+<link href="http://fargo.io/code/shared/app.css" rel="stylesheet" type="text/css">
+<script src="http://fargo.io/code/shared/appprefs.js?x=2"></script>
+
+<script src="http://fargo.io/code/shared/jBeep.min.js"></script>
+<script src="http://fargo.io/code/shared/beep.js"></script>
+
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+		<script src="http://fargo.io/code/markdownConverter.js"></script>
+		
+		
+		<script src="http://cdn.jsdelivr.net/medium-editor/latest/js/medium-editor.min.js"></script>
+		<link rel="stylesheet" href="http://cdn.jsdelivr.net/medium-editor/latest/css/medium-editor.min.css" type="text/css" media="screen" charset="utf-8">
+		
+		<link rel="stylesheet" href="http://fargo.io/code/editors/mediumeditor/dist/css/themes/default.css"> 
+		<script src="http://fargo.io/code/editors/mediumEditorMarkdown/me-markdown.standalone.js"></script>
+		
+		<script src="http://fargo.io/code/shared/emojify.js"></script>
+		<script src="http://fargo.io/code/browsers/outlinebrowser.js"></script>
+		<link href="http://fargo.io/code/browsers/outlinebrowser.css" rel="stylesheet" type="text/css">
+		
+		<script src="http://fargo.io/code/shared/buildrss.js"></script> 
+		
+		<script src="http://scripting.com/code/githubpub/api/code.js"></script>
+		
+		<script src="code.js"></script>
+		<link href="styles.css" rel="stylesheet" type="text/css">
+		</head>
+	<body>
+		<div class="divMenubar" id="idMenubar">
+			<div class="topbar-wrapper" style="z-index: 5;">
+				<div class="navbar navbar-fixed-top" data-dropdown="dropdown">
+					<div class="divVersionNumber">
+						<span id="idPublishStatus"></span><span id="idSavedStatus"></span>&nbsp;<span id="idVersionNumber"></span>
+						</div>
+					<div class="navbar-inner">
+						<div class="container">
+							<a class="brand" href=""><span id="idMenuProductName"></span></a>
+							<ul class="nav" id="idMainMenuList">
+								<li class="dropdown" id="idMainMenu"> 
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Main&nbsp;<b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a onclick="newBlogPostCommand ();"><span class="menuKeystroke">Cmd-N</span>New...</a></li>
+										<li><a onclick="openFileDialog ();"><span class="menuKeystroke">Cmd-O</span>Open...</a></li>
+										<li class="divider"></li>
+										<li><a onclick="openPostOnGitHub ();">View post on GitHub...</a></li>
+										<li><a onclick="viewTemplateOnGitHub ();">View template on GitHub...</a></li>
+										<li class="divider"></li>
+										<li><a onclick="insertHtmlCommand ();">Insert HTML...</a></li>
+										
+										</ul>
+									</li>
+								<li class="dropdown" id="idOutlinerMenu" style="display: none;"> 
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Outliner&nbsp;<b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a onclick="opExpand ();">Expand</a></li>
+										<li><a onclick="opExpandAllLevels ();">Expand All Subs</a></li>
+										<li><a onclick="opExpandEverything ();">Expand Everything</a></li>
+										
+										<li class="divider"></li>
+										<li><a onclick="opCollapse ();">Collapse</a></li>
+										<li><a onclick="opCollapseEverything ();">Collapse Everything</a></li>
+										
+										<li class="divider"></li>
+										<li id="idHoistMenuItem"><a onclick="hoistCommand ();">Hoist</a></li>
+										<li id="idDehoistMenuItem"><a onclick="dehoistCommand ();">Dehoist</a></li>
+										
+										<li class="divider"></li>
+										<li><a onclick="opDeleteLine ();">Delete Line</a></li>
+										
+										<li class="divider"></li>
+										<li class="dropdown-submenu">
+											<a href="#" tabindex="-1">Build...</a>
+												<ul class="dropdown-menu">
+													<li><a href="#" tabindex="-1" onclick="buildListicle ()">Listicle</a></li>
+													<li><a href="#" tabindex="-1" onclick="buildStatusCenter ()">Status Center</a></li>
+												</ul>
+											</li>
+										
+										<li class="divider"></li>
+										<li><a onclick="opFindCommand ();"><span class="menuKeystroke">Cmd-F</span>Find...</a></li>
+										<li><a onclick="opFindAgainCommand ();"><span class="menuKeystroke">Cmd-G</span>Find again</a></li>
+										
+										<li class="divider"></li>
+										<li><a onclick="toggleRenderMode ();"><span class="menuKeystroke">Cmd-`</span><span id="idRenderModeCommandString"></span></a></li>
+										</ul>
+									</li>
+								<li class="dropdown" id="idReorgMenu" style="display: none;"> 
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Reorg&nbsp;<b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a onclick="opReorg (up, 1);"><span class="menuKeystroke">Cmd-U</span>Move Up</a></li>
+										<li><a onclick="opReorg (down, 1);"><span class="menuKeystroke">Cmd-D</span>Move Down</a></li>
+										<li><a onclick="opReorg (left, 1);"><span class="menuKeystroke">Cmd-L</span>Move Left</a></li>
+										<li><a onclick="opReorg (right, 1);"><span class="menuKeystroke">Cmd-R</span>Move Right</a></li>
+										
+										<li class="divider"></li>
+										<li><a onclick="toggleArrowPad ();"><span id="idArrowPadCommandString"></span></a></li>
+										
+										<li class="divider"></li>
+										<li><a onclick="opToggleComment ();"><span class="menuKeystroke">Cmd-\</span>Comment</a></a></li>
+										
+										<li class="divider"></li>
+										<li><a onclick="opPromote ();"><span class="menuKeystroke">Cmd-[</span>Promote</a></li>
+										<li><a onclick="opDemote ();"><span class="menuKeystroke">Cmd-]</span>Demote</a></li>
+										</ul>
+									</li>
+								<li class="dropdown" id="idDocsMenu"> 
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Docs&nbsp;<b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										</ul>
+									</li>
+								<li class="dropdown" id="idHistoryMenu"> 
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">History&nbsp;<b class="caret"></b></a>
+									<ul class="dropdown-menu" id="idHistoryMenuList">
+										</ul>
+									</li>
+								</ul>
+							<ul class="nav pull-right">
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="idTwitterIcon"></span><span id="idGitHubUserName"></span>&nbsp;<b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a onclick="aboutDialog ();">About <span id="idMenuAboutProductName"></span>...</a></li>
+										<li class="divider"></li>
+										<li><a onclick="settingsCommand ();">Settings...</a></li>
+										<li class="divider"></li>
+										<li><a onclick="toggleGitHubConnection ();" id="idGitHubConnectMenuItem"></a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<div class="divOpenFileDialog">
+			<div id="idOpenFileDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true" style="left: 50%; width: 570px;">
+				<div class="modal-header">
+					<a href="#" class="close" data-dismiss="modal">&times;</a>
+					<h3 id="idOpenFileDialogPrompt" style="font-size: 18px; margin-top: 0; margin-bottom: 0;">Choose a blog post...</h3>
+					</div>
+				<div class="modal-body">
+					<div class="divOpenFileDialogList" id="idOpenFileDialogList">
+						</div>
+					</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" onclick="closeOpenFileDialog ();">Cancel</a>
+					</div>
+				</div>
+			</div>
+		<div class="divPrefsDialog" comment="This is the Settings dialog.">
+			<div id="idPrefsDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="windowTitleLabel" aria-hidden="true">
+				<div class="modal-body">
+					<div class="divDialogElements">
+						<form method="POST">
+	<div class="divTabsFromOutline">
+	<div class="tabbable">
+		<ul class="nav nav-tabs" data-tabs="tabs">
+			<li class="active" ><a href="#idLocation931"  data-toggle="tab">Location</a></li>
+			<li><a href="#idBlog931"  data-toggle="tab">Blog</a></li>
+			<li><a href="#idMisc931"  data-toggle="tab">Misc</a></li>
+			</ul>
+		<div id="my-tab-content" class="tab-content">
+			<div class="active tab-pane" id="idLocation931">
+				<fieldset>
+					<div class="divPrefs">	<div class="clearfix">	<label for="repo">Repo:</label>	<div class="input">		<input class="xlarge prefsInput" id="repo" name="repo" size="50" type="text" value="" placeholder="The name of the repository you are editing in." />		</div>	</div><div class="clearfix">	<label for="pathOfFile">Path:</label>	<div class="input">		<input class="xlarge prefsInput" id="pathOfFile" name="pathOfFile" size="50" type="text" value="" placeholder="Path of the file you are editing." />		</div>	</div>	</div>
+					</fieldset>
+						</div>
+					<div class="tab-pane" id="idBlog931">
+						<fieldset>
+							<div class="divPrefs">	<div class="clearfix">	<label for="title">Title:</label>	<div class="input">		<input class="xlarge prefsInput" id="title" name="title" size="50" type="text" value="" placeholder="The title of the blog." />		</div>	</div><div class="clearfix">	<label for="description">Description:</label>	<div class="input">		<textarea class="xxlarge" id="description" name="description" cols="70" rows="3"placeholder="The description for the blog." ></textarea>		</div>	</div><div class="clearfix">	<label for="language">Language:</label>	<div class="input">		<input class="xlarge prefsInput" id="language" name="language" size="50" type="text" value="" placeholder="Code for the native language of the blog." />		</div>	</div>	</div>
+							</fieldset>
+								</div>
+							<div class="tab-pane" id="idMisc931">
+								<fieldset>
+									<div class="divPrefs">	<div class="clearfix">	<label for="flAutoSave"></label>	<div class="input">		<input type="checkbox" name="flAutoSave" value=xxx>&nbsp;Auto Save.		</div>	</div><div class="clearfix">	<label for="flMarkdownPreview"></label>	<div class="input">		<input type="checkbox" name="flMarkdownPreview" value=xxx>&nbsp;Show Markdown preview.		</div>	</div><div class="clearfix">	<label for="commitMessage">Message:</label>	<div class="input">		<input class="xlarge prefsInput" id="commitMessage" name="commitMessage" size="50" type="text" value="" placeholder="The message to send to GitHub when you save." />		</div>	</div>	</div>
+									</fieldset>
+										</div>
+									</div>
+								</div>
+							</div>
+
+	</form>
+
+						</div>
+					</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" onclick="prefsCloseDialog ();">Cancel</a>
+					<a href="#" class="btn btn-primary" onclick="prefsOkClicked ();">OK</a>
+					</div>
+				</div>
+			</div>
+		<div class="divPageBody">
+			<div class="divBodyEditorContainer" id="idEditorContainer">
+				<div class="divStatus">
+					<span id="idSaveStatus" style="float: right"></span>
+					&nbsp;
+					</div>
+				<div class="divEditor divTitleEditor" id="idTitleEditor">
+					</div>
+				<div class="divEditor divDescriptionEditor" id="idDescriptionEditor">
+					</div>
+				<div class="divEditor divBodyEditor" id="idBodyEditor">
+					</div>
+				<div class="divStuffBelowEditor">
+					<div class="divPostButton">
+						<button id="idPostButton"  class="btn btnPost" type="button" onclick="postButtonClick ();"> 
+							<i class="fa fa-check"></i> Save
+							</button>
+						</div>
+					<div class="divIcons">
+						<a id="idEyeIconAnchor" target="_blank"><i class="fa fa-eye"></i></a>
+						<a id="idGitHubIconAnchor" target="_blank"><i class="fa fa-github"></i></a>
+						<a href="http://this.how/english/" target="_blank"><i class="fa fa-info-circle"></i></a>
+						</div>
+					</div>
+				<div class="divPreviewContainer" id="idPreviewContainer">
+					<div class="divPreview" id="idPreview">
+						</div>
+					</div>
+				
+				</div>
+			<div class="divSignOnContainer" id="idSignOnContainer">
+				<center>
+					<p>Welcome to the <a href="http://tbd.tbd/">English editor</a> for GitHub-based blogs.</p>
+					<button id="idSignOnButton"  class="btn btnSignOn" type="button" onclick="connectButtonClick ();">
+						Connect with GitHub
+						</button>
+					</center>
+				</div>
+			</div>
+		<script>
+			$(document).ready (function () {
+				startup ();
+				});
+			</script>
+		</body>
+	</html>

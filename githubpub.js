@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.55";   
+const myProductName = "githubpub", myVersion = "0.5.57";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -233,7 +233,7 @@ function timeoutCacheElements () { //delete cache elements that are too old
 			}
 		}
 	}
-function getFromGitHub (username, repository, path, callback) { //calls back with the JSON structure GitHub returns
+function getFromGitHub (username, repository, path, options, callback) { //calls back with the JSON structure GitHub returns
 	function getRandomClient () { //actually always returns the first one
 		for (var x in config.clients) {
 			return (config.clients [x])
@@ -241,6 +241,9 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 		}
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
+		}
+	if (options === undefined) { //10/29/18 by DW
+		options = new Object ();
 		}
 	var data = cacheRef (username, repository, path);
 	if (data !== undefined) {
@@ -250,10 +253,19 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 		var whenstart = new Date ();
 		var url = config.apiUrl + username + "/" + repository + "/contents/" + path;
 		var client = getRandomClient (); //10/27/18 by DW
-		if (client !== undefined) {
+		if (client !== undefined) { //xxx
 			url += "?client_id=" + client.id + "&client_secret=" + client.secret;
 			}
-		httpRequest (url, function (err, response, jsontext) {
+		var theRequest = {
+			url: url,
+			jar: true, //"remember cookies for future use"
+			maxRedirects: 5,
+			headers: {
+				"User-Agent": config.userAgent,
+				"Authorization": (options.accessToken) ? options.accessToken : undefined,
+				}
+			};
+		request (theRequest, function (err, response, jsontext) {
 			if (err) {
 				callback (err);
 				}
@@ -288,7 +300,7 @@ function getFromGitHub (username, repository, path, callback) { //calls back wit
 			});
 		}
 	}
-function getContentFromGitHub (domain, path, callback) { //calls back with the content GitHub returned
+function getContentFromGitHub (domain, path, options, callback) { //calls back with the content GitHub returned
 	var dstruct = config.domains [domain.toLowerCase ()]
 	if (dstruct === undefined) {
 		var s = "The domain \"" + domain + "\" is not defined.";
@@ -299,7 +311,7 @@ function getContentFromGitHub (domain, path, callback) { //calls back with the c
 		if (!utils.beginsWith (path, "/")) {
 			path = "/" + path;
 			}
-		getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, function (err, jstruct) {
+		getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, options, function (err, jstruct) {
 			if (err) {
 				callback (err);
 				}
@@ -313,7 +325,7 @@ function getContentFromGitHub (domain, path, callback) { //calls back with the c
 			});
 		}
 	}
-function getUserObject (host, path, callback) { //get object from user repo, if not found, look in the default location for the system
+function getUserObject (host, path, options, callback) { //get object from user repo, if not found, look in the default location for the system
 	if (!utils.beginsWith (path, "/")) {
 		path = "/" + path;
 		}
@@ -322,10 +334,10 @@ function getUserObject (host, path, callback) { //get object from user repo, if 
 		callback ({message: "The domain \"" + host + "\" is not defined."});
 		}
 	else {
-		getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, function (err, jstruct) {
+		getFromGitHub (dstruct.username, dstruct.repository, dstruct.path + path, options, function (err, jstruct) {
 			if (err) {
 				var loc = config.defaultFilesLocation;
-				getFromGitHub (loc.username, loc.repository, loc.path + path, callback);
+				getFromGitHub (loc.username, loc.repository, loc.path + path, options, callback);
 				}
 			else {
 				callback (undefined, jstruct);
@@ -333,8 +345,8 @@ function getUserObject (host, path, callback) { //get object from user repo, if 
 			})
 		}
 	}
-function getTemplate (host, callback) {
-	getUserObject (host, config.templatePath, function (err, jstruct) {
+function getTemplate (host, options, callback) {
+	getUserObject (host, config.templatePath, options, function (err, jstruct) {
 		if (err) {
 			console.log ("getTemplate: err.message == " + err.message);
 			callback (err);
@@ -345,8 +357,8 @@ function getTemplate (host, callback) {
 			}
 		});
 	}
-function renderThroughTemplate (pagetable, callback) {
-	getTemplate (pagetable.host, function (err, templatetext) { 
+function renderThroughTemplate (pagetable, options, callback) {
+	getTemplate (pagetable.host, options, function (err, templatetext) { 
 		if (err) {
 			callback (err);
 			}
@@ -389,7 +401,7 @@ function saveToGitHub (options, callback) { //10/2/18 by DW
 		options.lowerdomain = lowerdomain;
 		}
 	cacheDelete (options.username, options.repository, options.path); //make sure we don't use the cached version, if any
-	getFromGitHub (options.username, options.repository, options.path, function (err, jstruct) {
+	getFromGitHub (options.username, options.repository, options.path, options, function (err, jstruct) {
 		if (options.committer === undefined) {
 			options.committer = {
 				name: config.defaultNameCommitter,
@@ -474,8 +486,8 @@ function getFlatPostList (blogData) {
 		return (theList);
 		}
 	}
-function getBlogData (host, callback) {
-	getUserObject (host, config.dataPath, function (err, jstruct) {
+function getBlogData (host, options, callback) {
+	getUserObject (host, config.dataPath, options, function (err, jstruct) {
 		if (err) {
 			console.log ("getBlogData: err.message == " + err.message);
 			callback (err);
@@ -490,7 +502,7 @@ function getBlogData (host, callback) {
 function buildBlogRss (options, callback) {
 	var host = options.domain;
 	options.path = config.rssPath;
-	getUserObject (host, config.dataPath, function (err, jstruct) {
+	getUserObject (host, config.dataPath, options, function (err, jstruct) {
 		if (err) {
 			console.log ("buildBlogRss: err.message == " + err.message);
 			callback (err);
@@ -616,8 +628,11 @@ function handleHttpRequest (theRequest) {
 			}
 		}
 	function serveObject (host, path) {
+		var options = {
+			accessToken: accessToken
+			}
 		function getHomePageText (host, callback) {
-			getBlogData (host, function (err, blogData) {
+			getBlogData (host, options, function (err, blogData) {
 				var htmltext = "", indentlevel = 0;
 				function add (s) {
 					htmltext +=  utils.filledString ("\t", indentlevel) + s + "\n";
@@ -644,7 +659,7 @@ function handleHttpRequest (theRequest) {
 					}
 				});
 			}
-		getUserObject (host, path, function (err, jstruct) {
+		getUserObject (host, path, options, function (err, jstruct) {
 			if (err) {
 				notFound (err.message);
 				}
@@ -669,7 +684,7 @@ function handleHttpRequest (theRequest) {
 						function serveMarkdown () {
 							var pagetable = deYamlIze (fileContent.toString ());
 							function doRender (pagetable) {
-								getBlogData (host, function (err, blogData) {
+								getBlogData (host, options, function (err, blogData) {
 									if (!err) {
 										pagetable.blogTitle = blogData.title;
 										pagetable.blogDescription = blogData.description;
@@ -679,7 +694,7 @@ function handleHttpRequest (theRequest) {
 									pagetable.path = theRequest.lowerpath;
 									pagetable.ext = ext;
 									delete pagetable.text;
-									renderThroughTemplate (pagetable, function (err, htmltext) {
+									renderThroughTemplate (pagetable, options, function (err, htmltext) {
 										if (err) {
 											notFound (err.message);
 											}
@@ -820,9 +835,12 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/get":
-			var domain = theRequest.params.domain;
-			var path = theRequest.params.path;
-			getContentFromGitHub (domain, path, function (err, content) {
+			var domain = params.domain;
+			var path = params.path;
+			var options = {
+				accessToken: params.accessToken
+				};
+			getContentFromGitHub (domain, path, options, function (err, content) {
 				if (err) {
 					returnError (err);
 					}
@@ -880,7 +898,10 @@ function handleHttpRequest (theRequest) {
 		case "/getpost":
 			var domain = theRequest.params.domain;
 			var path = theRequest.params.path;
-			getContentFromGitHub (domain, path, function (err, content) {
+			var options = {
+				accessToken: params.accessToken
+				};
+			getContentFromGitHub (domain, path, options, function (err, content) {
 				if (err) {
 					returnError (err);
 					}
@@ -892,7 +913,10 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/repoget": //instead of a domain, take a username/repository to identify the location -- 10/10/18 by DW
-			getFromGitHub (params.username, params.repository, params.path, function (err, jstruct) {
+			var options = {
+				accessToken: params.accessToken
+				}
+			getFromGitHub (params.username, params.repository, params.path, options, function (err, jstruct) {
 				if (err) {
 					returnError (err);
 					}
@@ -946,7 +970,10 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/getgithubdata":
-			getUserObject (params.domain, params.path, function (err, jstruct) {
+			var options = {
+				accessToken: params.accessToken
+				}
+			getUserObject (params.domain, params.path, options, function (err, jstruct) {
 				if (err) {
 					returnError (err);
 					}

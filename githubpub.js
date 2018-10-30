@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.58";   
+const myProductName = "githubpub", myVersion = "0.5.60";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -541,6 +541,7 @@ function buildBlogRss (options, callback) {
 					}
 				}
 			var xmltext = rss.buildRssFeed (headElements, rssHistory);
+			options.path = config.rssPath;
 			options.data = xmltext;
 			saveToGitHub (options, function (err, jstruct) {
 				if (!err) {
@@ -637,7 +638,7 @@ function handleHttpRequest (theRequest) {
 					callback ("Can't build the home page because there was an error: " + err.message);
 					}
 				else {
-					var flatPostList = getFlatPostList (blogData);
+					var flatPostList = getFlatPostList (blogData), ctOnHomePage = 0;
 					add ("<ul class=\"ulHomePageItems\">"); indentlevel++;
 					for (var i = 0; i < flatPostList.length; i++) {
 						var item = flatPostList [i];
@@ -648,6 +649,9 @@ function handleHttpRequest (theRequest) {
 							add ("<div class=\"divItemDescription\">" + item.description + "</div>");
 							add ("<div class=\"divItemWhenPosted\">" + whenstring + "</div>");
 							add ("</li>"); indentlevel--;
+							if (++ctOnHomePage >= blogData.maxFeedItems) { //10/30/18 by DW
+								break;
+								}
 							}
 						}
 					add ("</ul>"); indentlevel--;
@@ -850,7 +854,7 @@ function handleHttpRequest (theRequest) {
 				domain: params.domain,
 				path: params.path,
 				accessToken: accessToken,
-				data: params.text,
+				data: theRequest.postBody,
 				type: "text/plain",
 				committer: {
 					name: params.name,
@@ -873,7 +877,7 @@ function handleHttpRequest (theRequest) {
 				domain: theRequest.params.domain,
 				path: theRequest.params.path,
 				accessToken: accessToken,
-				data: yamlIze (theRequest.params.text), //this is the diff
+				data: yamlIze (theRequest.postBody),  //10/30/18 by DW
 				type: "text/plain",
 				committer: {
 					name: theRequest.params.name,
@@ -922,18 +926,18 @@ function handleHttpRequest (theRequest) {
 				});
 			break;
 		case "/reposave":
-			var options = {
-				username: theRequest.params.username,
-				repository: theRequest.params.repository,
-				path: theRequest.params.path,
+			var options = { 
+				username: params.username,
+				repository: params.repository,
+				path: params.path,
 				accessToken: accessToken,
-				data: theRequest.params.text,
-				type: urlToMime (theRequest.params.path),
+				data: theRequest.postBody, //10/30/18 by DW
+				type: urlToMime (params.path),
 				committer: {
-					name: theRequest.params.name,
-					email: theRequest.params.email
+					name: params.name,
+					email: params.email
 					},
-				message: theRequest.params.msg,
+				message: params.msg,
 				userAgent: config.userAgent
 				};
 			saveToGitHub (options, function (err, result) {

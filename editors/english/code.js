@@ -2,6 +2,8 @@ var appConsts = {
 	productnameForDisplay: "English",
 	idGitHubClient: "475311614ae9d26e29e9",
 	
+	flLocalServer: false, //10/30/18 by DW
+	
 	myServerAddress: "http://english.scripting.com/",
 	myBlogDomain: "englishblog1.scripting.com", //an index into the server's domains object
 	
@@ -18,7 +20,7 @@ var appConsts = {
 		body: ""
 		},
 	
-	version: "0.4.18"
+	version: "0.4.20"
 	};
 var appPrefs = {
 	flAutoSave: true,
@@ -37,6 +39,16 @@ var editorValues = {
 var flEditorValuesChanged = false;
 
 
+function setServerConsts () { //10/30/18 by DW
+	if (appConsts.flLocalServer) {
+		appConsts.myServerAddress = "http://127.0.0.1:1402/";
+		appConsts.myBlogDomain = "localhost";
+		}
+	else {
+		appConsts.myServerAddress = "http://english.scripting.com/";
+		appConsts.myBlogDomain = "englishblog1.scripting.com"; //an index into the server's domains object
+		}
+	}
 function testRepoGetSave () { //testing repoget and reposave -- 10/26/18 by DW
 	var username = "scripting";
 	var repo = "test1";
@@ -90,6 +102,9 @@ function updateIconValues () { //10/20/18 by DW
 		}
 	setIcon ("idEyeIconAnchor", postStruct.urlPublic);
 	setIcon ("idGitHubIconAnchor", postStruct.urlGitHub);
+	
+	var blogData = myGitHubPubApp.getBlogData ();
+	setIcon ("idFeedIconAnchor", blogData.stats.urlFeed);
 	}
 function updatePostButton () {
 	var flVisible = $("#idPostButton").css ("display") == "inline-block";
@@ -296,6 +311,7 @@ function everySecond () {
 	}
 function startup () {
 	console.log ("startup");
+	setServerConsts (); //10/30/18 by DW
 	myGitHubPubApp = new githubpubApp (appConsts, appPrefs);
 	initMenus ();
 	myGitHubPubApp.callbacks.everySecond = everySecond;

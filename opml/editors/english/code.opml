@@ -15,6 +15,8 @@
 			<outline text="productnameForDisplay: &quot;English&quot;,"></outline>
 			<outline text="idGitHubClient: &quot;475311614ae9d26e29e9&quot;,"></outline>
 			<outline text=""></outline>
+			<outline text="flLocalServer: false, //10/30/18 by DW"></outline>
+			<outline text=""></outline>
 			<outline text="myServerAddress: &quot;http://english.scripting.com/&quot;,"></outline>
 			<outline text="myBlogDomain: &quot;englishblog1.scripting.com&quot;, //an index into the server's domains object"></outline>
 			<outline text=""></outline>
@@ -34,7 +36,7 @@
 				<outline text="},"></outline>
 				</outline>
 			<outline text=""></outline>
-			<outline text="version: &quot;0.4.18&quot;"></outline>
+			<outline text="version: &quot;0.4.20&quot;"></outline>
 			<outline text="};"></outline>
 			</outline>
 		<outline text="var appPrefs = {">
@@ -57,6 +59,19 @@
 		<outline text="var flEditorValuesChanged = false;"></outline>
 		<outline text=""></outline>
 		<outline text=""></outline>
+		<outline text="function setServerConsts () { //10/30/18 by DW">
+			<outline text="if (appConsts.flLocalServer) {">
+				<outline text="appConsts.myServerAddress = &quot;http://127.0.0.1:1402/&quot;;"></outline>
+				<outline text="appConsts.myBlogDomain = &quot;localhost&quot;;"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="else {">
+				<outline text="appConsts.myServerAddress = &quot;http://english.scripting.com/&quot;;"></outline>
+				<outline text="appConsts.myBlogDomain = &quot;englishblog1.scripting.com&quot;; //an index into the server's domains object"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="}"></outline>
+			</outline>
 		<outline text="function testRepoGetSave () { //testing repoget and reposave -- 10/26/18 by DW">
 			<outline text="var username = &quot;scripting&quot;;"></outline>
 			<outline text="var repo = &quot;test1&quot;;"></outline>
@@ -125,6 +140,9 @@
 				</outline>
 			<outline text="setIcon (&quot;idEyeIconAnchor&quot;, postStruct.urlPublic);"></outline>
 			<outline text="setIcon (&quot;idGitHubIconAnchor&quot;, postStruct.urlGitHub);"></outline>
+			<outline text=""></outline>
+			<outline text="var blogData = myGitHubPubApp.getBlogData ();"></outline>
+			<outline text="setIcon (&quot;idFeedIconAnchor&quot;, blogData.stats.urlFeed);"></outline>
 			<outline text="}"></outline>
 			</outline>
 		<outline text="function updatePostButton () {">
@@ -418,6 +436,7 @@
 			</outline>
 		<outline text="function startup () {">
 			<outline text="console.log (&quot;startup&quot;);"></outline>
+			<outline text="setServerConsts (); //10/30/18 by DW"></outline>
 			<outline text="myGitHubPubApp = new githubpubApp (appConsts, appPrefs);"></outline>
 			<outline text="initMenus ();"></outline>
 			<outline text="myGitHubPubApp.callbacks.everySecond = everySecond;"></outline>

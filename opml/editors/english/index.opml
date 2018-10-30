@@ -390,6 +390,7 @@
 							<outline text="&lt;div class=&quot;divIcons&quot;&gt;">
 								<outline text="&lt;a id=&quot;idEyeIconAnchor&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fa fa-eye&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
 								<outline text="&lt;a id=&quot;idGitHubIconAnchor&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fa fa-github&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
+								<outline text="&lt;a id=&quot;idFeedIconAnchor&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fa fa-rss&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
 								<outline text="&lt;a href=&quot;http://this.how/english/&quot; target=&quot;_blank&quot;&gt;&lt;i class=&quot;fa fa-info-circle&quot;&gt;&lt;/i&gt;&lt;/a&gt;"></outline>
 								<outline isComment="true" text=""></outline>
 								<outline isComment="true" text="&lt;i class=&quot;fa fa-eye&quot; onclick=&quot;clickEye ()&quot;&gt;&lt;/i"></outline>

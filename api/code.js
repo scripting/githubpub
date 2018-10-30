@@ -5,7 +5,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		blogDataPath: "data.json",
 		blogPostsPath: "posts/",
 		blogRssPath: "rss.xml",
-		version: "0.4.1"
+		version: "0.4.3"
 		};
 	var appPrefs = { //saved in localStorage (or filesystem on server, tbd)
 		accessToken: undefined,
@@ -38,7 +38,8 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			ctSecsLastDataSave: 0,
 			ctRssBuilds: 0,
 			whenLastRssBuild: new Date (0),
-			ctSecsLastRssBuild: 0
+			ctSecsLastRssBuild: 0,
+			urlFeed: undefined,
 			},
 		posts: {
 			subs: [
@@ -127,9 +128,16 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			connectWithGitHub ();
 			}
 		}
-	function serverCall (verb, params, callback, server) {
+	function serverCall (verb, params, callback, server, method, data) {
+		const timeoutInMilliseconds = 30000;
+		if (method === undefined) {
+			method = "GET";
+			}
 		if (params === undefined) {
 			params = new Object ();
+			}
+		if (params.accessToken === undefined) { //10/29/18 by DW
+			params.accessToken = appPrefs.accessToken;
 			}
 		if (server === undefined) { //9/25/18 by DW
 			server = appConsts.myServerAddress;
@@ -139,13 +147,20 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		if (paramString.length > 0) {
 			apiUrl += "?" + paramString;
 			}
-		readHttpFile (apiUrl, function (filetext) {
-			if (filetext === undefined) {
-				callback ({message: "Error reading the file."});
-				}
-			else {
-				callback (undefined, filetext);
-				}
+		var ajaxResult = $.ajax ({ 
+			url: apiUrl,
+			type: method,
+			data: data,
+			dataType: "text", 
+			headers: undefined,
+			timeout: timeoutInMilliseconds 
+			}) 
+		.success (function (data, status) { 
+			callback (undefined, data);
+			}) 
+		.error (function (status) { 
+			console.log ("serverCall: url == " + apiUrl + ", error == " + jsonStringify (status));
+			callback ({message: "Error reading the file."});
 			});
 		}
 	function getServerDomains (callback) {
@@ -218,13 +233,12 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			username: username,
 			repository: repository,
 			accessToken: appPrefs.accessToken,
-			text: data,
 			path: path,
 			msg: appPrefs.commitMessage,
 			name: appPrefs.userInfo.name,
 			email: appPrefs.userInfo.email
 			};
-		serverCall ("reposave", params, callback);
+		serverCall ("reposave", params, callback, undefined, "POST", data);
 		}
 	function getGitHubFileContent (path, callback) {
 		if (beginsWith (path, "/")) {
@@ -241,7 +255,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		var params = {
 			domain: appConsts.myBlogDomain,
 			accessToken: appPrefs.accessToken,
-			text: data,
 			path: path,
 			msg: appPrefs.commitMessage,
 			name: appPrefs.userInfo.name,
@@ -252,7 +265,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 				console.log ("updateGitHubFile: path == " + path + ", " + data.length + " chars, " + secondsSince (whenstart) + " secs.");
 				callback (JSON.parse (jsontext));
 				}
-			});
+			}, undefined, "POST", data);
 		}
 	function updateIconValues () { //10/20/18 by DW
 		function setIcon (id, val) {
@@ -440,7 +453,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 		var params = {
 			domain: appConsts.myBlogDomain,
 			accessToken: appPrefs.accessToken,
-			text: jsonStringify (postStruct),
 			path: postStruct.path,
 			msg: appPrefs.commitMessage,
 			name: appPrefs.userInfo.name,
@@ -460,7 +472,7 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			if (callback !== undefined) {
 				callback (postStruct);
 				}
-			});
+			}, undefined, "POST", jsonStringify (postStruct));
 		}
 	function newBlogPost (title) {
 		var postStruct = {
@@ -529,51 +541,6 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 	function openPostOnGitHub () {
 		window.open (appPrefs.postStruct.urlGitHub);
 		}
-	function buildBlogRss (callback) {
-		var headElements = {
-			title: blogData.title,
-			link: appPrefs.rssLink,
-			description: blogData.description,
-			language: blogData.language,
-			generator: appConsts.productnameForDisplay + " v" + appConsts.version,
-			docs: "http://cyber.law.harvard.edu/rss/rss.html",
-			maxFeedItems: blogData.maxFeedItems,
-			appDomain: appConsts.domain,
-			
-			flRssCloudEnabled:  true,
-			rssCloudDomain:  blogData.cloud.domain,
-			rssCloudPort:  blogData.cloud.port,
-			rssCloudPath: blogData.cloud.path,
-			rssCloudRegisterProcedure:  "",
-			rssCloudProtocol:  blogData.cloud.protocol
-			}
-		var flatPostList = getPostList (), rssHistory = new Array ();
-		for (var i = 0; i < flatPostList.length; i++) {
-			var item = flatPostList [i];
-			if (item.urlPublic) {
-				var obj = {
-					title: item.title,
-					description: item.description,
-					when: item.created,
-					link: item.urlPublic,
-					guid: {
-						flPermalink: true,
-						value: item.urlPublic
-						}
-					};
-				rssHistory.push (obj);
-				}
-			}
-		var xmltext = buildRssFeed (headElements, rssHistory);
-		updateGitHubFile (appConsts.blogRssPath, xmltext, function (jstruct) {
-			console.log ("buildBlogRss: jstruct == " + jsonStringify (jstruct));
-			var urlServer = "http://" + blogData.cloud.domain + ":" + blogData.cloud.port + blogData.cloud.path;
-			rssCloudPing (urlServer, jstruct.urlPublic);
-			if (callback !== undefined) {
-				callback ();
-				}
-			});
-		}
 	function buildRssOnServer () {
 		var whenstart = new Date ();
 		var params = {
@@ -588,11 +555,19 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 				console.log ("buildRssOnServer: err.message == " + err.message);
 				}
 			else {
-				console.log ("buildRssOnServer: jsontext == " + jsontext);
 				blogData.stats.ctRssBuilds++;
 				blogData.stats.whenLastRssBuild = new Date ();
 				blogData.stats.ctSecsLastRssBuild = secondsSince (whenstart);
-				blogDataChanged ();
+				try {
+					var jstruct = JSON.parse (jsontext);
+					blogData.stats.urlFeed = jstruct.urlPublic;
+					console.log ("buildRssOnServer: jstruct == " + jsonStringify (jstruct));
+					blogDataChanged ();
+					}
+				catch (err) {
+					console.log ("buildRssOnServer: jstruct == " + err.message);
+					blogDataChanged ();
+					}
 				}
 			});
 		}

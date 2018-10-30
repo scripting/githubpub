@@ -53,3 +53,26 @@ body {
 	margin-top: 15px;
 	margin-bottom: 5px;
 	}
+
+.ulHomePageItems {
+	list-style-type: none;
+	margin-left: 0;
+	}
+.ulHomePageItems li {
+	margin-bottom: 30px;
+	}
+.ulHomePageItems li a {
+	color: black;
+	}
+.ulHomePageItems li .divItemTitle {
+	font-size: 19px;
+	font-weight: bold;
+	margin-bottom: 15px;
+	}
+.ulHomePageItems li .divItemDescription {
+	font-size: 16px;
+	margin-bottom: 15px;
+	}
+.ulHomePageItems li .divItemWhenPosted {
+	font-size: 14px;
+	}

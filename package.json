@@ -2,19 +2,24 @@
 	"name": "githubpub", 
 	"description": "A web server that supports editing of blogs in GitHub repos, and serves content from those blogs.",
 	"author": "Dave Winer <dave@smallpicture.com>",
-	"version": "0.5.60",
+	"version": "0.5.64",
 	"scripts": {
 		"start": "node githubpub.js"
 		},
+	"files": [
+		"githubpub.js",
+		"readme.md",
+		"package.json"
+		],
 	"main": "githubpub.js",
 	"repository": {
 		"type" : "git",
 		"url" : "https://github.com/scripting/githubpub.git"
 		},
 	"dependencies" : {
-		"marked": "*",
+		"marked": "3.0.8",
 		"js-yaml": "*",
-		"dateformat": "*",
+		"dateformat": "4.5.1",
 		"querystring": "*",
 		"daveutils": "*", 
 		"daverss": "*", 

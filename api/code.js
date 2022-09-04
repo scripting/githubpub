@@ -607,9 +607,13 @@ function githubpubApp (consts, prefs) { //10/22/18 by DW
 			let item = postList [i];
 			var listItem = $("<li></li>");
 			var anchor = $("<a></a>");
-			if (item.path == appPrefs.postStruct.path) {
-				anchor.addClass ("aPostBeingEdited");
+			
+			if (appPrefs.postStruct !== undefined) { //11/8/21 by DW
+				if (item.path == appPrefs.postStruct.path) {
+					anchor.addClass ("aPostBeingEdited");
+					}
 				}
+			
 			anchor.click (function (event) { 
 				event.preventDefault ();
 				if (callback !== undefined) {

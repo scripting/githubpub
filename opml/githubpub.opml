@@ -11,7 +11,7 @@
 		<windowRight>1500</windowRight>
 		</head>
 	<body text="githubpub.js">
-		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.60&quot;;   "></outline>
+		<outline created="Mon, 03 Feb 2014 03:21:03 GMT" pgfnum="36831" text="const myProductName = &quot;githubpub&quot;, myVersion = &quot;0.5.64&quot;;    "></outline>
 		<outline text=""></outline>
 		<outline text="/*  The MIT License (MIT)">
 			<outline text="Copyright (c) 2014-2018 Dave Winer"></outline>
@@ -327,6 +327,9 @@
 			</outline>
 		<outline text="function getFromGitHub (username, repository, path, options, callback) { //calls back with the JSON structure GitHub returns">
 			<outline isComment="true" text="Changes">
+				<outline text="12/13/19; 11:09:44 AM by DW">
+					<outline text="New option, flCanUseCache. "></outline>
+					</outline>
 				<outline text="10/29/18; 10:48:35 AM by DW">
 					<outline text="New optional param, options, which contains accessToken to begin."></outline>
 					</outline>
@@ -346,79 +349,84 @@
 				<outline text="options = new Object ();"></outline>
 				<outline text="}"></outline>
 				</outline>
-			<outline text="var data = cacheRef (username, repository, path);"></outline>
-			<outline text="if (data !== undefined) {">
-				<outline isComment="true" text="console.log (&quot;getFromGitHub: serving from cache, path == &quot; + path);"></outline>
-				<outline text="callback (undefined, data);"></outline>
+			<outline text="if (options.flCanUseCache === undefined) { //12/13/19 by DW">
+				<outline text="options.flCanUseCache = true;"></outline>
 				<outline text="}"></outline>
 				</outline>
-			<outline text="else {">
-				<outline text="var whenstart = new Date ();"></outline>
-				<outline text="var url = config.apiUrl + username + &quot;/&quot; + repository + &quot;/contents/&quot; + path;"></outline>
-				<outline text="var client = getRandomClient (); //10/27/18 by DW"></outline>
-				<outline text="if (client !== undefined) { //xxx">
-					<outline text="url += &quot;?client_id=&quot; + client.id + &quot;&amp;client_secret=&quot; + client.secret;"></outline>
+			<outline text="if (options.flCanUseCache) { //12/13/19 by DW">
+				<outline text="var data = cacheRef (username, repository, path);"></outline>
+				<outline text="if (data !== undefined) {">
+					<outline isComment="true" text="console.log (&quot;getFromGitHub: serving from cache, path == &quot; + path);"></outline>
+					<outline text="callback (undefined, data);"></outline>
+					<outline text="return;"></outline>
 					<outline text="}"></outline>
 					</outline>
-				<outline text="var theRequest = {">
-					<outline text="url: url,"></outline>
-					<outline text="jar: true, //&quot;remember cookies for future use&quot;"></outline>
-					<outline text="maxRedirects: 5,"></outline>
-					<outline text="headers: {">
-						<outline text="&quot;User-Agent&quot;: config.userAgent,"></outline>
-						<outline text="&quot;Authorization&quot;: (options.accessToken) ? options.accessToken : undefined,"></outline>
-						<outline text="}"></outline>
-						</outline>
-					<outline text="};"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="var whenstart = new Date ();"></outline>
+			<outline text="var url = config.apiUrl + username + &quot;/&quot; + repository + &quot;/contents/&quot; + path;"></outline>
+			<outline text="var client = getRandomClient (); //10/27/18 by DW"></outline>
+			<outline text="if (client !== undefined) {">
+				<outline text="url += &quot;?client_id=&quot; + client.id + &quot;&amp;client_secret=&quot; + client.secret;"></outline>
+				<outline text="}"></outline>
+				</outline>
+			<outline text="var theRequest = {">
+				<outline text="url: url,"></outline>
+				<outline text="jar: true, //&quot;remember cookies for future use&quot;"></outline>
+				<outline text="maxRedirects: 5,"></outline>
+				<outline text="headers: {">
+					<outline text="&quot;User-Agent&quot;: config.userAgent,"></outline>
+					<outline text="&quot;Authorization&quot;: (options.accessToken) ? options.accessToken : undefined,"></outline>
+					<outline text="}"></outline>
 					</outline>
-				<outline text="request (theRequest, function (err, response, jsontext) {">
-					<outline text="if (err) {">
-						<outline text="callback (err);"></outline>
+				<outline text="};"></outline>
+				</outline>
+			<outline text="request (theRequest, function (err, response, jsontext) {">
+				<outline text="if (err) {">
+					<outline text="callback (err);"></outline>
+					<outline text="}"></outline>
+					</outline>
+				<outline text="else {">
+					<outline text="if (response.statusCode == 404) {">
+						<outline text="callback ({message: &quot;The file \&quot;&quot; + path + &quot;\&quot; was not found.&quot;});"></outline>
 						<outline text="}"></outline>
 						</outline>
 					<outline text="else {">
-						<outline text="if (response.statusCode == 404) {">
-							<outline text="callback ({message: &quot;The file \&quot;&quot; + path + &quot;\&quot; was not found.&quot;});"></outline>
+						<outline isComment="true" text="console.log (&quot;getFromGitHub: response.headers == &quot; + utils.jsonStringify (response.headers))"></outline>
+						<outline text="if (response.headers [&quot;x-ratelimit-remaining&quot;] == 0) {">
+							<outline text="var theLimit = response.headers [&quot;x-ratelimit-limit&quot;];"></outline>
+							<outline text="callback ({&quot;message&quot;: &quot;GitHub reported a rate limit error. You are limited to &quot; + theLimit + &quot; calls per hour.&quot;});"></outline>
 							<outline text="}"></outline>
 							</outline>
 						<outline text="else {">
-							<outline isComment="true" text="console.log (&quot;getFromGitHub: response.headers == &quot; + utils.jsonStringify (response.headers))"></outline>
-							<outline text="if (response.headers [&quot;x-ratelimit-remaining&quot;] == 0) {">
-								<outline text="var theLimit = response.headers [&quot;x-ratelimit-limit&quot;];"></outline>
-								<outline text="callback ({&quot;message&quot;: &quot;GitHub reported a rate limit error. You are limited to &quot; + theLimit + &quot; calls per hour.&quot;});"></outline>
-								<outline text="}"></outline>
-								</outline>
-							<outline text="else {">
-								<outline text="try {">
-									<outline text="var jstruct = JSON.parse (jsontext);"></outline>
-									<outline isComment="true" text="console.log (&quot;getFromGitHub: path == &quot; + path + &quot;, &quot; + utils.secondsSince (whenstart) + &quot; secs.&quot;);"></outline>
-									<outline text="addToCache (username, repository, path, jstruct);"></outline>
-									<outline text="if (config.flDebugObjectsFromGitHub) {">
-										<outline text="var f = &quot;debug/objects/&quot; + Number (new Date ()) + &quot;.json&quot;;"></outline>
-										<outline text="utils.sureFilePath (f, function () {">
-											<outline text="fs.writeFile (f, utils.jsonStringify (jstruct), function (err) {">
-												<outline text="});"></outline>
-												</outline>
+							<outline text="try {">
+								<outline text="var jstruct = JSON.parse (jsontext);"></outline>
+								<outline isComment="true" text="console.log (&quot;getFromGitHub: path == &quot; + path + &quot;, &quot; + utils.secondsSince (whenstart) + &quot; secs.&quot;);"></outline>
+								<outline text="addToCache (username, repository, path, jstruct);"></outline>
+								<outline text="if (config.flDebugObjectsFromGitHub) {">
+									<outline text="var f = &quot;debug/objects/&quot; + Number (new Date ()) + &quot;.json&quot;;"></outline>
+									<outline text="utils.sureFilePath (f, function () {">
+										<outline text="fs.writeFile (f, utils.jsonStringify (jstruct), function (err) {">
 											<outline text="});"></outline>
 											</outline>
-										<outline text="}"></outline>
+										<outline text="});"></outline>
 										</outline>
-									<outline text="callback (undefined, jstruct);"></outline>
 									<outline text="}"></outline>
 									</outline>
-								<outline text="catch (err) {">
-									<outline text="callback (err);"></outline>
-									<outline text="}"></outline>
-									</outline>
+								<outline text="callback (undefined, jstruct);"></outline>
+								<outline text="}"></outline>
+								</outline>
+							<outline text="catch (err) {">
+								<outline text="callback (err);"></outline>
 								<outline text="}"></outline>
 								</outline>
 							<outline text="}"></outline>
 							</outline>
 						<outline text="}"></outline>
 						</outline>
-					<outline text="});"></outline>
+					<outline text="}"></outline>
 					</outline>
-				<outline text="}"></outline>
+				<outline text="});"></outline>
 				</outline>
 			<outline text="}"></outline>
 			</outline>

@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.60";   
+const myProductName = "githubpub", myVersion = "0.5.64";    
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -245,60 +245,64 @@ function getFromGitHub (username, repository, path, options, callback) { //calls
 	if (options === undefined) { //10/29/18 by DW
 		options = new Object ();
 		}
-	var data = cacheRef (username, repository, path);
-	if (data !== undefined) {
-		callback (undefined, data);
+	if (options.flCanUseCache === undefined) { //12/13/19 by DW
+		options.flCanUseCache = true;
 		}
-	else {
-		var whenstart = new Date ();
-		var url = config.apiUrl + username + "/" + repository + "/contents/" + path;
-		var client = getRandomClient (); //10/27/18 by DW
-		if (client !== undefined) { //xxx
-			url += "?client_id=" + client.id + "&client_secret=" + client.secret;
+	if (options.flCanUseCache) { //12/13/19 by DW
+		var data = cacheRef (username, repository, path);
+		if (data !== undefined) {
+			callback (undefined, data);
+			return;
 			}
-		var theRequest = {
-			url: url,
-			jar: true, //"remember cookies for future use"
-			maxRedirects: 5,
-			headers: {
-				"User-Agent": config.userAgent,
-				"Authorization": (options.accessToken) ? options.accessToken : undefined,
-				}
-			};
-		request (theRequest, function (err, response, jsontext) {
-			if (err) {
-				callback (err);
+		}
+	var whenstart = new Date ();
+	var url = config.apiUrl + username + "/" + repository + "/contents/" + path;
+	var client = getRandomClient (); //10/27/18 by DW
+	if (client !== undefined) {
+		url += "?client_id=" + client.id + "&client_secret=" + client.secret;
+		}
+	var theRequest = {
+		url: url,
+		jar: true, //"remember cookies for future use"
+		maxRedirects: 5,
+		headers: {
+			"User-Agent": config.userAgent,
+			"Authorization": (options.accessToken) ? options.accessToken : undefined,
+			}
+		};
+	request (theRequest, function (err, response, jsontext) {
+		if (err) {
+			callback (err);
+			}
+		else {
+			if (response.statusCode == 404) {
+				callback ({message: "The file \"" + path + "\" was not found."});
 				}
 			else {
-				if (response.statusCode == 404) {
-					callback ({message: "The file \"" + path + "\" was not found."});
+				if (response.headers ["x-ratelimit-remaining"] == 0) {
+					var theLimit = response.headers ["x-ratelimit-limit"];
+					callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
 					}
 				else {
-					if (response.headers ["x-ratelimit-remaining"] == 0) {
-						var theLimit = response.headers ["x-ratelimit-limit"];
-						callback ({"message": "GitHub reported a rate limit error. You are limited to " + theLimit + " calls per hour."});
-						}
-					else {
-						try {
-							var jstruct = JSON.parse (jsontext);
-							addToCache (username, repository, path, jstruct);
-							if (config.flDebugObjectsFromGitHub) {
-								var f = "debug/objects/" + Number (new Date ()) + ".json";
-								utils.sureFilePath (f, function () {
-									fs.writeFile (f, utils.jsonStringify (jstruct), function (err) {
-										});
+					try {
+						var jstruct = JSON.parse (jsontext);
+						addToCache (username, repository, path, jstruct);
+						if (config.flDebugObjectsFromGitHub) {
+							var f = "debug/objects/" + Number (new Date ()) + ".json";
+							utils.sureFilePath (f, function () {
+								fs.writeFile (f, utils.jsonStringify (jstruct), function (err) {
 									});
-								}
-							callback (undefined, jstruct);
+								});
 							}
-						catch (err) {
-							callback (err);
-							}
+						callback (undefined, jstruct);
+						}
+					catch (err) {
+						callback (err);
 						}
 					}
 				}
-			});
-		}
+			}
+		});
 	}
 function getContentFromGitHub (domain, path, options, callback) { //calls back with the content GitHub returned
 	var dstruct = config.domains [domain.toLowerCase ()]

@@ -26,6 +26,12 @@ Here's <a href="https://www.npmjs.com/package/githubpub">githubpub</a> on NPM.
 
 4. It has a cool name. Try saying it three times fast. :heart:
 
+### Updates
+
+#### v0.5.63 -- 10/11/21 by DW
+
+In  package.json  we now require dateformat 4.5.1 because they updated the package to not work with older versions of Node. 
+
 ### Questions, problems?
 
 Post an <a href="https://github.com/scripting/githubpub/issues">issue</a> here. 

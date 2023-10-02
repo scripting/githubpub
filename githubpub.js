@@ -1,4 +1,4 @@
-const myProductName = "githubpub", myVersion = "0.5.64";    
+const myProductName = "githubpub", myVersion = "0.5.65";    
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -256,7 +256,7 @@ function getFromGitHub (username, repository, path, options, callback) { //calls
 			}
 		}
 	var whenstart = new Date ();
-	var url = config.apiUrl + username + "/" + repository + "/contents/" + path;
+	var url = config.apiUrl + username + "/" + repository + "/contents" + path;
 	var client = getRandomClient (); //10/27/18 by DW
 	if (client !== undefined) {
 		url += "?client_id=" + client.id + "&client_secret=" + client.secret;
@@ -266,10 +266,14 @@ function getFromGitHub (username, repository, path, options, callback) { //calls
 		jar: true, //"remember cookies for future use"
 		maxRedirects: 5,
 		headers: {
-			"User-Agent": config.userAgent,
-			"Authorization": (options.accessToken) ? options.accessToken : undefined,
+			"User-Agent": config.userAgent
 			}
 		};
+	
+	if (options.accessToken !== undefined) { //10/2/23 by DW
+		theRequest.headers.Authorization = "token " + options.accessToken;
+		}
+	
 	request (theRequest, function (err, response, jsontext) {
 		if (err) {
 			callback (err);
